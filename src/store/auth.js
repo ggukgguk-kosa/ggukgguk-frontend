@@ -5,10 +5,7 @@ export default {
   state: {
     memberInfo: {},
     accessToken: '',
-    accessTokenExpiresIn: null,
     refreshToken: '',
-    refreshTokenExpiresIn: null,
-    loginStatus: true
   },
   getters: {
     memberInfo(state) {
@@ -17,14 +14,8 @@ export default {
     accessToken(state) {
       return state.accessToken;
     },
-    accessTokenExpiresIn(state) {
-      return state.accessTokenExpiresIn;
-    },
     refreshToken(state) {
       return state.refreshToken;
-    },
-    refreshTokenExpiresIn(state) {
-      return state.refreshTokenExpiresIn;
     },
     isLogin(state) {
       if (Object.keys(state.memberInfo).length === 0
@@ -37,18 +28,14 @@ export default {
   },
   mutations: {
     setMemberInfo(state, {
-      memberInfo, accessToken, accessTokenExpiresIn,
-      refreshToken, refreshTokenExpiresIn
+      memberInfo, accessToken, refreshToken,
     }) {
       state.memberInfo = memberInfo;
       state.accessToken = accessToken;
-      state.accessTokenExpiresIn = new Date(accessTokenExpiresIn);
       state.refreshToken = refreshToken;
-      state.refreshTokenExpiresIn = new Date(refreshTokenExpiresIn);
     },
-    updateAccessToken(state, { accessToken, accessTokenExpiresIn }) {
+    updateAccessToken(state, { accessToken }) {
       state.accessToken = accessToken;
-      state.accessTokenExpiresIn = new Date(accessTokenExpiresIn);
     }
   },
   actions: {
