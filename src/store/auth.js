@@ -41,12 +41,12 @@ export default {
   actions: {
     login({ commit }, { memberId, memberPw }) {
       return auth.login({ memberId, memberPw})
-            .then((response) => {
-                console.log('리스폰스 받음');
-                console.log(response);
-                commit('setMemberInfo', response.data.data);
-                return response;
-            })
+      .then((response) => {
+          console.log('리스폰스 받음');
+          console.log(response);
+          commit('setMemberInfo', response.data.data);
+          return response;
+      })
     },
     logout({ commit }) {
       commit('setMemberInfo', {

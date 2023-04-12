@@ -10,7 +10,7 @@ function getInstance() {
     instance = axios.create({
         // eslint-disable-next-line
         baseURL: process.env.VUE_APP_BASE_URI,
-        timeout: 2500,
+        timeout: 10000,
         withCredentials: true,
         // headers: { 'Authorization': 'Bearer ' },
     });

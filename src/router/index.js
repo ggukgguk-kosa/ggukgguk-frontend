@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import WriteNewNoticeView from '../views/admin/WriteNewNoticeView.vue'
+import NoticeListView from '../views/admin/NoticeListView.vue';
 import store from '../store'
 
 const routes = [
@@ -14,6 +15,12 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginView
+  },
+  {
+    path: '/admin/notice',
+    name: 'noticeList',
+    component: NoticeListView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/notice/new',
