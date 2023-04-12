@@ -37,6 +37,9 @@ async function login() {
     router.push({name: 'home'})
   })
   .catch((error) => {
+    if (error.code === 'ERR_BAD_REQUEST') {
+      alert('로그인에 실패했습니다. 아이디와 비밀번호를 다시 확인해주세요.');
+    }
     console.log('로그인 실패');
     console.error(error);
   })
