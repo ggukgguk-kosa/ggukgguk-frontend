@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router'
 
 const store = useStore();
+const router = useRouter();
 
 const form = ref('');
 const memberId = ref('');
@@ -28,10 +30,11 @@ async function login() {
 
   store.dispatch('auth/login', {
     memberId: memberId.value,
-    memberPw: memberPw.value 
+    memberPw: memberPw.value
   })
   .then(() => {
     alert('로그인 성공');
+    router.push({name: 'home'})
   })
   .catch((error) => {
     console.log('로그인 실패');
@@ -54,6 +57,8 @@ async function login() {
         label="비밀번호"
       ></v-text-field>
       <v-btn type="submit" @click="login" block class="mt-2">로그인</v-btn>
+      <hr>
+      <a href="">네이버 로그인</a>
     </v-form>
   </v-sheet>
 </template>
