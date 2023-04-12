@@ -1,3 +1,4 @@
-import auth from './auth'
+import auth from './auth';
+import admin from './admin';
 
-export { auth }
+export { auth, admin }

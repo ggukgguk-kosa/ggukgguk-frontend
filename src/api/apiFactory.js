@@ -12,7 +12,7 @@ function getInstance() {
         baseURL: process.env.VUE_APP_BASE_URI,
         timeout: 2500,
         withCredentials: true,
-        //headers: { 'Authorization': 'Bearer ' },
+        // headers: { 'Authorization': 'Bearer ' },
     });
 
     return instance;

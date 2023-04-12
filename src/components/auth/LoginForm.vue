@@ -5,10 +5,15 @@ import { useRouter } from 'vue-router'
 
 const store = useStore();
 const router = useRouter();
+// const route = useRoute();
 
 const form = ref('');
 const memberId = ref('');
 const memberPw = ref('');
+
+// const to = computed(() => {
+//   return route.params.redirect;
+// })
 
 const idRules = [
     value => {
@@ -34,7 +39,8 @@ async function login() {
   })
   .then(() => {
     alert('로그인 성공');
-    router.push({name: 'home'})
+    // router.push({path: to.value})
+    router.push({name: 'home'});
   })
   .catch((error) => {
     if (error.code === 'ERR_BAD_REQUEST') {
