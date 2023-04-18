@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '../store'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import WriteNewNoticeView from '../views/admin/WriteNewNoticeView.vue'
 import NoticeListView from '../views/admin/NoticeListView.vue';
-import store from '../store'
+import TestMainView from '../views/test/TestMainView.vue';
 
 const routes = [
   {
@@ -26,6 +27,12 @@ const routes = [
     path: '/admin/notice/new',
     name: 'noticeNew',
     component: WriteNewNoticeView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/test',
+    name: 'testMain',
+    component: TestMainView,
     meta: { requiresAuth: true }
   }
 ]
