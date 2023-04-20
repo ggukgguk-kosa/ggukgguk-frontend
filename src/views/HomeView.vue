@@ -18,10 +18,11 @@ function onLogout() {
 </script>
 
 <template>
-  메인 페이지
+  메인 페이지!!
 
   {{ loginInfo }}
 
   <router-link :to="{name: 'login'}" v-if="!isLogin">로그인</router-link>
   <v-btn @click="onLogout" v-if="isLogin">로그아웃</v-btn>
+  <router-link :to="{name: 'testMain'}" v-if="isLogin">테스트 메인</router-link>
 </template>
