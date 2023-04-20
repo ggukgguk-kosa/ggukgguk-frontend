@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist';
+import diary from './diary'
 import auth from './auth'
 import admin from './admin'
 
@@ -18,7 +19,7 @@ export default createStore({
   actions: {
   },
   modules: {
-    auth, admin
+    auth, admin, diary
   },
   plugins: [vuexLocal.plugin]
 })

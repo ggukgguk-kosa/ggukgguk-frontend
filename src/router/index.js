@@ -5,6 +5,7 @@ import LoginView from '../views/auth/LoginView.vue'
 import WriteNewNoticeView from '../views/admin/WriteNewNoticeView.vue'
 import NoticeListView from '../views/admin/NoticeListView.vue';
 import TestMainView from '../views/test/TestMainView.vue';
+import RecordView from '../views/record/RecordView.vue'
 
 const routes = [
   {
@@ -33,6 +34,12 @@ const routes = [
     path: '/test',
     name: 'testMain',
     component: TestMainView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/record',
+    name: 'recordMain',
+    component: RecordView,
     meta: { requiresAuth: true }
   }
 ]

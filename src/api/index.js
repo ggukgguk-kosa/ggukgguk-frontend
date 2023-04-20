@@ -1,4 +1,6 @@
 import auth from './auth';
 import admin from './admin';
+import diary from './diary';
 
-export { auth, admin }
+export default null;
+export { auth, admin, diary };
