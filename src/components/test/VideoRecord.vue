@@ -24,8 +24,6 @@ let videoStream = null;
 const width = ref(1200);
 const height = ref(0);
 
-const pictureBlob = ref(null);
-
 const shouldStop = ref(false);
 const stopped = ref(true);
 const recordedVideoBlob = ref(null);
@@ -126,7 +124,7 @@ function recordVideo() {
   });
 
   mediaRecorder.addEventListener('stop', () => {
-    recordedVideoBlob.value = new Blob(recordedChunks)
+    recordedVideoBlob.value = new Blob(recordedChunks, { type: "video/webm" })
     recordedVideoSrc.value = URL.createObjectURL(recordedVideoBlob.value);
   });
 
@@ -145,7 +143,7 @@ function uploadVideo() {
     const formData = new FormData();
     formData.append('recordComment', '동영상 조각 업로드 테스트중');
     formData.append('memberId', memberId.value);
-    formData.append('mediaFile', pictureBlob.value);
+    formData.append('mediaFile', recordedVideoBlob.value);
     axios.post('/record', formData, {
         headers: {
             Authorization: `Bearer ${accessToken.value}`
