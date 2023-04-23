@@ -19,18 +19,25 @@ const accessToken = computed(() => {
 const error = ref('');
 const videoEl = ref(null);
 const canvasEl = ref(null);
-const pictureDataUri = ref('');
 let videoStream = null;
 
-const width = ref(500);
+const width = ref(1200);
 const height = ref(0);
 
 const pictureBlob = ref(null);
 
+const shouldStop = ref(false);
+const stopped = ref(true);
+const recordedVideoBlob = ref(null);
+const recordedVideoSrc = ref('');
+const elapsedSeconds = ref(0);
+
 const constraints = reactive({
-  audio: false,
+  audio: true,
   video: {
-    facingMode: 'environment'
+    facingMode: 'environment',
+    width: 1280,
+    height: 720,
   }
 });
 
@@ -91,37 +98,52 @@ function toggleFacingMode() {
     else if (facingMode === 'user') constraints.video.facingMode = 'environment';
 }
 
-function clearphoto() {
-  const context = canvasEl.value.getContext("2d");
-  context.fillStyle = "#AAA";
-  context.fillRect(0, 0, canvasEl.value.width, canvasEl.value.height);
+function recordVideo() {
+  console.log('비디오 레코딩 시작');
+  shouldStop.value = false;
+  stopped.value = false;
+  elapsedSeconds.value = 0;
 
-  const data = canvasEl.value.toDataURL("image/jpg");
-  pictureDataUri.value = data;
+  const options = {mimeType: 'video/webm'};
+  const recordedChunks = [];
+  const mediaRecorder = new MediaRecorder(videoStream, options);
+
+  mediaRecorder.addEventListener('dataavailable', (e) => {
+    console.log('dataavailable');
+
+    if (e.data.size > 0) {
+      recordedChunks.push(e.data);
+    }
+
+    elapsedSeconds.value++;
+    if (elapsedSeconds.value >= 60) shouldStop.value = true; // 60초 경과시 자동 중지
+
+    if(shouldStop.value === true && stopped.value === false) {
+      console.log('MediaRecorder Stop 로직 진입');
+      mediaRecorder.stop();
+      stopped.value = true;
+    }
+  });
+
+  mediaRecorder.addEventListener('stop', () => {
+    recordedVideoBlob.value = new Blob(recordedChunks)
+    recordedVideoSrc.value = URL.createObjectURL(recordedVideoBlob.value);
+  });
+
+  console.log('미디어 레코더 시작');
+  mediaRecorder.start(1000);
 }
 
-function takePicture() {
-  const context = canvasEl.value.getContext("2d");
-  
-  if (width.value && height.value) {
-    canvasEl.value.width = width.value;
-    canvasEl.value.height = height.value;
-    context.drawImage(videoEl.value, 0, 0)
-    const dataUri = canvasEl.value.toDataURL("image/jpeg");
-    pictureDataUri.value = dataUri;
-    canvasEl.value.toBlob((blob) => {
-      pictureBlob.value = blob;
-    }, 'image/jpeg')
-  } else {
-    clearphoto();
-  }
+function stopRecord() {
+  console.log('비디오 레코딩 중지');
+  shouldStop.value = true;
 }
 
 function uploadVideo() {
     console.log("Upload button clicked");
 
     const formData = new FormData();
-    formData.append('recordComment', '이미지 조각 업로드 테스트중');
+    formData.append('recordComment', '동영상 조각 업로드 테스트중');
     formData.append('memberId', memberId.value);
     formData.append('mediaFile', pictureBlob.value);
     axios.post('/record', formData, {
@@ -145,7 +167,13 @@ function uploadVideo() {
     <video :height="height" :width="width" @canplay="whenVideoCanPlay" ref="videoEl" autoplay playsinline></video>
     <div>{{ error }}</div>
     <canvas :height="height" :width="width" ref="canvasEl" />
-    <v-btn @click="takePicture">사진촬영</v-btn>
-    <img :src="pictureDataUri">
+
+    촬영 시간: {{ elapsedSeconds }}
+
+    <v-btn @click="recordVideo">촬영 시작</v-btn>
+    <v-btn @click="stopRecord">촬영 중지</v-btn>
+
+    <video v-if="recordedVideoSrc != ''" :height="height" :width="width"  :src="recordedVideoSrc"  autoplay playsinline controls></video>
+
     <v-btn @click="uploadVideo">업로드</v-btn>
 </template>

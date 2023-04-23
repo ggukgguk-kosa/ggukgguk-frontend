@@ -12,9 +12,9 @@ const axios = apiFactory.getInstance();
 const memberId = computed(() => {
     return store.getters['auth/memberInfo'].memberId;
 });
-const accessToken = computed(() => {
-    return store.getters['auth/accessToken'];
-});
+// const accessToken = computed(() => {
+//     return store.getters['auth/accessToken'];
+// });
 
 const error = ref('');
 const videoEl = ref(null);
@@ -22,7 +22,7 @@ const canvasEl = ref(null);
 const pictureDataUri = ref('');
 let videoStream = null;
 
-const width = ref(500);
+const width = ref(0);
 const height = ref(0);
 
 const pictureBlob = ref(null);
@@ -45,16 +45,14 @@ watch(constraints, () => {
 
 function handleSuccess(stream) {
   const videoTracks = stream.getVideoTracks();
+  width.value = videoTracks[0].getSettings().width;
+  height.value = videoTracks[0].getSettings().height;
+
   console.log('Got stream with constraints:', constraints);
   console.log(`Using video device: ${videoTracks[0].label}`);
   videoEl.value.srcObject = stream;
   videoEl.value.play();
 }
-
-function whenVideoCanPlay() {
-  height.value = (videoEl.value.videoHeight / videoEl.value.videoWidth) * width.value;
-}
-
 function handleError(error) {
   if (error.name === 'OverconstrainedError') {
     const v = constraints.video;
@@ -125,9 +123,9 @@ function uploadVideo() {
     formData.append('memberId', memberId.value);
     formData.append('mediaFile', pictureBlob.value);
     axios.post('/record', formData, {
-        headers: {
-            Authorization: `Bearer ${accessToken.value}`
-        }
+        // headers: {
+        //     Authorization: `Bearer ${accessToken.value}`
+        // }
     }, {
         withCredentials: true
     })
@@ -142,10 +140,10 @@ function uploadVideo() {
 
 <template>
     <v-btn @click="toggleFacingMode">전면 후면 토글</v-btn><br>
-    <video :height="height" :width="width" @canplay="whenVideoCanPlay" ref="videoEl" autoplay playsinline></video>
+    <video :height="height" :width="width" ref="videoEl" autoplay playsinline></video>
     <div>{{ error }}</div>
     <canvas :height="height" :width="width" ref="canvasEl" />
     <v-btn @click="takePicture">사진촬영</v-btn>
-    <img :src="pictureDataUri">
+    <img :src="pictureDataUri" width="500">
     <v-btn @click="uploadVideo">업로드</v-btn>
 </template>
