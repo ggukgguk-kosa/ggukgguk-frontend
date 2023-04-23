@@ -32,7 +32,7 @@ function getInstance() {
     instance.interceptors.response.use((response) => {
         return response;
     }, async (error) => {
-        if (error.response.status !== 401) return Promise.reject(error);
+        if (error.response?.status !== 401) return Promise.reject(error);
 
         const refreshToken = store.getters['auth/refreshToken'];
         try {
@@ -41,7 +41,7 @@ function getInstance() {
             });
             const newToken = refreshResonse.data.data.accessToken;
             console.log('새로운 토큰으로 갱신함:');
-            store.commit('auth/updateAccessToken', { newToken });
+            store.commit('auth/updateAccessToken', { accessToken: newToken });
             error.config.headers = {
                 ...error.config.headers,
                 Authorization: `Bearer ${newToken}`,
