@@ -38,9 +38,9 @@ async function login() {
     memberPw: memberPw.value
   })
   .then(() => {
-    alert('로그인 성공');
+    // alert('로그인 성공');
     // router.push({path: to.value})
-    router.push({name: 'home'});
+    router.push({name: 'diaryMain'});
   })
   .catch((error) => {
     if (error.code === 'ERR_BAD_REQUEST') {
@@ -57,6 +57,9 @@ onMounted(() => {
 </script>
 
 <template>
+  <div class="img-wrap">
+    <img src="/img/landing_main.png">
+  </div>
   <v-sheet width="300" class="mx-auto">
     <v-form @submit.prevent ref="form">
       <v-text-field
@@ -75,3 +78,14 @@ onMounted(() => {
     </v-form>
   </v-sheet>
 </template>
+
+<style scoped>
+  .img-wrap {
+    margin-top: 10%;
+    text-align: center;
+  }
+
+  img {
+    width: 300px;
+  }
+</style>
