@@ -57,7 +57,7 @@ function handleScroll() {
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     console.log(startDateStr);
-    getRecordsMore();
+    getRecordsDown();
   }
 
   // 스크롤이 맨 위에 도달했는지 확인
@@ -67,7 +67,7 @@ function handleScroll() {
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     console.log(startDateStr);
-    getRecordsMore();
+    getRecordsUp();
   }
 }
 
@@ -92,9 +92,9 @@ function getRecordList() {
   })
 }
 
-function getRecordsMore() {
+function getRecordsUp() {
   isLoading.value = true;
-  store.dispatch("record/getRecordsMore", memberId.value)
+  store.dispatch("record/getRecordsUp", memberId.value)
   .then(() => {
         isLoading.value = false;
   })
@@ -104,6 +104,17 @@ function getRecordsMore() {
   })
 }
 
+function getRecordsDown() {
+  isLoading.value = true;
+  store.dispatch("record/getRecordsDown", memberId.value)
+  .then(() => {
+        isLoading.value = false;
+  })
+  .catch((error) => {
+        console.error('조각 리스트 조회 실패');
+        console.error(error);
+  })
+}
 
 async function getDiaryList() {
     await store.dispatch("diary/getDiaryList", memberId.value)
