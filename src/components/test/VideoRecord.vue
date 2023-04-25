@@ -30,6 +30,8 @@ const recordedVideoBlob = ref(null);
 const recordedVideoSrc = ref('');
 const elapsedSeconds = ref(0);
 
+const durationLimit = 60;
+
 const constraints = reactive({
   audio: true,
   video: {
@@ -102,10 +104,18 @@ function recordVideo() {
   stopped.value = false;
   elapsedSeconds.value = 0;
 
-  const options = {mimeType: 'video/webm'};
+  let mimeType;
+  MediaRecorder.isTypeSupported('video/webm') ?
+    mimeType = 'video/webm' :
+    mimeType = 'video/mp4';
+
+  const options = { 
+    mimeType,
+    videoBitsPerSecond: 2500000
+  };
   const recordedChunks = [];
   const mediaRecorder = new MediaRecorder(videoStream, options);
-
+  console.log(mediaRecorder.videoBitsPerSecond);
   mediaRecorder.addEventListener('dataavailable', (e) => {
     console.log('dataavailable');
 
@@ -114,7 +124,7 @@ function recordVideo() {
     }
 
     elapsedSeconds.value++;
-    if (elapsedSeconds.value >= 60) shouldStop.value = true; // 60초 경과시 자동 중지
+    if (elapsedSeconds.value >= durationLimit) shouldStop.value = true; // 60초 경과시 자동 중지
 
     if(shouldStop.value === true && stopped.value === false) {
       console.log('MediaRecorder Stop 로직 진입');
@@ -124,7 +134,7 @@ function recordVideo() {
   });
 
   mediaRecorder.addEventListener('stop', () => {
-    recordedVideoBlob.value = new Blob(recordedChunks, { type: "video/webm" })
+    recordedVideoBlob.value = new Blob(recordedChunks, { type: mimeType })
     recordedVideoSrc.value = URL.createObjectURL(recordedVideoBlob.value);
   });
 

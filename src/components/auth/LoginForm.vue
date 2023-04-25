@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
 
@@ -50,6 +50,10 @@ async function login() {
     console.error(error);
   })
 }
+
+onMounted(() => {
+  store.commit('auth/updateAccessToken', { accessToken: ''});
+})
 </script>
 
 <template>
