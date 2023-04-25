@@ -1,8 +1,10 @@
 <script setup>
-import DiaryMain from '../../components/record/DiaryMain.vue';
+import RecordHeader from '../../components/record/RecordHeader.vue'
+import RecordMain from '../../components/record/RecordMain.vue';
 
 </script>
 
 <template>
-    <diary-main />
+    <record-header />
+    <record-main />
 </template>

@@ -6,6 +6,8 @@ import WriteNewNoticeView from '../views/admin/WriteNewNoticeView.vue'
 import NoticeListView from '../views/admin/NoticeListView.vue';
 import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
+import DiaryView from '../views/record/DiaryView.vue';
+import CalendarView  from '../views/record/CalendarView.vue';
 
 const routes = [
   {
@@ -40,6 +42,18 @@ const routes = [
     path: '/record',
     name: 'recordMain',
     component: RecordView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/diary',
+    name: 'diaryMain',
+    component: DiaryView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/calendar',
+    name: 'CalendarMain',
+    component: CalendarView,
     meta: { requiresAuth: true }
   }
 ]
