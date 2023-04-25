@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 const store = useStore();
 
@@ -19,13 +20,19 @@ function setDiaryYear(year) {
     store.commit('diary/setDiaryYear', year);
 }
 
-function getDiaryList() {
-    store.dispatch("diary/getDiaryList", memberId.value)
+function setDiaryMonth(month){
+    store.commit('diary/setDiaryMonth', month);
+}
+
+async function getDiaryList() {
+    await store.dispatch("diary/getDiaryList", memberId.value)
     .catch((error) => {
         console.error('다이어리 리스트 조회 실패');
         console.error(error);
     })
 }
+
+const router = useRouter();
 
 const selectedYear = ref(new Date().getFullYear());
 const selectedMonth = ref(null);
@@ -33,12 +40,15 @@ const years = [new Date().getFullYear(), new Date().getFullYear()-1, new Date().
 const months = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 
 watch(selectedYear, () => {
-    store.commit('diary/setDiaryYear', selectedYear.value);
-    store.dispatch("diary/getDiaryList", memberId.value)
-    .catch((error) => {
-        console.error('다른 연도 다이어리 조회 실패');
-        console.error(error);
-    });
+    setDiaryYear(selectedYear.value);
+    setDiaryMonth(null);
+    getDiaryList();
+})
+
+watch(selectedMonth, async () => {
+    setDiaryMonth(selectedMonth.value);
+    await getDiaryList();
+    router.push('/calendar');
 })
 
 // function onMonthChange() {
@@ -46,7 +56,6 @@ watch(selectedYear, () => {
 // }
 
 onMounted(() => {
-  setDiaryYear();
   getDiaryList();
 })
 
