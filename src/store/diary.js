@@ -23,6 +23,7 @@ export default {
       console.log(state.diaryOption.diaryYear);
     },
     setDiaryMonth(state, diaryMonth){
+      console.log('2: ', diaryMonth);
       state.diaryOption.diaryMonth = diaryMonth;
     },
     setDiaryList(state, diaryList) {
@@ -32,6 +33,7 @@ export default {
   actions: {
     // eslint-disable-next-line
     getDiaryList({ commit, state }, memberId) {
+      console.log("3: ", state.diaryOption);
       return diary.getDiaryList(memberId, state.diaryOption.diaryYear, state.diaryOption.diaryMonth )
       .then((response) => {
         console.log(response.data.data);
