@@ -9,6 +9,10 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
+const diaryYear = computed(() => {
+            return store.getters['diary/diaryOption'].diaryYear;
+})
+
 const diaryList = computed(() => {
     return store.getters['diary/diaryList']
 })
@@ -34,7 +38,7 @@ async function getDiaryList() {
 
 const router = useRouter();
 
-const selectedYear = ref(new Date().getFullYear());
+const selectedYear = ref(diaryYear);
 const selectedMonth = ref(null);
 const years = [new Date().getFullYear(), new Date().getFullYear()-1, new Date().getFullYear()-2];
 const months = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];

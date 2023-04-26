@@ -9,6 +9,7 @@ import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
 import CalendarView  from '../views/record/CalendarView.vue';
 import RecordAddView from '../views/record/RecordAddView.vue';
+import MapTest from '../views/record/MapTest.vue';
 
 const routes = [
   {
@@ -61,6 +62,12 @@ const routes = [
     path: '/calendar',
     name: 'CalendarMain',
     component: CalendarView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/map',
+    name: 'MapTest',
+    component: MapTest,
     meta: { requiresAuth: true }
   }
 ]

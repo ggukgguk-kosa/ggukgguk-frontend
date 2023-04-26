@@ -17,21 +17,23 @@ function setStartDateStr(){
   store.commit('record/setStartDateStr', null);
 }
 
-function setKeyword(){
-  store.commit('record/setKeyword', keyword.value);
+function setKeyword(keyword){
+  store.commit('record/setKeyword', keyword);
 }
  
 function handleSearch(){
   setStartDateStr();
-  setKeyword();
+  setKeyword(keyword.value);
   store.dispatch('record/getRecordList', memberId.value);
+  keyword.value=null;
+  setKeyword(null);
 }
 
 const route = useRoute();
 
 // 날짜 클릭하면 해당 날짜기준 조각 조회
 function handleDateClick({date}) {
-  keyword.value= null;
+  setKeyword(null);
   const clickedDate = new Date(date)
   const dateStr = formatDate(clickedDate);
   store.commit('record/setStartDateStr', dateStr);
@@ -56,7 +58,7 @@ function getRecordList() {
 </script>
 
 <template>
-<v-app-bar class="text-center align-content-center">
+<v-app-bar class="text-center align-content-center w-full">
   <v-menu>
     <template v-slot:activator="{ props }">
       <v-btn
@@ -69,16 +71,18 @@ function getRecordList() {
     @dayclick="handleDateClick"
     />
   </v-menu>
-  <v-text-field
-    v-model="keyword"
-    label="Search"
-    placeholder="Enter search keyword"
-    clearable
-    solo-inverted
-    append-icon="mdi-magnify"
-    @click:append="handleSearch"
-    @keydown.enter="handleSearch"
-  />
+      <input
+        v-model="keyword"
+        class="v-input v-text-field__input v-text-field__input--enclosed v-text-field__input--placeholder v-text-field__input--solo w-full"
+        type="text"
+        placeholder="Enter search keyword"
+        @keydown.enter="handleSearch"
+        style="max-width: none;"
+      />
+  <v-btn icon
+  @click="handleSearch">
+    <v-icon>mdi-magnify</v-icon>
+  </v-btn>
   <v-btn icon>
     <v-icon>mdi-dots-vertical</v-icon>
   </v-btn>
