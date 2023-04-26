@@ -8,7 +8,7 @@ import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
 import CalendarView  from '../views/record/CalendarView.vue';
-
+import MemberView from '../views/member/MemberView.vue';
 const routes = [
   {
     path: '/',
@@ -55,7 +55,14 @@ const routes = [
     name: 'CalendarMain',
     component: CalendarView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/member',
+    name: 'MemberMain',
+    component : MemberView,
+    meta : {requiresAuth : true}
   }
+
 ]
 
 const router = createRouter({
