@@ -1,8 +1,10 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 const store = useStore();
+const router = useRouter();
 
 const loginInfo = computed(() => {
   return store.getters['auth/memberInfo'];
@@ -15,6 +17,10 @@ const isLogin = computed(() => {
 function onLogout() {
   store.dispatch('auth/logout');
 }
+
+onMounted(() => {
+  if (isLogin.value) router.push({name: 'recordMain'});
+})
 </script>
 
 <template>

@@ -60,6 +60,11 @@ export default {
         console.log(response.data.data);
         commit('setRecordsDown', response.data.data);
       })
+    },
+
+    // eslint-disable-next-line
+    addRecord({ }, formData) {
+      return record.postRecord(formData);
     }
 
   }

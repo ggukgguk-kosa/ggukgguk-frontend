@@ -6,6 +6,7 @@ import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 import VCalendar from 'v-calendar';
 import 'v-calendar/style.css';
+import { AVPlugin } from 'vue-audio-visual'
 
 loadFonts()
 
@@ -14,4 +15,5 @@ createApp(App)
   .use(store)
   .use(vuetify)
   .use(VCalendar, {})
+  .use(AVPlugin)
   .mount('#app')

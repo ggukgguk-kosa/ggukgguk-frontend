@@ -40,7 +40,7 @@ async function login() {
   .then(() => {
     // alert('로그인 성공');
     // router.push({path: to.value})
-    router.push({name: 'diaryMain'});
+    router.push({name: 'recordMain'});
   })
   .catch((error) => {
     if (error.code === 'ERR_BAD_REQUEST') {

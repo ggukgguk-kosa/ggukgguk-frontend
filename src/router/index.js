@@ -8,6 +8,7 @@ import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
 import CalendarView  from '../views/record/CalendarView.vue';
+import RecordAddView from '../views/record/RecordAddView.vue';
 
 const routes = [
   {
@@ -42,6 +43,12 @@ const routes = [
     path: '/record',
     name: 'recordMain',
     component: RecordView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/record/new',
+    name: 'recordAdd',
+    component: RecordAddView,
     meta: { requiresAuth: true }
   },
   {
