@@ -97,11 +97,11 @@ export default {
           newReplyList : response.data.data
         });
       })
+    },
 
     // eslint-disable-next-line
     addRecord({ }, formData) {
       return record.postRecord(formData);
     }
-
-  }
+  },
 };

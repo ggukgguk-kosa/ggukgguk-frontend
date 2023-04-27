@@ -69,7 +69,11 @@ function handleScroll() {
   // 스크롤이 맨 위에 도달했는지 확인
   if (scrollY === 0 && !isLoading.value) {
     isLoading.value = true;
+    console.log(latestRecordCreatedAt.value.getDate());
+    console.log(latestRecordCreatedAt.value.getDate() + 5);
+    console.log(startDate.value);
     startDate.value.setDate(latestRecordCreatedAt.value.getDate() + 5); // startDate를 5일 후로 수정
+    console.log(startDate.value);
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     console.log(startDateStr);

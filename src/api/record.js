@@ -48,8 +48,9 @@ export default {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
             }
         });
+    },
 
     postRecord(formData) {
         return axios.post('/record', formData);
     }
-}
+};

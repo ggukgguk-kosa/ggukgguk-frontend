@@ -4,11 +4,9 @@
 
 <template>
   <v-app>
-    <v-main>
       <v-container>
-        <router-view/>
+        <router-view :key="$route.path"/>
       </v-container>
-    </v-main>
   </v-app>
 </template>
 

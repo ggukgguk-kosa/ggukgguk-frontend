@@ -5,6 +5,8 @@
     import CaptureImage from './media/CaptureImage.vue';
     import CaptureVideo from './media/CaptureVideo.vue';
     import CaptureAudio from './media/CaptureAudio.vue';
+    import CaptureLocation from './media/CaptureLocation.vue';
+    import RecordMap from './RecordMap.vue';
 
     const store = useStore();
     const memberId = computed(() => {
@@ -40,6 +42,11 @@
     const captureAudioVisible = ref(false);
     const recordAudio = ref(null);
     const recordAudioUrl = ref('');
+
+    const captureLocationVisible = ref(false);
+    const recordLocationX = ref(0);
+    const recordLocationY = ref(0);
+
 
     function openInputGallery() {
         document.querySelector("input#input-media-from-gallery").click();
@@ -116,12 +123,14 @@
         const formData = new FormData();
         formData.append('recordComment', recordComment.value);
         formData.append('memberId', memberId.value);
-        console.log(memberId.value);
 
         const mediaFileBlob = recordImage.value ? recordImage.value
             : recordVideo.value ? recordVideo.value
             : recordAudio.value;
         formData.append('mediaFile', mediaFileBlob);
+        
+        formData.append('recordLocationX', recordLocationX.value);
+        formData.append('recordLocationY', recordLocationY.value);
 
         store.dispatch('record/addRecord', formData)
         .then((response) => {
@@ -133,6 +142,18 @@
             console.error('실패');
             console.error(error);
         })
+    }
+
+    function openLocationRecoder() {
+        captureLocationVisible.value = true;
+    }
+
+    function handleLocationCapture(coord) {
+        const { y, x } = coord;
+        recordLocationY.value = y;
+        recordLocationX.value = x;
+        console.log(recordLocationY.value, recordLocationX.value);
+        captureLocationVisible.value = false;
     }
 </script>
 
@@ -151,8 +172,14 @@
                 <v-btn icon="mdi-image-outline" @click="openInputImage"></v-btn>
                 <v-btn icon="mdi-video-outline" @click="openVideoCamera"></v-btn>
                 <v-btn icon="mdi-microphone-outline" @click="openAudioRecoder"></v-btn>
-                <v-btn icon="mdi-map-marker-outline"></v-btn>
+                <v-btn icon="mdi-map-marker-outline" @click="openLocationRecoder"></v-btn>
             </v-btn-group>
+        </div>
+
+        <div class="preview-map my-8" v-if="recordLocationX !== 0 && recordLocationY !== 0">
+            <record-map class="map-container"
+                :record-location-x="recordLocationX"
+                :record-location-y="recordLocationY"/>
         </div>
 
         <div class="preview my-8">
@@ -177,6 +204,7 @@
     <capture-image v-if="captureImageVisible" @captured="handleImageCapture" />
     <capture-video v-if="captureVideoVisible" @captured="handleVideoCapture" />
     <capture-audio v-if="captureAudioVisible" @captured="handleAudioCapture" />
+    <capture-location v-if="captureLocationVisible" @captured="handleLocationCapture" />
 </template>
 
 <style scoped>
@@ -200,6 +228,10 @@ h1 {
 
 .media-preview {
     width: 70%;
+}
+
+.map-container {
+    z-index: 0;
 }
 
 input {
