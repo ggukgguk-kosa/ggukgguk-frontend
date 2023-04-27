@@ -2,8 +2,14 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import RecordMap from './RecordMap.vue';
 
 const store = useStore();
+
+const BASE_URI = window.baseURI;
+
+const topElId = ref(0);
+const OFFSET = 65;
 
 const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
@@ -67,6 +73,7 @@ function handleScroll() {
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     console.log(startDateStr);
+    topElId.value = recordList.value[0].recordId;
     getRecordsUp();
   }
 }
@@ -97,6 +104,8 @@ function getRecordsUp() {
   store.dispatch("record/getRecordsUp", memberId.value)
   .then(() => {
         isLoading.value = false;
+        document.getElementById(topElId.value).scrollIntoView();
+        document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
   })
   .catch((error) => {
         console.error('조각 리스트 조회 실패');
@@ -154,15 +163,24 @@ onMounted(() => {
       <v-col
         v-for="record in recordList"
         :key="record.recordId"
+        :id="record.recordId"
         cols="12"
-        md="6"
-        lg="4"
+        xs="12"
       >
-        <v-card
-          width="400"
-        >
+        <v-card>
+          <video v-if="record.mediaTypeId==='video'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></video>
+          <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`">
+          <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></audio>
+          <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY"></record-map>
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
           <v-card-text>{{ record.recordComment }}</v-card-text>
+          <v-card v-if="record.replyList[0].replyId!=0">
+            <v-card-text>댓글:</v-card-text>
+            <v-card-text v-for="reply in record.replyList" :key="reply.replyId">
+              {{ reply.memberNickname}}
+              {{ reply.replyContent }}
+            </v-card-text>
+          </v-card>
         </v-card>
       </v-col>
     </v-row>
