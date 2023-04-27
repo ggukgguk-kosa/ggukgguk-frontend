@@ -33,16 +33,17 @@ function initMap() {
   kakao.maps.event.addListener(map.value, 'click', function(mouseEvent) {        
     
     // 클릭한 위도, 경도 정보를 가져옵니다 
-    var latlng = mouseEvent.latLng; 
-    console.log(latlng);
+    // eslint-disable-next-line
+    const latlng = mouseEvent.latLng;
+    console.log(mouseEvent);
     // 마커 위치를 클릭한 위치로 옮깁니다
     marker.value.setPosition(latlng);
 
     console.log('마커 위치 업데이트');
 
     coord.value = {
-      x: latlng.Ma,
-      y: latlng.La
+      x: latlng.La,
+      y: latlng.Ma
     }
   });
 }
@@ -86,6 +87,8 @@ function selectResult(result) {
     x: result.x,
     y: result.y
   }
+
+  resultList.value = [];
 }
 
 onMounted(() => {
@@ -163,7 +166,7 @@ function selectCoord() {
       background-color: #FFFFFF;
       border: 1px black solid;
       font-size: x-large;
-      width: 280px;
+      width: 200px;
     }
 
     .result {
