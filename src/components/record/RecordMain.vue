@@ -6,6 +6,8 @@ import RecordMap from './RecordMap.vue';
 
 const store = useStore();
 
+const BASE_URI = window.baseURI;
+
 const topElId = ref(0);
 const OFFSET = 65;
 
@@ -250,9 +252,9 @@ onMounted(() => {
         xs="12"
       >
         <v-card>
-          <video v-if="record.mediaTypeId==='video'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></video>
-          <img v-if="record.mediaTypeId==='image'" :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`">
-          <audio v-if="record.mediaTypeId==='audio'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></audio>
+          <video v-if="record.mediaTypeId==='video'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></video>
+          <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`">
+          <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></audio>
           <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY"></record-map>
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
           <v-card-text>{{ record.recordComment }}</v-card-text>
