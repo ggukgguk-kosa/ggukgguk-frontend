@@ -4,15 +4,6 @@ import axios from 'axios'
 
 let map = null;
 
-// function addKakaoMapScript() {
-//   const script = document.createElement("script");
-//   /* global kakao */
-//   script.onload = () => kakao.maps.load(initMap);
-//   script.src =
-//     "https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=0026de09db0051064ed4bcdbccf105fa";
-//   document.head.appendChild(script);
-// }
-
 const selectedX = ref(126.570667);
 const selectedY = ref(33.450701);
 

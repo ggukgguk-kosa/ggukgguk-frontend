@@ -7,7 +7,7 @@ export default {
       startDateStr: new Date().toISOString().substring(0, 10),
       keyword: null
     },
-    recordList:[]
+    recordList: []
   },
   getters: {
     recordOption(state) {
@@ -34,12 +34,16 @@ export default {
     },
     setRecordsDown(state, recordList) {
       state.recordList = [...state.recordList, ...recordList];
+    },
+    updateReplyList(state, {recordId, newReplyList}) {
+      const index = state.recordList.findIndex(record => record.recordId === recordId);
+      state.recordList[index].replyList = newReplyList;
     }
   },
   actions: {
     // eslint-disable-next-line
     getRecordList({ commit, state }, memberId) {
-      return record.getRecordList(memberId, state.recordOption.startDateStr, state.recordOption.keyword )
+      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword )
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordList', response.data.data);
@@ -47,7 +51,7 @@ export default {
     },
 
     getRecordsUp({ commit, state }, memberId) {
-      return record.getRecordList(memberId, state.recordOption.startDateStr, state.recordOption.keyword )
+      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword )
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordsUp', response.data.data);
@@ -55,12 +59,44 @@ export default {
     },
 
     getRecordsDown({ commit, state }, memberId) {
-      return record.getRecordList(memberId, state.recordOption.startDateStr, state.recordOption.keyword )
+      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword )
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordsDown', response.data.data);
       })
     },
+
+    // eslint-disable-next-line
+    addReply( { commit }, { memberId, recordId, replyContent } ) {
+      return record.addReply( memberId, recordId, replyContent )
+      .then((response) => {
+        commit('updateReplyList', 
+        { recordId : recordId,
+          newReplyList : response.data.data 
+      });
+      })
+    },
+    
+    editReply( { commit }, { memberId, recordId, replyId, replyContent } ) {
+      return record.editReply( memberId, recordId, replyId, replyContent )
+      .then((response) => {
+        commit('updateReplyList',
+        {
+          recordId : recordId,
+          newReplyList : response.data.data
+        });
+      })
+    },
+
+    deleteReply( { commit }, { recordId, replyId } ) {
+      return record.deleteReply( recordId, replyId )
+      .then((response) => {
+        commit('updateReplyList',
+        {
+          recordId : recordId,
+          newReplyList : response.data.data
+        });
+      })
 
     // eslint-disable-next-line
     addRecord({ }, formData) {
