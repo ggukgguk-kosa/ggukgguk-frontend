@@ -13,6 +13,10 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
+// function setFriendId(friendId) {
+//     store.commit('record/setFriendId', friendId);
+// }
+
 function formatDate(date) {
   console.log(date);
   const year = date.getFullYear();
@@ -60,7 +64,6 @@ function handleScroll() {
     startDate.value.setDate(earliestRecordCreatedAt.value.getDate() - 1); // startDate를 5일 전으로 수정
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
-    console.log(startDateStr);
     getRecordsDown();
   }
 
@@ -68,6 +71,7 @@ function handleScroll() {
   if (scrollY === 0 && !isLoading.value) {
     isLoading.value = true;
     startDate.value.setDate(latestRecordCreatedAt.value.getDate() + 5); // startDate를 5일 후로 수정
+    console.log(startDate.value);
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     console.log(startDateStr);
@@ -102,6 +106,7 @@ function getRecordsUp() {
   store.dispatch("record/getRecordsUp", memberId.value)
   .then(() => {
         isLoading.value = false;
+        startDate.value = earliestRecordCreatedAt.value;
         document.getElementById(topElId.value).scrollIntoView();
         document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
   })
@@ -240,6 +245,25 @@ onMounted(() => {
 </script>
 
 <template>
+  <v-slide-group
+        class="slide"
+        show-arrows
+      >
+        <v-slide-group-item
+          v-for="n in 25"
+          :key="n"
+          v-slot="{ isSelected, toggle }"
+        >
+          <v-btn
+            class="ma-2"
+            rounded
+            :color="isSelected ? 'primary' : undefined"
+            @click="toggle"
+          >
+            Options {{ n }}
+          </v-btn>
+        </v-slide-group-item>
+      </v-slide-group>
   <v-container>
     <v-row>
       <v-col
@@ -249,13 +273,15 @@ onMounted(() => {
         cols="12"
         xs="12"
       >
-        <v-card>
-          <video v-if="record.mediaTypeId==='video'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></video>
-          <img v-if="record.mediaTypeId==='image'" :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`">
-          <audio v-if="record.mediaTypeId==='audio'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></audio>
-          <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY"></record-map>
+        <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', justifyContent: 'center', padding: '10px' }">
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
-          <v-card-text>{{ record.recordComment }}</v-card-text>
+          <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', display: 'flex', justifyContent: 'center' }">
+            <video v-if="record.mediaTypeId==='video'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></video>
+            <img v-if="record.mediaTypeId==='image'" :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
+            <audio v-if="record.mediaTypeId==='audio'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+            <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media"></record-map>
+          </v-card>
+            <v-card-text style="display: flex; justify-content: center;">{{ record.recordComment }}</v-card-text>
           <v-divider></v-divider>
           <v-list dense>
             <div>댓글</div>
@@ -267,15 +293,27 @@ onMounted(() => {
                     <span class="font-weight-bold">{{ reply.memberNickname }}</span>
                     <span>{{ reply.replyContent }}</span>
                   </v-col>
-                  <v-col cols="2" v-if="reply.memberId === memberId">
+                  <v-col cols="2" v-if="reply.memberId === memberId" class="d-flex justify-end">
                     <span @click="openEditReplyForm(reply)">수정</span>
                     <span @click="openDeleteReplyDialog(reply)">삭제</span>
                   </v-col>
                 </v-row>
                 <v-form v-if="editReplyForm && reply.replyId === editReplyId">
-                  <v-text-field v-model="editReplyContent" required></v-text-field>
-                  <v-btn @click="editReply(reply)">수정</v-btn>
-                  <v-btn @click="cancelEditReply">취소</v-btn>
+                  <v-row>
+                    <v-col cols="10">
+                      <v-text-field v-model="editReplyContent" required></v-text-field>
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn
+                      :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
+                      class= "button"
+                      @click="editReply(reply)">수정</v-btn>
+                      <v-btn 
+                      :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
+                      class= "button"
+                      @click="cancelEditReply">취소</v-btn>
+                    </v-col>
+                  </v-row>
                 </v-form>
               </div>
               </v-list-item-title>
@@ -283,10 +321,33 @@ onMounted(() => {
           </v-list>
           <v-form class="d-flex align-center">
             <v-text-field v-model="newReplyContent" required></v-text-field>
-            <v-btn class="ml-2" @click="addReply(record.recordId)" :disabled="newReplyContent === ''">등록</v-btn>
+            <v-btn 
+            :style="{ border: '2px solid ' + record.mainColor, color: 'white', backgroundColor: record.mainColor }"
+            class= "button"
+            @click="addReply(record.recordId)" :disabled="newReplyContent === ''">등록</v-btn>
           </v-form>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+
+.slide {
+  margin: 10px;
+}
+
+.card {
+  margin: 20px;
+}
+
+.media {
+  margin: 20px;
+}
+
+.button {
+  margin: 8px;
+}
+
+</style>

@@ -36,6 +36,8 @@ async function getDiaryList() {
     })
 }
 
+
+
 const router = useRouter();
 
 const selectedYear = ref(diaryYear);
@@ -55,9 +57,9 @@ watch(selectedMonth, async () => {
     router.push('/calendar');
 })
 
-// function onMonthChange() {
-//     store.commit('diary/setDiaryMonth', selectedMonth.value);
-// }
+function clickDiary(diary) {
+    selectedMonth.value = diary.diaryMonth;
+}
 
 onMounted(() => {
   getDiaryList();
@@ -66,15 +68,13 @@ onMounted(() => {
 </script>
 
 <template>
-{{ selectedYear }}
-  <v-container>
+  <v-container align="center">
     <v-row>
       <v-col cols="6">
         <v-select
           v-model="selectedYear"
           :items="years"
           label="Year"
-          @input="onYearChange"
         ></v-select>
       </v-col>
       <v-col cols="6">
@@ -82,27 +82,26 @@ onMounted(() => {
           v-model="selectedMonth"
           :items="months"
           label="Month"
-          @input="onMonthChange"
         ></v-select>
       </v-col>
     </v-row>
-  </v-container>
-
-  <v-container>
-    <v-row>
+    <v-row 
+      v-for="diary in diaryList"
+      :key="diary.diaryId"
+      align="center" justify="center"
+    >
       <v-col
-        v-for="diary in diaryList"
-        :key="diary.diaryId"
         cols="12"
-        md="6"
-        lg="4"
+        class="d-flex justify-center"
       >
         <v-card
-          width="400"
+          :width="300"
           :title="diary.diaryMonth"
-          :style="{ backgroundColor: diary.mainColor }"
+          :style="{ borderColor: diary.mainColor, borderWidth: '1px', backgroundColor: diary.mainColor }"
+          v-on:click="clickDiary(diary)"
         >
-          <v-card-text>{{ diary.mainKeyword }}</v-card-text>
+          <v-card-text
+            :style="{ backgroundColor: 'white', color: diary.mainColor, padding: '10px 10px 10px 10px' }">{{ diary.mainKeyword }}</v-card-text>
         </v-card>
       </v-col>
     </v-row>

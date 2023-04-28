@@ -5,7 +5,8 @@ export default {
   state: {
     recordOption: {
       startDateStr: new Date().toISOString().substring(0, 10),
-      keyword: null
+      keyword: null,
+      friendId: null
     },
     recordList: []
   },
@@ -25,6 +26,10 @@ export default {
     setKeyword(state, keyword){
       console.log(keyword);
       state.recordOption.keyword = keyword;
+    },
+    setFriendId(state, friendId){
+      console.log(friendId);
+      state.recordOption.friendId = friendId;
     },
     setRecordList(state, recordList) {
       state.recordList = recordList;

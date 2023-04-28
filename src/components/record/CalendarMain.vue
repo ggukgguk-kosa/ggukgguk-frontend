@@ -103,7 +103,6 @@ function formatDate(date) {
 
 
 onMounted(() => {
-  getDiaryList();
   calendar.value.move({ month: selectedMonth.value, year: selectedYear.value });
   setRecordCount();
   // 전체 화면 색상 변경
