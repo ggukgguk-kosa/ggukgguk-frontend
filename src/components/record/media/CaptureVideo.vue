@@ -1,43 +1,37 @@
 <script setup>
-import { ref, computed, reactive, onMounted, watch } from 'vue';
-import apiFactory from "../../api/apiFactory";
-import store from '@/store';
+import { onMounted, ref, reactive, watch, defineEmits } from 'vue';
+
+const isMobile = ref(false);
 
 onMounted(() => {
+    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) ||
+        navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) ||
+        navigator.userAgent.match(/Windows Phone/i)) {
+            isMobile.value = true;
+    }
     getMedia();
 })
 
-const axios = apiFactory.getInstance();
+const emit = defineEmits(['captured']);
 
-const memberId = computed(() => {
-    return store.getters['auth/memberInfo'].memberId;
-});
-const accessToken = computed(() => {
-    return store.getters['auth/accessToken'];
-});
-
-const error = ref('');
+const errorMsg = ref('');
 const videoEl = ref(null);
-const canvasEl = ref(null);
 let videoStream = null;
 
-const width = ref(1200);
+const width = ref(0);
 const height = ref(0);
 
 const shouldStop = ref(false);
 const stopped = ref(true);
 const recordedVideoBlob = ref(null);
-const recordedVideoSrc = ref('');
 const elapsedSeconds = ref(0);
 
 const durationLimit = 60;
 
 const constraints = reactive({
-  audio: true,
+  audio: false,
   video: {
-    facingMode: 'environment',
-    width: 1280,
-    height: 720,
+    facingMode: 'environment'
   }
 });
 
@@ -52,31 +46,30 @@ watch(constraints, () => {
 
 function handleSuccess(stream) {
   const videoTracks = stream.getVideoTracks();
+  width.value = videoTracks[0].getSettings().width;
+  height.value = videoTracks[0].getSettings().height;
+
   console.log('Got stream with constraints:', constraints);
   console.log(`Using video device: ${videoTracks[0].label}`);
   videoEl.value.srcObject = stream;
   videoEl.value.play();
 }
 
-function whenVideoCanPlay() {
-  height.value = (videoEl.value.videoHeight / videoEl.value.videoWidth) * width.value;
-}
-
 function handleError(error) {
   if (error.name === 'OverconstrainedError') {
     const v = constraints.video;
-    errorMsg(`The resolution ${v.width.exact}x${v.height.exact} px is not supported by your device.`);
+    emitError(`The resolution ${v.width.exact}x${v.height.exact} px is not supported by your device.`);
   } else if (error.name === 'NotAllowedError') {
-    errorMsg('Permissions have not been granted to use your camera and ' +
+    emitError('Permissions have not been granted to use your camera and ' +
       'microphone, you need to allow the page access to your devices in ' +
       'order for the demo to work.');
   }
-  errorMsg(`getUserMedia error: ${error.name}`, error);
+  emitError(`getUserMedia error: ${error.name}`, error);
 }
 
-function errorMsg(msg, error) {
-  error.value = msg;
+function emitError(msg, error) {
   if (typeof error !== 'undefined') {
+    errorMsg.value = msg;
     console.error(error);
   }
 }
@@ -135,7 +128,7 @@ function recordVideo() {
 
   mediaRecorder.addEventListener('stop', () => {
     recordedVideoBlob.value = new Blob(recordedChunks, { type: mimeType })
-    recordedVideoSrc.value = URL.createObjectURL(recordedVideoBlob.value);
+    emit('captured', recordedVideoBlob.value);
   });
 
   console.log('미디어 레코더 시작');
@@ -146,42 +139,55 @@ function stopRecord() {
   console.log('비디오 레코딩 중지');
   shouldStop.value = true;
 }
-
-function uploadVideo() {
-    console.log("Upload button clicked");
-
-    const formData = new FormData();
-    formData.append('recordComment', '동영상 조각 업로드 테스트중');
-    formData.append('memberId', memberId.value);
-    formData.append('mediaFile', recordedVideoBlob.value);
-    axios.post('/record', formData, {
-        headers: {
-            Authorization: `Bearer ${accessToken.value}`
-        }
-    }, {
-        withCredentials: true
-    })
-    .then((response) => {
-        console.log(response);
-    })
-    .catch((error) => {
-        console.error(error);
-    });
-}
 </script>
 
 <template>
-    <v-btn @click="toggleFacingMode">전면 후면 토글</v-btn><br>
-    <video :height="height" :width="width" @canplay="whenVideoCanPlay" ref="videoEl" autoplay playsinline></video>
-    <div>{{ error }}</div>
-    <canvas :height="height" :width="width" ref="canvasEl" />
+    <div class="wrapper">
+        <video ref="videoEl" autoplay playsinline muted></video>
+        <div>{{ errorMsg }}</div>
 
-    촬영 시간: {{ elapsedSeconds }}
+        <div class="toolbar mt-8">
+            <div>
+                {{ elapsedSeconds }} / {{ durationLimit }}
+            </div>
 
-    <v-btn @click="recordVideo">촬영 시작</v-btn>
-    <v-btn @click="stopRecord">촬영 중지</v-btn>
+            <div>
+                <v-btn @click="recordVideo" icon="mdi-record-circle-outline" v-if="stopped"></v-btn>
+                <v-btn @click="stopRecord" icon="mdi-stop" v-if="!stopped"></v-btn>
+            </div>
 
-    <video v-if="recordedVideoSrc != ''" :height="height" :width="width"  :src="recordedVideoSrc"  autoplay playsinline controls></video>
-
-    <v-btn @click="uploadVideo">업로드</v-btn>
+            <div>
+                <v-btn @click="toggleFacingMode" icon="mdi-orbit-variant" v-if="isMobile && stopped"></v-btn>
+            </div>
+        </div>
+    </div>
 </template>
+
+<style scoped>
+    canvas {
+        display: none;
+    }
+
+    video {
+        width: 100vw;
+        height: 90vh;
+        object-fit: contain;
+    }
+
+    .wrapper {
+        background-color: #FFFFFF;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        text-align: center;
+    }
+
+    .toolbar {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+</style>

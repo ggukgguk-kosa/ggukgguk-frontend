@@ -6,6 +6,8 @@ import RecordMap from './RecordMap.vue';
 
 const store = useStore();
 
+const BASE_URI = window.baseURI;
+
 const topElId = ref(0);
 const OFFSET = 65;
 
@@ -70,6 +72,9 @@ function handleScroll() {
   // 스크롤이 맨 위에 도달했는지 확인
   if (scrollY === 0 && !isLoading.value) {
     isLoading.value = true;
+    console.log(latestRecordCreatedAt.value.getDate());
+    console.log(latestRecordCreatedAt.value.getDate() + 5);
+    console.log(startDate.value);
     startDate.value.setDate(latestRecordCreatedAt.value.getDate() + 5); // startDate를 5일 후로 수정
     console.log(startDate.value);
     const startDateStr = formatDate(startDate.value);
@@ -274,6 +279,10 @@ onMounted(() => {
         xs="12"
       >
         <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', justifyContent: 'center', padding: '10px' }">
+          <video v-if="record.mediaTypeId==='video'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></video>
+          <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`">
+          <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></audio>
+          <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY"></record-map>
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
           <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', display: 'flex', justifyContent: 'center' }">
             <video v-if="record.mediaTypeId==='video'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></video>

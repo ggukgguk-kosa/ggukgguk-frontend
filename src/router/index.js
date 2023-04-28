@@ -8,6 +8,7 @@ import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
 import CalendarView  from '../views/record/CalendarView.vue';
+import RecordAddView from '../views/record/RecordAddView.vue';
 import MapTest from '../views/record/MapTest.vue';
 
 const routes = [
@@ -46,6 +47,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/record/new',
+    name: 'recordAdd',
+    component: RecordAddView,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/diary',
     name: 'diaryMain',
     component: DiaryView,
@@ -66,7 +73,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes
 })
 
@@ -79,6 +86,7 @@ router.beforeEach((to) => {
       query: { redirect: to.fullPath },
     }
   }
+  return true;
 })
 
 export default router

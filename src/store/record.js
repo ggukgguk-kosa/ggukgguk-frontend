@@ -70,6 +70,7 @@ export default {
         commit('setRecordsDown', response.data.data);
       })
     },
+
     // eslint-disable-next-line
     addReply( { commit }, { memberId, recordId, replyContent } ) {
       return record.addReply( memberId, recordId, replyContent )
@@ -101,7 +102,11 @@ export default {
           newReplyList : response.data.data
         });
       })
-    }
+    },
 
-  }
+    // eslint-disable-next-line
+    addRecord({ }, formData) {
+      return record.postRecord(formData);
+    }
+  },
 };

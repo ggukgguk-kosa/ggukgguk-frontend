@@ -13,7 +13,7 @@ export default {
             }
         });
     },
-
+    
     addReply( memberId, recordId, replyContent ) {
         return axios.post('/record/reply',
         {
@@ -48,5 +48,9 @@ export default {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
             }
         });
+    },
+
+    postRecord(formData) {
+        return axios.post('/record', formData);
     }
-}
+};
