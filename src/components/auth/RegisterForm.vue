@@ -1,5 +1,5 @@
 <script setup>
-import { ref} from "vue";
+import { ref } from "vue";
 import { useStore } from "vuex";
 // import { useRouter } from "vue-router";
 
@@ -15,14 +15,15 @@ const memberEmail = ref("");
 const memberPhone = ref("");
 const memberBirth = ref("");
 const memberAuthority = "NORMAL";
-
+const duplicated = ref(false);
 
 // 각 요소별로 입력 조건 명시
 const IdRules = [
   (value) => {
     return (
       (!!value || "아이디를 입력해주세요.") &&
-      ((value && value.length <= 16) || "16자 이내로 입력하세요.")
+      ((value && value.length <= 16) || "16자 이내로 입력하세요.")&&
+      (!duplicated.value || "아이디가 중복되었습니다. 다시 작성해주세요")  
     );
   }
 ];
@@ -31,6 +32,7 @@ const EmailRules = [
     return !!value || "이메일을 입력해주세요.";
   },
 ];
+
 
 // watch(memberId, (newVal,oldVal) => {
 // })
@@ -62,15 +64,19 @@ function register() {
 }
 
 // 아이디 중복 검사.
-function checkDuplicateId(){
-  store.dispatch("auth/duplicateId",memberId.value)
-  .then((response) => {
-      console.log("검색 성공");
-      console.log(response);
-      if(response.data.status == 'success') {
-         alert('이미 가입된 아이디가 있습니다. 다시 작성해주세요');
-      }
-  })
+function checkDuplicateId() {
+  store.dispatch("auth/duplicateId", memberId.value).then((response) => {
+    console.log("검색 성공");
+    console.log(response);
+    if (response.data.status == "success") {
+      alert("이미 가입된 아이디가 있습니다. 다시 작성해주세요");
+      duplicated.value = true;
+      memberId.value = "";
+    } else {
+      alert("가입이 가능합니다.");
+      duplicated.value = false;
+    }
+  });
 }
 </script>
 <template>
@@ -82,10 +88,18 @@ function checkDuplicateId(){
           v-model="memberId"
           :counter="16"
           :rules="IdRules"
+          :success="!!memberId"
           label="id"
         ></v-text-field>
+        <!-- <v-container class="duplicate-indicator">
+          {{
+            dupblicated
+              ? `${memberId} ID is not available.` 
+              : ""
+          }}
+        </v-container> -->
       </v-col>
-      <v-col cols="2" >
+      <v-col cols="2">
         <v-btn class="check-duplicate" @click="checkDuplicateId">
           중복확인
         </v-btn>
