@@ -24,6 +24,12 @@ export default {
         {
             memberId
         });
+    },
+    // 구글로그인 인가코드 전달
+    handleGoogleAuth(code){
+        console.log(code);
+        return axios.post(`/auth/social/google`, null, {
+            params: { code },
+        });
     }
-
 }

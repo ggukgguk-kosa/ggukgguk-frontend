@@ -73,7 +73,16 @@ export default {
         console.log(response);
         return response;
       })
+    },
+    // 구글 인가 코드 전달.
+    // eslint-disable-next-line
+    handleGoogleAuth({},code){
+      return auth.handleGoogleAuth(code)
+      .then((response) => {
+        console.log('리스폰스 받음');
+        console.log(response);
+        return response;
+      })
     }
-
   }
 };
