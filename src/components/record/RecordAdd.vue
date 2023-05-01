@@ -1,5 +1,5 @@
 <script setup>
-    import { computed, ref, onMounted } from 'vue';
+    import { computed, ref, onMounted, watch } from 'vue';
     import { useStore } from 'vuex';
     import { useRouter } from 'vue-router';
     import CaptureImage from './media/CaptureImage.vue';
@@ -29,6 +29,37 @@
     const recordComment = ref('');
     const commentLength = computed(() => {
         return recordComment.value.length;
+    });
+
+    const friendSearch = ref('');
+    const friendListRaw = computed(() => {
+        return store.getters['member/friendList'];
+    });
+    const friendWholeList = computed(() => {
+        return friendListRaw.value.map(item => {
+            return {
+                title: `${item.memberNickname} (${item.memberName})`,
+                value: item.memberId
+            }
+        })
+    });
+    const friendsSearchResultList = ref([]);
+    const friendSearchVisible = ref(false);
+
+    watch(friendListRaw, () => {
+        friendsSearchResultList.value = friendWholeList.value;
+    });
+
+    watch(friendSearch, (newVal) => {
+        friendsSearchResultList.value = friendWholeList.value.map((item) => {
+            if (item?.value.includes(newVal)) {
+                return item;
+            } else if (item?.title.includes(newVal)) {
+                return item;
+            } else {
+                return null;
+            }
+        })
     });
 
     const captureImageVisible = ref(false);
@@ -120,9 +151,26 @@
             return;
         }
 
+        // 친구 검사 로직
+        if (friendSearch.value !== '') { // 받는 사람을 적은 경우 검사
+            let freindValidation = false;
+            friendListRaw.value.forEach((item) => {
+                if (item.memberId === friendSearch.value) freindValidation = true;
+            })
+
+            if (!freindValidation) {
+                alert('받는 사람 아이디를 잘못 입력했습니다. \n보내지 않으려면 공란으로 남겨주세요.');
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append('recordComment', recordComment.value);
         formData.append('memberId', memberId.value);
+
+        if (friendSearch.value !== '') {
+            formData.append('recordShareTo', friendSearch.value);
+        }
 
         const mediaFileBlob = recordImage.value ? recordImage.value
             : recordVideo.value ? recordVideo.value
@@ -154,6 +202,20 @@
         recordLocationX.value = x;
         console.log(recordLocationY.value, recordLocationX.value);
         captureLocationVisible.value = false;
+    }
+
+    function showFriendSearch() {
+        friendSearchVisible.value = true;
+        store.dispatch('member/fetchFriendList')
+        .catch((error) => {
+            alert('회원 목록을 가져오는 중 오류가 발생했습니다.');
+            console.error(error);
+        })
+    }
+
+    function handleSelectFriend(e) {
+        friendSearch.value = e.id;
+        friendSearchVisible.value = false;
     }
 </script>
 
@@ -194,6 +256,18 @@
             label="조각 내용"
             variant="outlined" />
             <div class="comment-length">{{ commentLength }} / {{ MAX_COMMENT_LENGTH }}</div>
+
+            <div class="mt-16">
+                <v-text-field
+                v-model="friendSearch"
+                @click="showFriendSearch"
+                label="받는사람"
+                variant="outlined" />
+            </div>
+
+            <v-card v-if="friendSearchVisible" class="mb-8">
+                <v-list @click:select="handleSelectFriend" :items="friendsSearchResultList"></v-list>
+            </v-card>
         </div>
 
         <div class="toolbar">

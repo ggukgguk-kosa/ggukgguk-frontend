@@ -13,5 +13,10 @@ export default {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
             }
         });
+    },
+
+    // 친구 목록 조회
+    getFriendList() {
+        return axios.get(`/friend/list`);
     }
 } 
