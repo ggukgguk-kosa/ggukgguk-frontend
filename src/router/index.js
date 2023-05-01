@@ -7,9 +7,11 @@ import NoticeListView from '../views/admin/NoticeListView.vue';
 import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
-import CalendarView  from '../views/record/CalendarView.vue';
+import CalendarView from '../views/record/CalendarView.vue';
 import RecordAddView from '../views/record/RecordAddView.vue';
 import MapTest from '../views/record/MapTest.vue';
+import MemberView from '../views/member/MemberView.vue';
+import RegiseterView from '../views/auth/RegisterView.vue';
 
 const routes = [
   {
@@ -69,6 +71,17 @@ const routes = [
     name: 'MapTest',
     component: MapTest,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/member',
+    name: 'MemberMain',
+    component: MemberView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/register',
+    name: 'memberRegiseter',
+    component : RegiseterView
   }
 ]
 
