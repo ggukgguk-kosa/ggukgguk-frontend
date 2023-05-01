@@ -62,13 +62,14 @@ function clickDiary(diary) {
 }
 
 onMounted(() => {
+  setDiaryMonth(null);
   getDiaryList();
 })
 
 </script>
 
 <template>
-  <v-container align="center">
+  <v-container align="center" class="mt-15">
     <v-row>
       <v-col cols="6">
         <v-select

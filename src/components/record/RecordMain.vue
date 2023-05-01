@@ -15,9 +15,28 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
-// function setFriendId(friendId) {
-//     store.commit('record/setFriendId', friendId);
-// }
+const friendId = computed(() => {
+            return store.getters['record/recordOption'].friendId;
+})
+
+const friendList = computed(() => {
+            return store.getters['friend/friendList'];
+})
+
+function setFriendId(friendId) {
+    store.commit('record/setFriendId', friendId);
+}
+
+function getFriendList() {
+  store.dispatch('friend/getFriendList', memberId);
+}
+
+function clickFriend(friendId) {
+    console.log("클릭");
+    setFriendId(friendId);
+    setStartDateStr(new Date().toISOString().substring(0, 10));
+    getRecordList();
+}
 
 function formatDate(date) {
   console.log(date);
@@ -54,6 +73,9 @@ function setStartDateStr(startDateStr) {
     store.commit('record/setStartDateStr', startDateStr);
 }
 
+let lastScrollPosition = 0;
+const scrollThreshold = 10;
+
 function handleScroll() {
   const scrollY = window.scrollY || document.documentElement.scrollTop;
   const documentHeight = document.documentElement.scrollHeight;
@@ -62,20 +84,18 @@ function handleScroll() {
   // 스크롤이 맨 아래에 도달했는지 확인
   if (Math.ceil(scrollY + windowHeight) >= documentHeight && !isLoading.value) {
     isLoading.value = true;
-    console.log(earliestRecordCreatedAt.value);
-    startDate.value.setDate(earliestRecordCreatedAt.value.getDate() - 1); // startDate를 5일 전으로 수정
+    startDate.value = earliestRecordCreatedAt.value;
+    startDate.value.setDate(startDate.value.getDate() - 1); // startDate를 5일 전으로 수정
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     getRecordsDown();
   }
 
   // 스크롤이 맨 위에 도달했는지 확인
-  if (scrollY === 0 && !isLoading.value) {
+  if (scrollY === 0 && !isLoading.value && Math.abs(scrollY - lastScrollPosition) > scrollThreshold) {
     isLoading.value = true;
-    console.log(latestRecordCreatedAt.value.getDate());
-    console.log(latestRecordCreatedAt.value.getDate() + 5);
-    console.log(startDate.value);
-    startDate.value.setDate(latestRecordCreatedAt.value.getDate() + 5); // startDate를 5일 후로 수정
+    startDate.value = latestRecordCreatedAt.value;
+    startDate.value.setDate(startDate.value.getDate() + 5); // startDate를 5일 후로 수정
     console.log(startDate.value);
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
@@ -83,6 +103,8 @@ function handleScroll() {
     topElId.value = recordList.value[0].recordId;
     getRecordsUp();
   }
+
+  lastScrollPosition = scrollY;
 }
 
 window.addEventListener('scroll', handleScroll);
@@ -111,7 +133,6 @@ function getRecordsUp() {
   store.dispatch("record/getRecordsUp", memberId.value)
   .then(() => {
         isLoading.value = false;
-        startDate.value = earliestRecordCreatedAt.value;
         document.getElementById(topElId.value).scrollIntoView();
         document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
   })
@@ -161,16 +182,13 @@ watch(selectedMonth, async () => {
 // 댓글
 
 // 댓글 추가
-const newReplyContent = ref('');
+const newReplyContent = ref({});
 
 function addReply(recordId) {
   store.dispatch("record/addReply", { 
     memberId : memberId.value, 
     recordId : recordId, 
-    replyContent : newReplyContent.value })
-  .then(() => {
-        newReplyContent.value = '';
-  })
+    replyContent : newReplyContent.value[recordId] })
   .catch((error) => {
         console.error('댓글 추가 실패');
         console.error(error);
@@ -243,29 +261,39 @@ function deleteReply(reply) {
   })
 }
 
+// 맨위로
+function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
 onMounted(() => {
+  setFriendId(null);
   getRecordList();
+  getFriendList();
 })
 
 </script>
 
 <template>
   <v-slide-group
-        class="slide"
         show-arrows
+        class = "mt-15"
       >
         <v-slide-group-item
-          v-for="n in 25"
-          :key="n"
-          v-slot="{ isSelected, toggle }"
+          v-for="friend in friendList"
+          :key="friend.memberId"
+          v-slot="{ isSelected }"
         >
           <v-btn
             class="ma-2"
             rounded
             :color="isSelected ? 'primary' : undefined"
-            @click="toggle"
+            @click="clickFriend(friend.memberId)"
           >
-            Options {{ n }}
+            {{ friend.memberNickname }}
           </v-btn>
         </v-slide-group-item>
       </v-slide-group>
@@ -278,16 +306,16 @@ onMounted(() => {
         cols="12"
         xs="12"
       >
-        <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', justifyContent: 'center', padding: '10px' }">
-          <video v-if="record.mediaTypeId==='video'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></video>
-          <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`">
-          <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></audio>
-          <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY"></record-map>
+          <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px' }">
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
-          <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', display: 'flex', justifyContent: 'center' }">
-            <video v-if="record.mediaTypeId==='video'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></video>
-            <img v-if="record.mediaTypeId==='image'" :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
-            <audio v-if="record.mediaTypeId==='audio'" controls :src="`https://localhost:8443/api/record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+          <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
+          <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
+          <v-card-text v-if="friendId && record.memberId !== friendId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
+          <v-card-text v-if="friendId && record.recordShareTo && record.memberId === friendId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
+          <v-card v-if="record.mediaTypeId || record.recordLocationX !==0" class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', display: 'flex', justifyContent: 'center' }">
+            <video v-if="record.mediaTypeId==='video'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></video>
+            <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
+            <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
             <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media"></record-map>
           </v-card>
             <v-card-text style="display: flex; justify-content: center;">{{ record.recordComment }}</v-card-text>
@@ -329,23 +357,25 @@ onMounted(() => {
             </v-list-item>
           </v-list>
           <v-form class="d-flex align-center">
-            <v-text-field v-model="newReplyContent" required></v-text-field>
+            <v-text-field :value="newReplyContent[record.recordId]" @input="newReplyContent[record.recordId] = $event.target.value" required></v-text-field>
             <v-btn 
-            :style="{ border: '2px solid ' + record.mainColor, color: 'white', backgroundColor: record.mainColor }"
+            :style="{ border: '2px solid ' + record.mainColor, color: 'black', backgroundColor: record.mainColor }"
             class= "button"
-            @click="addReply(record.recordId)" :disabled="newReplyContent === ''">등록</v-btn>
+            @click="addReply(record.recordId); newReplyContent[record.recordId] = ''" :disabled="newReplyContent === ''">등록</v-btn>
           </v-form>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
+    <v-btn
+    @click="scrollToTop"
+    style="position: fixed; bottom: 80px; right: 20px;"
+  >
+    <v-icon>mdi-chevron-up</v-icon>
+  </v-btn>
 </template>
 
 <style scoped>
-
-.slide {
-  margin: 10px;
-}
 
 .card {
   margin: 20px;

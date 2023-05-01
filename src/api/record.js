@@ -4,10 +4,10 @@ import store from '../store'
 const axios = apiFactory.getInstance();
 
 export default {
-    getRecordList( memberId, startDateStr, keyword ) {
+    getRecordList( memberId, startDateStr, keyword, friendId ) {
         return axios.get('/record',
         {
-            params: { memberId, startDateStr, keyword },
+            params: { memberId, startDateStr, keyword, friendId },
             headers: {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
             }

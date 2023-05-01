@@ -50,7 +50,7 @@ function setRecordCount(){
     const date = new Date(diaryYear.value, diaryMonth.value - 1, record.recordDay);
     const dots = [];
     for (let i = 0; i < record.recordCount; i++) {
-      dots.push({ dot: true, dates: [date] });
+      dots.push({ dot: true, dates: [date], color: mainColor.value });
     }
     attributes.value = attributes.value.concat(dots);
   }
@@ -80,6 +80,7 @@ watch(selectedMonth, async () => {
 
 const calendar = ref(null);
 
+
 // attributes 변수를 빈 배열로 초기화
 const attributes = ref([]);
 
@@ -101,19 +102,24 @@ function formatDate(date) {
   return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
 }
 
+async function onMountedHandler() {
+  if(diaryMonth.value==null){
+    setDiaryMonth(new Date().getMonth());
+    await getDiaryList();
+    calendar.value.move({ month: diaryMonth.value, year: diaryYear.value });
+    setRecordCount();
+  } else {
+    calendar.value.move({ month: diaryMonth.value, year: diaryYear.value });
+    setRecordCount();
+  }
+}
 
-onMounted(() => {
-  calendar.value.move({ month: selectedMonth.value, year: selectedYear.value });
-  setRecordCount();
-  // 전체 화면 색상 변경
-  console.log(mainColor.value);
-  document.body.style.setProperty('background-color', mainColor.value);
-})
+onMounted(onMountedHandler)
 
 </script>
 
 <template>
-  <v-container :style="{ backgroundColor: mainColor }">
+  <v-container :style="{ backgroundColor: mainColor, borderRadius: '10px' }" class="mt-15" >
     <v-row>
       <v-col cols="6">
         <v-select
@@ -138,10 +144,12 @@ onMounted(() => {
           ref="calendar"
           :attributes="attributes"
           @dayclick="handleDateClick"
+          class="calendar"
           />
     </v-row>
   </v-container>
 </template>
 
-<style>
+<style scoped>
+
 </style>

@@ -11,6 +11,8 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
+const dialog=ref(false);
+
 const keyword = ref(null);
 
 function setStartDateStr(){
@@ -33,6 +35,7 @@ const route = useRoute();
 
 // 날짜 클릭하면 해당 날짜기준 조각 조회
 function handleDateClick({date}) {
+  dialog.value = false;
   setKeyword(null);
   const clickedDate = new Date(date)
   const dateStr = formatDate(clickedDate);
@@ -55,22 +58,32 @@ function getRecordList() {
   })
 }
 
+function goToRecord(){
+  router.push('/record');
+}
+
+function goToDiary(){
+  router.push('/diary');
+}
+
+function goToCalendar(){
+  router.push('/calendar');
+}
+
 </script>
 
 <template>
 <v-app-bar class="text-center align-content-center w-full">
-  <v-menu>
+ <v-dialog v-model="dialog" max-width="290" @click:outside="dialog = false">
     <template v-slot:activator="{ props }">
-      <v-btn
-        v-bind="props"
-      >
-        <v-icon size=40>mdi-calendar</v-icon>
+      <v-btn v-bind="props">
+        <v-icon>mdi-calendar</v-icon>
       </v-btn>
     </template>
-    <VCalendar 
-    @dayclick="handleDateClick"
-    />
-  </v-menu>
+        <VCalendar 
+          @dayclick="handleDateClick"
+        />
+  </v-dialog>
       <input
         v-model="keyword"
         class="v-input v-text-field__input v-text-field__input--enclosed v-text-field__input--placeholder v-text-field__input--solo w-full"
@@ -83,9 +96,33 @@ function getRecordList() {
   @click="handleSearch">
     <v-icon>mdi-magnify</v-icon>
   </v-btn>
-  <v-btn icon>
-    <v-icon>mdi-dots-vertical</v-icon>
-  </v-btn>
+<v-menu offset-y>
+  <template v-slot:activator="{ props }">
+    <v-btn icon v-bind="props">
+      <v-icon>mdi-dots-vertical</v-icon>
+    </v-btn>
+  </template>
+  <v-list>
+    <v-list-item>
+      <v-list-item-title
+        @click="goToRecord">
+        조각
+      </v-list-item-title>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-title
+        @click="goToDiary">
+        다이어리
+      </v-list-item-title>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-title
+        @click="goToCalendar">
+        캘린더
+      </v-list-item-title>
+    </v-list-item>
+  </v-list>
+</v-menu>
 </v-app-bar>
 
 </template>
