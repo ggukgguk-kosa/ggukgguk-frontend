@@ -74,15 +74,29 @@ export default {
         return response;
       })
     },
+    
     // 구글 인가 코드 전달.
     // eslint-disable-next-line
-    handleGoogleAuth({},code){
-      return auth.handleGoogleAuth(code)
-      .then((response) => {
-        console.log('리스폰스 받음');
+    handleGoogleAuth({ commit }, code) {
+      // console.log("테스트 :" + code);
+      return auth.handleGoogleAuth(code).then((response) => {
+        console.log("리스폰스 응답");
         console.log(response);
+        // Extract the user information from the received JSON object
+        // Commit the setMemberInfo mutation with the user information
+        commit("setMemberInfo",response.data.data);
         return response;
-      })
-    }
+      });
+    },
+    // 카카오 인가코드 전달.
+    handleKakaoAuth({ commit }, AccessToken,refreshToken) {
+      // console.log("테스트 :" + code);
+      return auth.directKakaoAuth(AccessToken).then((response) => {
+        const memberInfo = response.data.data;
+        commit("setMemberInfo", { memberInfo,refreshToken,AccessToken});
+        return response;
+      });
+    },
+
   }
 };

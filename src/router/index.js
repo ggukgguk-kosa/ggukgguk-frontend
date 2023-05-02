@@ -12,7 +12,8 @@ import RecordAddView from '../views/record/RecordAddView.vue';
 import MapTest from '../views/record/MapTest.vue';
 import MemberView from '../views/member/MemberView.vue';
 import RegiseterView from '../views/auth/RegisterView.vue';
-
+import CheckView from '../views/auth/CheckView.vue';
+import KaKaoRedirect from '../components/auth/KakaoRedirect.vue';
 const routes = [
   {
     path: '/',
@@ -82,6 +83,16 @@ const routes = [
     path: '/register',
     name: 'memberRegiseter',
     component : RegiseterView
+  },
+  {
+    path: '/check',
+    name: 'loginCheck',
+    component : CheckView
+  },
+  {
+    path: '/login/kakao-redirect',
+    name: 'KaKaoRedirect',
+    component: KaKaoRedirect,
   }
 ]
 

@@ -28,8 +28,15 @@ export default {
     // 구글로그인 인가코드 전달
     handleGoogleAuth(code){
         console.log(code);
-        return axios.post(`/auth/social/google`, null, {
+        return axios.get(`/auth/social/google`,{
             params: { code },
+        });
+    },
+    // 카카오 로그인 권한 토큰 전달.
+    directKakaoAuth(AccessToken){
+        console.log("axios: " + AccessToken);
+        return axios.get(`/auth/social/kakao`,{
+            params: { AccessToken },
         });
     }
 }
