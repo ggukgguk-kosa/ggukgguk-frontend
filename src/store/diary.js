@@ -7,7 +7,8 @@ export default {
       diaryYear: new Date().getFullYear(),
       diaryMonth: null
     },
-    diaryList:[]
+    diaryList:[],
+    colorList:[]
   },
   getters: {
     diaryOption(state) {
@@ -15,6 +16,9 @@ export default {
     },
     diaryList(state) {
       return state.diaryList
+    },
+    colorList(state) {
+      return state.colorList
     }
   },
   mutations: {
@@ -28,6 +32,9 @@ export default {
     },
     setDiaryList(state, diaryList) {
       state.diaryList = diaryList;
+    },
+    setColorList(state, colorList) {
+      state.colorList = colorList;
     }
   },
   actions: {
@@ -39,6 +46,20 @@ export default {
         console.log(response.data.data);
         commit('setDiaryList', response.data.data);
       })
-    }
+    },
+    getColorList({ commit, state }) {
+      console.log(state.diaryList.diaryId);
+      return diary.getColorList(state.diaryList.diaryId)
+      .then((response) => {
+        console.log(response.data.data);
+        commit('setColorList', response.data.data);
+      })
+    },
+    updateMainColor({ state }, mainColor) {
+      return diary.updateMainColor(state.diaryList.diaryId, mainColor)
+      .then((response) => {
+        console.log(response.data.data);
+    })
+    } 
   }
 };

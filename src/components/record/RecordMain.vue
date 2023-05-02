@@ -270,7 +270,6 @@ function scrollToTop() {
     }
 
 onMounted(() => {
-  setFriendId(null);
   getRecordList();
   getFriendList();
 })

@@ -9,6 +9,10 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
+const friendId = computed(() => {
+            return store.getters['record/recordOption'].friendId;
+})
+
 const diaryYear = computed(() => {
             return store.getters['diary/diaryOption'].diaryYear;
 })
@@ -29,11 +33,19 @@ function setDiaryMonth(month){
 }
 
 async function getDiaryList() {
-    await store.dispatch("diary/getDiaryList", memberId.value)
-    .catch((error) => {
+    if(friendId.value !== null && friendId.value !== undefined){
+      await store.dispatch("diary/getDiaryList", friendId.value)
+     .catch((error) => {
         console.error('다이어리 리스트 조회 실패');
         console.error(error);
-    })
+      })
+    } else {
+      await store.dispatch("diary/getDiaryList", memberId.value)
+      .catch((error) => {
+          console.error('다이어리 리스트 조회 실패');
+          console.error(error);
+      })
+    }
 }
 
 
