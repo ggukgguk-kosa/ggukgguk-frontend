@@ -219,68 +219,78 @@
 </script>
 
 <template>
-    <h1>새로운 조각</h1>
+    <v-container :class="captureAudioVisible
+        || captureImageVisible
+        || captureVideoVisible
+        || captureLocationVisible ? 'no-scroll' : ''">
+        <h1>새로운 조각</h1>
 
-    <div class="mt-10">
-        <div class="toolbar">
-            <input type="file" id="input-media-from-gallery" accept="image/*" @change="onInputChange">
-            <input type="file" id="input-image-from-camera" accept="image/*" capture="environment" @change="onInputChange">
-            <v-btn-group
-                divided
-                variant="outlined"
-            >
-                <v-btn icon="mdi-paperclip" @click="openInputGallery"></v-btn>
-                <v-btn icon="mdi-image-outline" @click="openInputImage"></v-btn>
-                <v-btn icon="mdi-video-outline" @click="openVideoCamera"></v-btn>
-                <v-btn icon="mdi-microphone-outline" @click="openAudioRecoder"></v-btn>
-                <v-btn icon="mdi-map-marker-outline" @click="openLocationRecoder"></v-btn>
-            </v-btn-group>
-        </div>
-
-        <div class="preview-map my-8" v-if="recordLocationX !== 0 && recordLocationY !== 0">
-            <record-map class="map-container"
-                :record-location-x="recordLocationX"
-                :record-location-y="recordLocationY"/>
-        </div>
-
-        <div class="preview my-8">
-            <img v-if="recordImageUrl !== ''" :src="recordImageUrl" class="media-preview">
-            <video v-if="recordVideoUrl !== ''" :src="recordVideoUrl" class="media-preview" autoplay playsinline controls />
-            <audio :src="recordAudioUrl" controls v-if="recordAudioUrl != ''"></audio>
-        </div>
-
-        <div>
-            <v-textarea
-            v-model="recordComment"
-            label="조각 내용"
-            variant="outlined" />
-            <div class="comment-length">{{ commentLength }} / {{ MAX_COMMENT_LENGTH }}</div>
-
-            <div class="mt-16">
-                <v-text-field
-                v-model="friendSearch"
-                @click="showFriendSearch"
-                label="받는사람"
-                variant="outlined" />
+        <div class="mt-10">
+            <div class="toolbar">
+                <input type="file" id="input-media-from-gallery" accept="image/*" @change="onInputChange">
+                <input type="file" id="input-image-from-camera" accept="image/*" capture="environment" @change="onInputChange">
+                <v-btn-group
+                    divided
+                    variant="outlined"
+                >
+                    <v-btn icon="mdi-paperclip" @click="openInputGallery"></v-btn>
+                    <v-btn icon="mdi-image-outline" @click="openInputImage"></v-btn>
+                    <v-btn icon="mdi-video-outline" @click="openVideoCamera"></v-btn>
+                    <v-btn icon="mdi-microphone-outline" @click="openAudioRecoder"></v-btn>
+                    <v-btn icon="mdi-map-marker-outline" @click="openLocationRecoder"></v-btn>
+                </v-btn-group>
             </div>
 
-            <v-card v-if="friendSearchVisible" class="mb-8">
-                <v-list @click:select="handleSelectFriend" :items="friendsSearchResultList"></v-list>
-            </v-card>
+            <div class="preview-map my-8" v-if="recordLocationX !== 0 && recordLocationY !== 0">
+                <record-map class="map-container"
+                    :record-location-x="recordLocationX"
+                    :record-location-y="recordLocationY"/>
+            </div>
+
+            <div class="preview my-8">
+                <img v-if="recordImageUrl !== ''" :src="recordImageUrl" class="media-preview">
+                <video v-if="recordVideoUrl !== ''" :src="recordVideoUrl" class="media-preview" autoplay playsinline controls />
+                <audio :src="recordAudioUrl" controls v-if="recordAudioUrl != ''"></audio>
+            </div>
+
+            <div>
+                <v-textarea
+                v-model="recordComment"
+                label="조각 내용"
+                variant="outlined" />
+                <div class="comment-length">{{ commentLength }} / {{ MAX_COMMENT_LENGTH }}</div>
+
+                <div class="mt-16">
+                    <v-text-field
+                    v-model="friendSearch"
+                    @click="showFriendSearch"
+                    label="받는사람"
+                    variant="outlined" />
+                </div>
+
+                <v-card v-if="friendSearchVisible" class="mb-8">
+                    <v-list @click:select="handleSelectFriend" :items="friendsSearchResultList"></v-list>
+                </v-card>
+            </div>
+
+            <div class="toolbar">
+                <v-btn icon="mdi-arrow-up-thin-circle-outline" color="primary" @click="uploadRecord"></v-btn>
+            </div>
         </div>
 
-        <div class="toolbar">
-            <v-btn icon="mdi-arrow-up-thin-circle-outline" color="primary" @click="uploadRecord"></v-btn>
-        </div>
-    </div>
-
-    <capture-image v-if="captureImageVisible" @captured="handleImageCapture" />
-    <capture-video v-if="captureVideoVisible" @captured="handleVideoCapture" />
-    <capture-audio v-if="captureAudioVisible" @captured="handleAudioCapture" />
-    <capture-location v-if="captureLocationVisible" @captured="handleLocationCapture" />
+        <capture-image v-if="captureImageVisible" @captured="handleImageCapture" @abort="() => {captureImageVisible = false}" />
+        <capture-video v-if="captureVideoVisible" @captured="handleVideoCapture" @abort="() => {captureVideoVisible = false}" />
+        <capture-audio v-if="captureAudioVisible" @captured="handleAudioCapture" @abort="() => {captureAudioVisible = false}" />
+        <capture-location v-if="captureLocationVisible" @captured="handleLocationCapture" @abort="() => {captureLocationVisible = false}" />
+    </v-container>
 </template>
 
 <style scoped>
+.no-scroll {
+    overflow: hidden;
+    height: 80vh;
+}
+
 h1 {
   text-align: center;  
   font-size: 24px;
@@ -289,6 +299,10 @@ h1 {
 .toolbar {
     text-align: center;
     margin-bottom: 15px;
+}
+
+video {
+    height: 600px;
 }
 
 .comment-length {
