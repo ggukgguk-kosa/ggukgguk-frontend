@@ -1,46 +1,36 @@
+<template>
+  <section class="test">
+    <v-btn id="google-signin-button" @click="loginWithGoogle" block class="mt-2">Google</v-btn>
+  </section>
+</template>
+
 <script setup>
-import { ref, watchEffect } from "vue";
-import { useStore } from "vuex";
+import { onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 
-const store = useStore();
+const router = useRouter();
 
-const GoogleLoginBtn = () => {
-  const url =
-    "https://accounts.google.com/o/oauth2/auth?client_id=" +
-    process.env.VUE_APP_GOOGLE_LOGIN_KEY +
-    "&redirect_uri=https://localhost:8443/api/auth/social/google" +
-    "&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
-  window.location.href = url;
-};
+onMounted(() => {
+  window.google.accounts.id.initialize({
+    client_id: "720876072203-b5m5ific9hf9htl31thto7dcad65e9ju.apps.googleusercontent.com", // Replace with your Google Client ID
+    callback: onSignIn,
+  });
 
-const handleGoogleAuth = async (code) => {
-  try {
-    console.log("Google code:",code);
-    await store.dispatch("auth/handleGoogleAuth", code).then((response) => {
-      console.log("검색 성공");
-      console.log(response);
-    });
-  } catch (error) {
-    console.error("Google authentication failed.", error);
-  }
-};
+  window.google.accounts.id.renderButton(document.getElementById("google-signin-button"), {
+    theme: "outline",
+    size: "large",
+  });
+});
 
-const currentURL = ref(window.location.href);
-const googleCode = ref(null);
-console.log(currentURL);
-console.log("Script is running");
+async function onSignIn(response) {
+  console.log(response)
+  const token = response.credential;
+  console.log(token);
+  router.push({ name: "RedirectGoogle", query: { token } });
+}
 
-watchEffect(async () => {
-  const searchParams = new URL(currentURL.value).searchParams;
-  if (searchParams.has("code")) {
-    googleCode.value = searchParams.get("code");
-    await handleGoogleAuth(googleCode.value);
-  }
+onUnmounted(() => {
+  // Clean up the Google Identity Services library
+  window.google.accounts.id.disableAutoSelect();
 });
 </script>
-
-<template>
-  <v-btn type="button" @click="GoogleLoginBtn" block class="mt-2"
-    >구글로그인</v-btn
-  >
-</template>

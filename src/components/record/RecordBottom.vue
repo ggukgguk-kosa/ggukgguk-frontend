@@ -3,10 +3,9 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-function goToAddRecord() {
-    router.push({ name: 'recordAdd'})
+function goToRecordNew() {
+    router.push({ name: 'recordAdd' });
 }
-
 </script>
 
 <template>
@@ -15,7 +14,7 @@ function goToAddRecord() {
             <v-icon>mdi-cog</v-icon>
         </v-btn>
 
-        <v-btn value="record" size="large" class="record-btn" color="red" @click="goToAddRecord">
+        <v-btn value="record" size="large" class="record-btn" color="red" @click="goToRecordNew">
             <v-icon>mdi-circle</v-icon>
         </v-btn>
 

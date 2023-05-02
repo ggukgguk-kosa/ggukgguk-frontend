@@ -69,7 +69,11 @@ function handleScroll() {
   // 스크롤이 맨 위에 도달했는지 확인
   if (scrollY === 0 && !isLoading.value) {
     isLoading.value = true;
+    console.log(latestRecordCreatedAt.value.getDate());
+    console.log(latestRecordCreatedAt.value.getDate() + 5);
+    console.log(startDate.value);
     startDate.value.setDate(latestRecordCreatedAt.value.getDate() + 5); // startDate를 5일 후로 수정
+    console.log(startDate.value);
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     console.log(startDateStr);
@@ -150,6 +154,90 @@ watch(selectedMonth, async () => {
     router.push('/calendar');
 })
 
+// 댓글
+
+// 댓글 추가
+const newReplyContent = ref('');
+
+function addReply(recordId) {
+  store.dispatch("record/addReply", { 
+    memberId : memberId.value, 
+    recordId : recordId, 
+    replyContent : newReplyContent.value })
+  .then(() => {
+        newReplyContent.value = '';
+  })
+  .catch((error) => {
+        console.error('댓글 추가 실패');
+        console.error(error);
+  })
+}
+
+// 댓글 수정
+const editReplyForm = ref(false);
+const editReplyContent = ref('');
+const editReplyId =ref(0);
+
+function openEditReplyForm(reply) {
+  editReplyForm.value = true;
+  editReplyId.value = reply.replyId;
+  editReplyContent.value = reply.replyContent;
+}
+
+function cancelEditReply() {
+  editReplyForm.value = false;
+  editReplyId.value = 0;
+  editReplyContent.value = '';
+}
+
+function editReply(reply) {
+  store.dispatch("record/editReply", { 
+    memberId : memberId.value, 
+    recordId : reply.recordId,
+    replyId : reply.replyId, 
+    replyContent : editReplyContent.value })
+  .then(() => {
+        editReplyForm.value = false;
+        editReplyId.value = 0;
+        editReplyContent.value = '';
+  })
+  .catch((error) => {
+        console.error('댓글 수정 실패');
+        console.error(error);
+  })
+}
+
+const deleteReplyId = ref(0);
+
+// 댓글 삭제
+function openDeleteReplyDialog(reply) {
+  
+  deleteReplyId.value = reply.replyId;
+
+    if (!confirm("삭제 또는 취소를 선택해주세요.")) {
+      deleteReply(reply);
+  } else {
+      deleteReplyId.value = 0;
+  }
+}
+
+// function closeDeleteReplyDialog() {
+//   deleteDialog.value = false;
+//   deleteReplyId.value = 0;
+// }
+
+function deleteReply(reply) {
+  store.dispatch("record/deleteReply", {
+    recordId : reply.recordId,
+    replyId : reply.replyId })
+  .then(() => {
+        deleteReplyId.value = 0;
+  })
+  .catch((error) => {
+        console.error('댓글 삭제 실패');
+        console.error(error);
+  })
+}
 
 onMounted(() => {
   getRecordList();
@@ -174,13 +262,35 @@ onMounted(() => {
           <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY"></record-map>
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
           <v-card-text>{{ record.recordComment }}</v-card-text>
-          <v-card v-if="record.replyList[0].replyId!=0">
-            <v-card-text>댓글:</v-card-text>
-            <v-card-text v-for="reply in record.replyList" :key="reply.replyId">
-              {{ reply.memberNickname}}
-              {{ reply.replyContent }}
-            </v-card-text>
-          </v-card>
+          <v-divider></v-divider>
+          <v-list dense>
+            <div>댓글</div>
+            <v-list-item v-for="reply in record.replyList" :key="reply.replyId">
+              <v-list-item-title v-if="reply.replyId !== 0">
+              <div class="mb-2">
+                <v-row>
+                  <v-col cols="10">
+                    <span class="font-weight-bold">{{ reply.memberNickname }}</span>
+                    <span>{{ reply.replyContent }}</span>
+                  </v-col>
+                  <v-col cols="2" v-if="reply.memberId === memberId">
+                    <span @click="openEditReplyForm(reply)">수정</span>
+                    <span @click="openDeleteReplyDialog(reply)">삭제</span>
+                  </v-col>
+                </v-row>
+                <v-form v-if="editReplyForm && reply.replyId === editReplyId">
+                  <v-text-field v-model="editReplyContent" required></v-text-field>
+                  <v-btn @click="editReply(reply)">수정</v-btn>
+                  <v-btn @click="cancelEditReply">취소</v-btn>
+                </v-form>
+              </div>
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+          <v-form class="d-flex align-center">
+            <v-text-field v-model="newReplyContent" required></v-text-field>
+            <v-btn class="ml-2" @click="addReply(record.recordId)" :disabled="newReplyContent === ''">등록</v-btn>
+          </v-form>
         </v-card>
       </v-col>
     </v-row>

@@ -57,24 +57,26 @@ export default {
     },
     // 회원 가입
     // eslint-disable-next-line
-    register({}, {memberId, memberPw, memberName, memberNickname, 
-      memberEmail, memberPhone, memberBirth, memberAuthority}){
-        console.log(memberId);
-      return auth.addMember({memberId, memberPw, memberName, memberNickname, 
-        memberEmail, memberPhone, memberBirth, memberAuthority});
+    register({ }, { memberId, memberPw, memberName, memberNickname,
+      memberEmail, memberPhone, memberBirth, memberAuthority }) {
+      console.log(memberId);
+      return auth.addMember({
+        memberId, memberPw, memberName, memberNickname,
+        memberEmail, memberPhone, memberBirth, memberAuthority
+      });
     },
 
     // 아이디 중복 가입
     // eslint-disable-next-line
-    duplicateId({},memberId){
+    duplicateId({ }, memberId) {
       return auth.duplicateId(memberId)
-      .then((response) => {
-        console.log('리스폰스 받음');
-        console.log(response);
-        return response;
-      })
+        .then((response) => {
+          console.log('리스폰스 받음');
+          console.log(response);
+          return response;
+        })
     },
-    
+
     // 구글 인가 코드 전달.
     // eslint-disable-next-line
     handleGoogleAuth({ commit }, code) {
@@ -84,19 +86,29 @@ export default {
         console.log(response);
         // Extract the user information from the received JSON object
         // Commit the setMemberInfo mutation with the user information
-        commit("setMemberInfo",response.data.data);
+        commit("setMemberInfo", response.data.data);
         return response;
       });
     },
     // 카카오 인가코드 전달.
-    handleKakaoAuth({ commit }, AccessToken,refreshToken) {
+    handleKakaoAuth({ commit }, AccessToken, refreshToken) {
       // console.log("테스트 :" + code);
       return auth.directKakaoAuth(AccessToken).then((response) => {
         const memberInfo = response.data.data;
-        commit("setMemberInfo", { memberInfo,refreshToken,AccessToken});
+        commit("setMemberInfo", { memberInfo, refreshToken, AccessToken });
         return response;
       });
     },
 
+    // 구글 로그인 시작 (백엔드에서만 구현할 예정)
+    // eslint-disable-next-line
+    handleGoogleAuth({},token) {
+      return auth.directGoogleUrl(token).then((response)=>{
+        console.log(response);
+        // const memberInfo = response.data.data;
+        // window.location.href = googleLoginUrl;
+        return response
+      })
+    },
   }
 };

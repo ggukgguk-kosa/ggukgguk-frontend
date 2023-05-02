@@ -13,8 +13,44 @@ export default {
             }
         });
     },
+    
+    addReply( memberId, recordId, replyContent ) {
+        return axios.post('/record/reply',
+        {
+            memberId, recordId, replyContent
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${store.getters['auth/accessToken']}`
+            }
+        });
+    },
+
+    editReply( memberId, recordId, replyId, replyContent ) {
+        return axios.put(`/record/reply/${replyId}`,
+        {
+            memberId, recordId, replyContent
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${store.getters['auth/accessToken']}`
+            }
+        });
+    },
+
+    deleteReply( recordId, replyId ) {
+        return axios.delete(`/record/reply/${replyId}`,
+        {
+            data: {
+                recordId
+              },
+            headers: {
+                Authorization: `Bearer ${store.getters['auth/accessToken']}`
+            }
+        });
+    },
 
     postRecord(formData) {
         return axios.post('/record', formData);
     }
-}
+};
