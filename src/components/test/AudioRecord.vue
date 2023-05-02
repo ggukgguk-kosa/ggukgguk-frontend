@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import Recorder from '@/util/recorder.js';
+import Recorder from '@/util/recorder';
 import apiFactory from "../../api/apiFactory";
 import store from '@/store';
 
