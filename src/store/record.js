@@ -5,7 +5,8 @@ export default {
   state: {
     recordOption: {
       startDateStr: new Date().toISOString().substring(0, 10),
-      keyword: null
+      keyword: null,
+      friendId: null
     },
     recordList: []
   },
@@ -26,6 +27,10 @@ export default {
       console.log(keyword);
       state.recordOption.keyword = keyword;
     },
+    setFriendId(state, friendId){
+      console.log(friendId);
+      state.recordOption.friendId = friendId;
+    },
     setRecordList(state, recordList) {
       state.recordList = recordList;
     },
@@ -43,7 +48,8 @@ export default {
   actions: {
     // eslint-disable-next-line
     getRecordList({ commit, state }, memberId) {
-      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword )
+      console.log(state.recordOption);
+      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword, state.recordOption.friendId )
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordList', response.data.data);
@@ -51,7 +57,7 @@ export default {
     },
 
     getRecordsUp({ commit, state }, memberId) {
-      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword )
+      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword, state.recordOption.friendId )
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordsUp', response.data.data);
@@ -59,7 +65,7 @@ export default {
     },
 
     getRecordsDown({ commit, state }, memberId) {
-      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword )
+      return record.getRecordList( memberId, state.recordOption.startDateStr, state.recordOption.keyword, state.recordOption.friendId )
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordsDown', response.data.data);

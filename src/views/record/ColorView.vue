@@ -1,5 +1,5 @@
 <script setup>
-import DiaryMain from '../../components/record/DiaryMain.vue';
+import ColorMain from '../../components/record/ColorMain.vue';
 import RecordHeader from '../../components/record/RecordHeader.vue';
 import RecordBottom from '../../components/record/RecordBottom.vue';
 
@@ -7,6 +7,6 @@ import RecordBottom from '../../components/record/RecordBottom.vue';
 
 <template>
     <record-header />
-    <diary-main />
+    <color-main />
     <record-bottom />
 </template>

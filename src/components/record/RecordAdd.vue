@@ -1,5 +1,5 @@
 <script setup>
-    import { computed, ref, onMounted } from 'vue';
+    import { computed, ref, onMounted, watch } from 'vue';
     import { useStore } from 'vuex';
     import { useRouter } from 'vue-router';
     import CaptureImage from './media/CaptureImage.vue';
@@ -29,6 +29,37 @@
     const recordComment = ref('');
     const commentLength = computed(() => {
         return recordComment.value.length;
+    });
+
+    const friendSearch = ref('');
+    const friendListRaw = computed(() => {
+        return store.getters['member/friendList'];
+    });
+    const friendWholeList = computed(() => {
+        return friendListRaw.value.map(item => {
+            return {
+                title: `${item.memberNickname} (${item.memberName})`,
+                value: item.memberId
+            }
+        })
+    });
+    const friendsSearchResultList = ref([]);
+    const friendSearchVisible = ref(false);
+
+    watch(friendListRaw, () => {
+        friendsSearchResultList.value = friendWholeList.value;
+    });
+
+    watch(friendSearch, (newVal) => {
+        friendsSearchResultList.value = friendWholeList.value.map((item) => {
+            if (item?.value.includes(newVal)) {
+                return item;
+            } else if (item?.title.includes(newVal)) {
+                return item;
+            } else {
+                return null;
+            }
+        })
     });
 
     const captureImageVisible = ref(false);
@@ -103,7 +134,6 @@
         recordImageUrl.value = '';
         recordVideo.value = null;
         recordVideoUrl.value = '';
-        console.log('asdf');
         recordAudio.value = audioBlob;
         recordAudioUrl.value = URL.createObjectURL(audioBlob);
         captureAudioVisible.value = false;
@@ -120,9 +150,26 @@
             return;
         }
 
+        // 친구 검사 로직
+        if (friendSearch.value !== '') { // 받는 사람을 적은 경우 검사
+            let freindValidation = false;
+            friendListRaw.value.forEach((item) => {
+                if (item.memberId === friendSearch.value) freindValidation = true;
+            })
+
+            if (!freindValidation) {
+                alert('받는 사람 아이디를 잘못 입력했습니다. \n보내지 않으려면 공란으로 남겨주세요.');
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append('recordComment', recordComment.value);
         formData.append('memberId', memberId.value);
+
+        if (friendSearch.value !== '') {
+            formData.append('recordShareTo', friendSearch.value);
+        }
 
         const mediaFileBlob = recordImage.value ? recordImage.value
             : recordVideo.value ? recordVideo.value
@@ -155,59 +202,95 @@
         console.log(recordLocationY.value, recordLocationX.value);
         captureLocationVisible.value = false;
     }
+
+    function showFriendSearch() {
+        friendSearchVisible.value = true;
+        store.dispatch('member/fetchFriendList')
+        .catch((error) => {
+            alert('회원 목록을 가져오는 중 오류가 발생했습니다.');
+            console.error(error);
+        })
+    }
+
+    function handleSelectFriend(e) {
+        friendSearch.value = e.id;
+        friendSearchVisible.value = false;
+    }
 </script>
 
 <template>
-    <h1>새로운 조각</h1>
+    <v-container :class="captureAudioVisible
+        || captureImageVisible
+        || captureVideoVisible
+        || captureLocationVisible ? 'no-scroll' : ''">
+        <h1>새로운 조각</h1>
 
-    <div class="mt-10">
-        <div class="toolbar">
-            <input type="file" id="input-media-from-gallery" accept="image/*" @change="onInputChange">
-            <input type="file" id="input-image-from-camera" accept="image/*" capture="environment" @change="onInputChange">
-            <v-btn-group
-                divided
-                variant="outlined"
-            >
-                <v-btn icon="mdi-paperclip" @click="openInputGallery"></v-btn>
-                <v-btn icon="mdi-image-outline" @click="openInputImage"></v-btn>
-                <v-btn icon="mdi-video-outline" @click="openVideoCamera"></v-btn>
-                <v-btn icon="mdi-microphone-outline" @click="openAudioRecoder"></v-btn>
-                <v-btn icon="mdi-map-marker-outline" @click="openLocationRecoder"></v-btn>
-            </v-btn-group>
+        <div class="mt-10">
+            <div class="toolbar">
+                <input type="file" id="input-media-from-gallery" accept="image/*" @change="onInputChange">
+                <input type="file" id="input-image-from-camera" accept="image/*" capture="environment" @change="onInputChange">
+                <v-btn-group
+                    divided
+                    variant="outlined"
+                >
+                    <v-btn icon="mdi-paperclip" @click="openInputGallery"></v-btn>
+                    <v-btn icon="mdi-image-outline" @click="openInputImage"></v-btn>
+                    <v-btn icon="mdi-video-outline" @click="openVideoCamera"></v-btn>
+                    <v-btn icon="mdi-microphone-outline" @click="openAudioRecoder"></v-btn>
+                    <v-btn icon="mdi-map-marker-outline" @click="openLocationRecoder"></v-btn>
+                </v-btn-group>
+            </div>
+
+            <div class="preview-map my-8" v-if="recordLocationX !== 0 && recordLocationY !== 0">
+                <record-map class="map-container"
+                    :record-location-x="recordLocationX"
+                    :record-location-y="recordLocationY"/>
+            </div>
+
+            <div class="preview my-8">
+                <img v-if="recordImageUrl !== ''" :src="recordImageUrl" class="media-preview">
+                <video v-if="recordVideoUrl !== ''" :src="recordVideoUrl" class="media-preview" autoplay playsinline controls />
+                <audio :src="recordAudioUrl" controls v-if="recordAudioUrl != ''"></audio>
+            </div>
+
+            <div>
+                <v-textarea
+                v-model="recordComment"
+                label="조각 내용"
+                variant="outlined" />
+                <div class="comment-length">{{ commentLength }} / {{ MAX_COMMENT_LENGTH }}</div>
+
+                <div class="mt-16">
+                    <v-text-field
+                    v-model="friendSearch"
+                    @click="showFriendSearch"
+                    label="받는사람"
+                    variant="outlined" />
+                </div>
+
+                <v-card v-if="friendSearchVisible" class="mb-8">
+                    <v-list @click:select="handleSelectFriend" :items="friendsSearchResultList"></v-list>
+                </v-card>
+            </div>
+
+            <div class="toolbar">
+                <v-btn icon="mdi-arrow-up-thin-circle-outline" color="primary" @click="uploadRecord"></v-btn>
+            </div>
         </div>
 
-        <div class="preview-map my-8" v-if="recordLocationX !== 0 && recordLocationY !== 0">
-            <record-map class="map-container"
-                :record-location-x="recordLocationX"
-                :record-location-y="recordLocationY"/>
-        </div>
-
-        <div class="preview my-8">
-            <img v-if="recordImageUrl !== ''" :src="recordImageUrl" class="media-preview">
-            <video v-if="recordVideoUrl !== ''" :src="recordVideoUrl" class="media-preview" autoplay playsinline controls />
-            <audio :src="recordAudioUrl" controls v-if="recordAudioUrl != ''"></audio>
-        </div>
-
-        <div>
-            <v-textarea
-            v-model="recordComment"
-            label="조각 내용"
-            variant="outlined" />
-            <div class="comment-length">{{ commentLength }} / {{ MAX_COMMENT_LENGTH }}</div>
-        </div>
-
-        <div class="toolbar">
-            <v-btn icon="mdi-arrow-up-thin-circle-outline" color="primary" @click="uploadRecord"></v-btn>
-        </div>
-    </div>
-
-    <capture-image v-if="captureImageVisible" @captured="handleImageCapture" />
-    <capture-video v-if="captureVideoVisible" @captured="handleVideoCapture" />
-    <capture-audio v-if="captureAudioVisible" @captured="handleAudioCapture" />
-    <capture-location v-if="captureLocationVisible" @captured="handleLocationCapture" />
+        <capture-image v-if="captureImageVisible" @captured="handleImageCapture" @abort="() => {captureImageVisible = false}" />
+        <capture-video v-if="captureVideoVisible" @captured="handleVideoCapture" @abort="() => {captureVideoVisible = false}" />
+        <capture-audio v-if="captureAudioVisible" @captured="handleAudioCapture" @abort="() => {captureAudioVisible = false}" />
+        <capture-location v-if="captureLocationVisible" @captured="handleLocationCapture" @abort="() => {captureLocationVisible = false}" />
+    </v-container>
 </template>
 
 <style scoped>
+.no-scroll {
+    overflow: hidden;
+    height: 80vh;
+}
+
 h1 {
   text-align: center;  
   font-size: 24px;
@@ -218,6 +301,10 @@ h1 {
     margin-bottom: 15px;
 }
 
+video {
+    height: 600px;
+}
+
 .comment-length {
     font-size: 85%;
 }
@@ -226,12 +313,20 @@ h1 {
     text-align: center;
 }
 
+.preview-map {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
 .media-preview {
     width: 70%;
 }
 
 .map-container {
     z-index: 0;
+    height: 400px;
+    width: 400px;
 }
 
 input {
