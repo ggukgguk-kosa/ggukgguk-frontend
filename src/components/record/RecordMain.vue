@@ -315,7 +315,7 @@ onMounted(() => {
             <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
             <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
             <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
-            <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media"></record-map>
+            <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media map-container"></record-map>
           </v-card>
             <v-card-text style="display: flex; justify-content: center;">{{ record.recordComment }}</v-card-text>
           <v-divider></v-divider>
@@ -386,6 +386,11 @@ onMounted(() => {
 
 .button {
   margin: 8px;
+}
+
+.map-container {
+  height: 400px;
+  width: 400px;
 }
 
 </style>

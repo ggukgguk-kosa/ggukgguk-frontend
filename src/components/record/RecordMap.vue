@@ -23,6 +23,7 @@ function initMap() {
     level: 3,
     draggable: false // 지도를 움직이지 못하게 함
   };
+  console.log(container);
   // eslint-disable-next-line
   map = new kakao.maps.Map(container, options);
 }
@@ -60,5 +61,4 @@ onMounted(() => {
 </template>
 
 <style>
-
 </style>
