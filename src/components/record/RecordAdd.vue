@@ -134,7 +134,6 @@
         recordImageUrl.value = '';
         recordVideo.value = null;
         recordVideoUrl.value = '';
-        console.log('asdf');
         recordAudio.value = audioBlob;
         recordAudioUrl.value = URL.createObjectURL(audioBlob);
         captureAudioVisible.value = false;

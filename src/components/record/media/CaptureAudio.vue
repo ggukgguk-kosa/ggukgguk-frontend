@@ -1,6 +1,6 @@
 <script setup>
 import { ref, defineEmits } from 'vue';
-import Recorder from '@/util/recorder.js';
+import Recorder from '@/util/recorder';
 
 const emit = defineEmits(['captured']);
 
