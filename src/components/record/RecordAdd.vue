@@ -313,12 +313,20 @@ video {
     text-align: center;
 }
 
+.preview-map {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
 .media-preview {
     width: 70%;
 }
 
 .map-container {
     z-index: 0;
+    height: 400px;
+    width: 400px;
 }
 
 input {
