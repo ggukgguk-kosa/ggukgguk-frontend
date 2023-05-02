@@ -29,7 +29,7 @@ const elapsedSeconds = ref(0);
 const durationLimit = 60;
 
 const constraints = reactive({
-  audio: false,
+  audio: true,
   video: {
     facingMode: 'environment'
   }

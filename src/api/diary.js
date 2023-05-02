@@ -13,5 +13,25 @@ export default {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
             }
         });
+    },
+    getColorList( diaryId ) {
+        return axios.get(`/diary/${diaryId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${store.getters['auth/accessToken']}`
+            }
+        });
+    },
+    updateMainColor( diaryId, mainColor ) {
+        return axios.put(`/diary/${diaryId}`,
+        {
+            diaryId: diaryId,
+            mainColor : mainColor
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${store.getters['auth/accessToken']}`
+            }
+        });
     }
 }

@@ -1,7 +1,32 @@
 <script setup>
-import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
 const router = useRouter();
+const route = useRoute();
+const store = useStore();
+
+const memberId = computed(() => {
+            return store.getters['auth/memberInfo'].memberId;
+        })
+
+function goToRecord() {
+    route.name === "recordMain" ? getRecordList() : router.push('/record');
+}
+
+function setFriendId(friendId) {
+    store.commit('record/setFriendId', friendId);
+}
+
+function getRecordList() {
+  setFriendId(null);
+  store.dispatch("record/getRecordList", memberId.value)
+  .catch((error) => {
+        console.error('조각 리스트 조회 실패');
+        console.error(error);
+  })
+}
 
 function goToRecordNew() {
     router.push({ name: 'recordAdd' });
@@ -10,6 +35,10 @@ function goToRecordNew() {
 
 <template>
     <v-bottom-navigation>
+        <v-btn value="home" @click="goToRecord">
+            <v-icon>mdi-home</v-icon>
+        </v-btn>
+
         <v-btn value="setting">
             <v-icon>mdi-cog</v-icon>
         </v-btn>
