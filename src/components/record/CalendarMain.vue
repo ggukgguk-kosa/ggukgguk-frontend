@@ -12,6 +12,10 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
+const friendId = computed(() => {
+            return store.getters['record/recordOption'].friendId;
+})
+
 const diaryYear = computed(() => {
             return store.getters['diary/diaryOption'].diaryYear;
 })
@@ -36,11 +40,19 @@ function setDiaryMonth(month){
 }
 
 async function getDiaryList() {
-    await store.dispatch("diary/getDiaryList", memberId.value)
-    .catch((error) => {
-        console.error('다이어리 리스트 조회 실패');
-        console.error(error);
+    if(friendId.value !== null && friendId.value !== undefined){
+          await store.dispatch("diary/getDiaryList", friendId.value)
+          .catch((error) => {
+          console.error('다이어리 리스트 조회 실패');
+          console.error(error);
     })
+    } else {
+      await store.dispatch("diary/getDiaryList", memberId.value)
+      .catch((error) => {
+          console.error('다이어리 리스트 조회 실패');
+          console.error(error);
+      })
+    }
     console.log(diaryList.value.diaryRecordList);
 }
 
@@ -50,7 +62,7 @@ function setRecordCount(){
     const date = new Date(diaryYear.value, diaryMonth.value - 1, record.recordDay);
     const dots = [];
     for (let i = 0; i < record.recordCount; i++) {
-      dots.push({ dot: true, dates: [date] });
+      dots.push({ dot: true, dates: [date], color: mainColor.value });
     }
     attributes.value = attributes.value.concat(dots);
   }
@@ -80,6 +92,7 @@ watch(selectedMonth, async () => {
 
 const calendar = ref(null);
 
+
 // attributes 변수를 빈 배열로 초기화
 const attributes = ref([]);
 
@@ -102,19 +115,32 @@ function formatDate(date) {
 }
 
 
-onMounted(() => {
-  getDiaryList();
-  calendar.value.move({ month: selectedMonth.value, year: selectedYear.value });
-  setRecordCount();
-  // 전체 화면 색상 변경
-  console.log(mainColor.value);
-  document.body.style.setProperty('background-color', mainColor.value);
-})
+
+function goToColor(){
+  router.push('/color'); 
+}
+
+async function onMountedHandler() {
+  if(diaryMonth.value==null){
+    setDiaryMonth(new Date().getMonth());
+    await getDiaryList();
+    console.log("null실행")
+    calendar.value.move({ month: diaryMonth.value, year: diaryYear.value });
+    setRecordCount();
+  } else {
+    await getDiaryList();
+    console.log("아님아님")
+    calendar.value.move({ month: diaryMonth.value, year: diaryYear.value });
+    setRecordCount();
+  }
+}
+
+onMounted(onMountedHandler)
 
 </script>
 
 <template>
-  <v-container :style="{ backgroundColor: mainColor }">
+  <v-container :style="{ backgroundColor: mainColor, borderRadius: '10px' }" class="mt-15" >
     <v-row>
       <v-col cols="6">
         <v-select
@@ -133,16 +159,22 @@ onMounted(() => {
         ></v-select>
       </v-col>
     </v-row>
-  
     <v-row>
           <VCalendar expanded
           ref="calendar"
           :attributes="attributes"
           @dayclick="handleDateClick"
+          class="calendar"
           />
     </v-row>
   </v-container>
+  <v-icon
+    @click="goToColor"
+  >
+    mdi-palette
+  </v-icon>
 </template>
 
-<style>
+<style scoped>
+
 </style>

@@ -9,6 +9,10 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
+const friendId = computed(() => {
+            return store.getters['record/recordOption'].friendId;
+})
+
 const diaryYear = computed(() => {
             return store.getters['diary/diaryOption'].diaryYear;
 })
@@ -29,12 +33,22 @@ function setDiaryMonth(month){
 }
 
 async function getDiaryList() {
-    await store.dispatch("diary/getDiaryList", memberId.value)
-    .catch((error) => {
+    if(friendId.value !== null && friendId.value !== undefined){
+      await store.dispatch("diary/getDiaryList", friendId.value)
+     .catch((error) => {
         console.error('다이어리 리스트 조회 실패');
         console.error(error);
-    })
+      })
+    } else {
+      await store.dispatch("diary/getDiaryList", memberId.value)
+      .catch((error) => {
+          console.error('다이어리 리스트 조회 실패');
+          console.error(error);
+      })
+    }
 }
+
+
 
 const router = useRouter();
 
@@ -55,26 +69,25 @@ watch(selectedMonth, async () => {
     router.push('/calendar');
 })
 
-// function onMonthChange() {
-//     store.commit('diary/setDiaryMonth', selectedMonth.value);
-// }
+function clickDiary(diary) {
+    selectedMonth.value = diary.diaryMonth;
+}
 
 onMounted(() => {
+  setDiaryMonth(null);
   getDiaryList();
 })
 
 </script>
 
 <template>
-{{ selectedYear }}
-  <v-container>
+  <v-container align="center" class="mt-15">
     <v-row>
       <v-col cols="6">
         <v-select
           v-model="selectedYear"
           :items="years"
           label="Year"
-          @input="onYearChange"
         ></v-select>
       </v-col>
       <v-col cols="6">
@@ -82,27 +95,26 @@ onMounted(() => {
           v-model="selectedMonth"
           :items="months"
           label="Month"
-          @input="onMonthChange"
         ></v-select>
       </v-col>
     </v-row>
-  </v-container>
-
-  <v-container>
-    <v-row>
+    <v-row 
+      v-for="diary in diaryList"
+      :key="diary.diaryId"
+      align="center" justify="center"
+    >
       <v-col
-        v-for="diary in diaryList"
-        :key="diary.diaryId"
         cols="12"
-        md="6"
-        lg="4"
+        class="d-flex justify-center"
       >
         <v-card
-          width="400"
+          :width="300"
           :title="diary.diaryMonth"
-          :style="{ backgroundColor: diary.mainColor }"
+          :style="{ borderColor: diary.mainColor, borderWidth: '1px', backgroundColor: diary.mainColor }"
+          v-on:click="clickDiary(diary)"
         >
-          <v-card-text>{{ diary.mainKeyword }}</v-card-text>
+          <v-card-text
+            :style="{ backgroundColor: 'white', color: diary.mainColor, padding: '10px 10px 10px 10px' }">{{ diary.mainKeyword }}</v-card-text>
         </v-card>
       </v-col>
     </v-row>

@@ -4,6 +4,7 @@ import record from './record'
 import diary from './diary'
 import auth from './auth'
 import admin from './admin'
+import friend from './friend'
 import member from './member';
 
 const vuexLocal = new VuexPersistence({
@@ -21,7 +22,7 @@ export default createStore({
   actions: {
   },
   modules: {
-    auth, admin, record, diary, member
+    auth, admin, record, diary, friend, member
   },
   plugins: [vuexLocal.plugin]
 })
