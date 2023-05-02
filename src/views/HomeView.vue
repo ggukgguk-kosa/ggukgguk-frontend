@@ -21,6 +21,11 @@ function onLogout() {
 onMounted(() => {
   if (isLogin.value) router.push({name: 'recordMain'});
 })
+
+function regiserInfo(){
+  router.push({name: 'memberRegiseter'});
+}
+
 </script>
 
 <template>
@@ -33,7 +38,7 @@ onMounted(() => {
     </div>
 
     <div class="landing-wrap">
-      <v-btn id="to-register-btn" rounded="xl" size="x-large" color="primary">회원가입</v-btn> <br><br>
+      <v-btn id="to-register-btn" @click="regiserInfo" rounded="xl" size="x-large" color="primary">회원가입</v-btn> <br><br>
       <router-link id="to-login-link" :to="{name: 'login'}">이미 회원이신가요?</router-link>
     </div>
       

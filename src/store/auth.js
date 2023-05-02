@@ -19,8 +19,8 @@ export default {
     },
     isLogin(state) {
       if (Object.keys(state.memberInfo).length === 0
-              || state.accessToken === ''
-              || state.refreshToken === '') {
+        || state.accessToken === ''
+        || state.refreshToken === '') {
         return false;
       }
       return true;
@@ -40,13 +40,13 @@ export default {
   },
   actions: {
     login({ commit }, { memberId, memberPw }) {
-      return auth.login({ memberId, memberPw})
-      .then((response) => {
+      return auth.login({ memberId, memberPw })
+        .then((response) => {
           console.log('리스폰스 받음');
           console.log(response);
           commit('setMemberInfo', response.data.data);
           return response;
-      })
+        })
     },
     logout({ commit }) {
       commit('setMemberInfo', {
@@ -54,6 +54,35 @@ export default {
         accessToken: '',
         refreshToken: ''
       });
+    },
+    // 회원 가입
+    // eslint-disable-next-line
+    register({}, {memberId, memberPw, memberName, memberNickname, 
+      memberEmail, memberPhone, memberBirth, memberAuthority}){
+        console.log(memberId);
+      return auth.addMember({memberId, memberPw, memberName, memberNickname, 
+        memberEmail, memberPhone, memberBirth, memberAuthority});
+    },
+
+    // 아이디 중복 가입
+    // eslint-disable-next-line
+    duplicateId({},memberId){
+      return auth.duplicateId(memberId)
+      .then((response) => {
+        console.log('리스폰스 받음');
+        console.log(response);
+        return response;
+      })
+    },
+    // 구글 인가 코드 전달.
+    // eslint-disable-next-line
+    handleGoogleAuth({},code){
+      return auth.handleGoogleAuth(code)
+      .then((response) => {
+        console.log('리스폰스 받음');
+        console.log(response);
+        return response;
+      })
     }
   }
 };
