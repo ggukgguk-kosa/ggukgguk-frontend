@@ -12,6 +12,7 @@ const memberId = computed(() => {
         })
 
 function goToRecord() {
+    setFriendId(null);
     route.name === "recordMain" ? getRecordList() : router.push('/record');
 }
 
@@ -20,7 +21,6 @@ function setFriendId(friendId) {
 }
 
 function getRecordList() {
-  setFriendId(null);
   store.dispatch("record/getRecordList", memberId.value)
   .catch((error) => {
         console.error('조각 리스트 조회 실패');

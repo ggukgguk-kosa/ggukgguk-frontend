@@ -279,7 +279,6 @@ onMounted(() => {
 <template>
   <v-slide-group
         show-arrows
-        class = "mt-15"
       >
         <v-slide-group-item
           v-for="friend in friendList"
@@ -305,7 +304,7 @@ onMounted(() => {
         cols="12"
         xs="12"
       >
-          <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px' }">
+        <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', padding: '10px' }">
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
           <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
           <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
@@ -317,7 +316,7 @@ onMounted(() => {
             <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
             <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media"></record-map>
           </v-card>
-            <v-card-text style="display: flex; justify-content: center;">{{ record.recordComment }}</v-card-text>
+          <v-card-text style="display: flex; justify-content: center;">{{ record.recordComment }}</v-card-text>
           <v-divider></v-divider>
           <v-list dense>
             <div>댓글</div>
@@ -358,7 +357,7 @@ onMounted(() => {
           <v-form class="d-flex align-center">
             <v-text-field :value="newReplyContent[record.recordId]" @input="newReplyContent[record.recordId] = $event.target.value" required></v-text-field>
             <v-btn 
-            :style="{ border: '2px solid ' + record.mainColor, color: 'black', backgroundColor: record.mainColor }"
+            :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor ? 'white' : 'black', backgroundColor: record.mainColor }"
             class= "button"
             @click="addReply(record.recordId); newReplyContent[record.recordId] = ''" :disabled="newReplyContent === ''">등록</v-btn>
           </v-form>

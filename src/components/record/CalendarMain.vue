@@ -124,7 +124,7 @@ async function onMountedHandler() {
   if(diaryMonth.value==null){
     setDiaryMonth(new Date().getMonth());
     await getDiaryList();
-    console.log("null실행")
+    console.log(diaryMonth.value);
     calendar.value.move({ month: diaryMonth.value, year: diaryYear.value });
     setRecordCount();
   } else {
@@ -169,6 +169,7 @@ onMounted(onMountedHandler)
     </v-row>
   </v-container>
   <v-icon
+    v-if="!friendId"
     @click="goToColor"
   >
     mdi-palette
