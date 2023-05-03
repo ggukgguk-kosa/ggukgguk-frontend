@@ -12,7 +12,9 @@
     const memberId = computed(() => {
         return store.getters['auth/memberInfo'].memberId;
     });
-    const MAX_COMMENT_LENGTH = 512
+    const MAX_COMMENT_LENGTH = 512;
+    const MIN_WORD_COUNT = 3;
+    const isLoading = ref(false);
 
     const router = useRouter();
 
@@ -139,14 +141,25 @@
         captureAudioVisible.value = false;
     }
 
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+    }
+
+    function setTodayDate() {
+        store.commit('record/setStartDateStr', formatDate(new Date()));
+    }
+
     function uploadRecord() {
-        if (recordComment.value.split(' ').length < 3) {
-            alert('3단어 이상 입력해주세요');
+        if (recordComment.value.split(' ').length < MIN_WORD_COUNT) {
+            alert(MIN_WORD_COUNT + '단어 이상 입력해주세요');
             return;
         }
 
-        if (recordComment.value.length > 512) {
-            alert('512자를 초과할 수 없습니다.');
+        if (recordComment.value.length > MAX_COMMENT_LENGTH) {
+            alert(MAX_COMMENT_LENGTH + '자를 초과할 수 없습니다.');
             return;
         }
 
@@ -163,6 +176,7 @@
             }
         }
 
+        isLoading.value = true;
         const formData = new FormData();
         formData.append('recordComment', recordComment.value);
         formData.append('memberId', memberId.value);
@@ -181,11 +195,15 @@
 
         store.dispatch('record/addRecord', formData)
         .then((response) => {
+            isLoading.value = false;
             console.log('성공');
             console.log(response);
-            router.push({ name: 'recordMain' })
+
+            setTodayDate();
+            router.push({ name: 'recordMain' });
         })
         .catch((error) => {
+            isLoading.value = false;
             console.error('실패');
             console.error(error);
         })
@@ -219,6 +237,18 @@
 </script>
 
 <template>
+    <v-overlay
+        v-model="isLoading"
+        scroll-strategy="block"
+        persistent
+    >
+        <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+        ></v-progress-circular>
+    </v-overlay>
+
     <v-container :class="captureAudioVisible
         || captureImageVisible
         || captureVideoVisible
@@ -331,6 +361,12 @@ video {
 
 input {
     display: none;
+}
+
+.v-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 768px) { 

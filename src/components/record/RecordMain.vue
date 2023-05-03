@@ -51,7 +51,7 @@ function getFriendList() {
 function clickFriend(friendId) {
     console.log("클릭");
     setFriendId(friendId);
-    setStartDateStr(new Date().toISOString().substring(0, 10));
+    setStartDateStr(formatDate(new Date()));
     noMoreDown.value = false;
     noMoreUp.value = false;
     getRecordList();
