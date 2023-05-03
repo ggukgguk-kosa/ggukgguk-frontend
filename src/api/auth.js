@@ -41,7 +41,5 @@ export default {
             },
             params: { token },
         });
-    },
-
-
+    }
 }
