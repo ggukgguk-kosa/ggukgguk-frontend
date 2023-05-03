@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted} from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRouter} from "vue-router";
 
 const store = useStore();
 const router = useRouter();
@@ -56,35 +56,7 @@ onMounted(() => {
   store.commit("auth/updateAccessToken", { accessToken: "" });
 });
 
-// 구글로그인 로그인
-const GoogleLoginBtn = () => {
-  const url =
-    "https://accounts.google.com/o/oauth2/auth?client_id=" +
-    process.env.VUE_APP_GOOGLE_LOGIN_KEY +
-    "&redirect_uri=" +
-    "http://localhost:8080/api/auth/social/google" +
-    "&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
-  window.location.href = url;
-};
-const googleCode = ref(null);
-
-router.afterEach((to) => {
-  const code = to.query.code;
-  if (code && !googleCode.value) {
-    googleCode.value = code;
-    handleGoogleAuth(googleCode.value);
-  }
-});
-const handleGoogleAuth = async (code) => {
-  try {
-    console.log("Google code:", code); 
-    await store.dispatch("auth/handleGoogleAuth", code);
-  } catch (error) {
-    console.error("구글인증 하지 못하였습니다.", error);
-  }
-};
 </script>
-
 <template>
   <div class="img-wrap">
     <img src="/img/landing_main.png" />
@@ -103,9 +75,6 @@ const handleGoogleAuth = async (code) => {
       ></v-text-field>
       <v-btn type="submit" @click="login" block class="mt-2">로그인</v-btn>
       <hr />
-      <v-btn type="button" @click="GoogleLoginBtn" block class="mt-2"
-        >구글로그인</v-btn
-      >
     </v-form>
   </v-sheet>
 </template>
