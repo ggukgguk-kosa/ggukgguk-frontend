@@ -9,7 +9,7 @@ import 'v-calendar/style.css';
 import { AVPlugin } from 'vue-audio-visual'
 
 window.baseURI = process.env.VUE_APP_BASE_URI;
-
+window.Kakao.init('f0b4268c10a9c956df9816637eede528');
 loadFonts()
 
 createApp(App)
