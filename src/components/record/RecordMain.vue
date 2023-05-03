@@ -19,6 +19,15 @@ const friendId = computed(() => {
             return store.getters['record/recordOption'].friendId;
 })
 
+const friendNickname = computed(() => {
+  let nick;
+  friendList.value.forEach((item) => {
+    if (item.memberId === friendId.value)
+      nick = item.memberNickname;
+  });
+  return nick;
+});
+
 const friendList = computed(() => {
             return store.getters['friend/friendList'];
 })
@@ -28,13 +37,22 @@ function setFriendId(friendId) {
 }
 
 function getFriendList() {
-  store.dispatch('friend/getFriendList', memberId);
+  store.dispatch('friend/getFriendList', memberId)
+  .then(() => {
+    isLoading.value = false;
+  })
+  .catch((error) => {
+    console.error('친구 리스트를 불러오던 중 오류가 발생했습니다.');
+    console.error(error);
+  })
 }
 
 function clickFriend(friendId) {
     console.log("클릭");
     setFriendId(friendId);
     setStartDateStr(new Date().toISOString().substring(0, 10));
+    noMoreDown.value = false;
+    noMoreUp.value = false;
     getRecordList();
 }
 
@@ -66,8 +84,11 @@ const earliestRecordCreatedAt = computed(() => {
     }, new Date());
 })
 
-let isLoading = ref(false);
+const isLoadingForScrollEvent = ref(false);
+const isLoading = ref(false);
 
+const noMoreUp = ref(false);
+const noMoreDown = ref(false);
 
 function setStartDateStr(startDateStr) {
     store.commit('record/setStartDateStr', startDateStr);
@@ -82,8 +103,12 @@ function handleScroll() {
   const windowHeight = window.innerHeight;
 
   // 스크롤이 맨 아래에 도달했는지 확인
-  if (Math.ceil(scrollY + windowHeight) >= documentHeight && !isLoading.value) {
-    isLoading.value = true;
+  if (Math.ceil(scrollY + windowHeight) >= documentHeight && !isLoadingForScrollEvent.value) {
+    if (noMoreDown.value) {
+      return;
+    }
+
+    isLoadingForScrollEvent.value = true;
     startDate.value = earliestRecordCreatedAt.value;
     startDate.value.setDate(startDate.value.getDate() - 1); // startDate를 5일 전으로 수정
     const startDateStr = formatDate(startDate.value);
@@ -92,8 +117,12 @@ function handleScroll() {
   }
 
   // 스크롤이 맨 위에 도달했는지 확인
-  if (scrollY === 0 && !isLoading.value && Math.abs(scrollY - lastScrollPosition) > scrollThreshold) {
-    isLoading.value = true;
+  if (scrollY === 0 && !isLoadingForScrollEvent.value && Math.abs(scrollY - lastScrollPosition) > scrollThreshold) {
+    if (noMoreUp.value) {
+      return;
+    }
+
+    isLoadingForScrollEvent.value = true;
     startDate.value = latestRecordCreatedAt.value;
     startDate.value.setDate(startDate.value.getDate() + 5); // startDate를 5일 후로 수정
     console.log(startDate.value);
@@ -121,7 +150,12 @@ function setDiaryMonth(month){
 }
 
 function getRecordList() {
+  isLoading.value = true;
+
   store.dispatch("record/getRecordList", memberId.value)
+  .then(() => {
+    isLoading.value = false;
+  })
   .catch((error) => {
         console.error('조각 리스트 조회 실패');
         console.error(error);
@@ -129,12 +163,18 @@ function getRecordList() {
 }
 
 function getRecordsUp() {
+  isLoadingForScrollEvent.value = true;
   isLoading.value = true;
+
   store.dispatch("record/getRecordsUp", memberId.value)
-  .then(() => {
+  .then((data) => {
+        isLoadingForScrollEvent.value = false;
         isLoading.value = false;
-        document.getElementById(topElId.value).scrollIntoView();
+        document.getElementById(topElId.value)?.scrollIntoView();
         document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
+        console.log('asdfasdf');
+        console.log(data);
+        if (data?.length === 0) noMoreUp.value = true;
   })
   .catch((error) => {
         console.error('조각 리스트 조회 실패');
@@ -143,10 +183,14 @@ function getRecordsUp() {
 }
 
 function getRecordsDown() {
+  isLoadingForScrollEvent.value = true;
   isLoading.value = true;
+
   store.dispatch("record/getRecordsDown", memberId.value)
-  .then(() => {
+  .then((data) => {
+        isLoadingForScrollEvent.value = false;
         isLoading.value = false;
+        if (data?.length === 0) noMoreDown.value = true;
   })
   .catch((error) => {
         console.error('조각 리스트 조회 실패');
@@ -155,7 +199,12 @@ function getRecordsDown() {
 }
 
 async function getDiaryList() {
+    isLoading.value = true;
+
     await store.dispatch("diary/getDiaryList", memberId.value)
+    .then(() => {
+      isLoading.value = false;
+    })
     .catch((error) => {
         console.error('다이어리 리스트 조회 실패');
         console.error(error);
@@ -277,6 +326,21 @@ onMounted(() => {
 </script>
 
 <template>
+  <v-overlay
+    v-model="isLoading"
+    scroll-strategy="block"
+    persistent
+  >
+    <v-progress-circular
+      color="primary"
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
+
+  <h1 v-if="!friendId">나</h1>
+  <h1 v-if="friendId">{{ friendNickname }} ({{ friendId }})</h1>
+
   <v-slide-group
         show-arrows
         class = "mt-15"
@@ -297,6 +361,9 @@ onMounted(() => {
         </v-slide-group-item>
       </v-slide-group>
   <v-container>
+    <v-card v-if="noMoreUp">
+      더 이상 불러올 데이터가 없습니다.
+    </v-card>
     <v-row>
       <v-col
         v-for="record in recordList"
@@ -365,6 +432,9 @@ onMounted(() => {
         </v-card>
       </v-col>
     </v-row>
+    <v-card v-if="noMoreDown">
+      더 이상 불러올 데이터가 없습니다.
+    </v-card>
   </v-container>
     <v-btn
     @click="scrollToTop"
@@ -391,6 +461,12 @@ onMounted(() => {
 .map-container {
   height: 400px;
   width: 400px;
+}
+
+.v-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 </style>
