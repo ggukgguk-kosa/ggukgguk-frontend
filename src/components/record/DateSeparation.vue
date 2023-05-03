@@ -2,7 +2,7 @@
 import { onMounted, defineEmits, defineProps } from 'vue';
 
 const emit = defineEmits(['mounted']);
-const props = defineProps(['date']);
+const props = defineProps(['date', 'color']);
 
 onMounted(() => {
     emit('mounted');
@@ -11,8 +11,15 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
+    <div :style="color ? `color: ${color}` : 'color: black'">
         {{ props.date }}
-        <hr />
+        <hr :style="color ? `background-color: ${color}` : 'background-color: black'" />
     </div>
 </template>
+
+<style scoped>
+hr {
+    height:1px;
+    border:0;
+}
+</style>
