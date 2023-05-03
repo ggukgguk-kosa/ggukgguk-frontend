@@ -35,10 +35,12 @@ export default {
       state.recordList = recordList;
     },
     setRecordsUp(state, recordList) {
-      state.recordList = [...recordList, ...state.recordList];
+      if (recordList !== [])
+        state.recordList = [...recordList, ...state.recordList];
     },
     setRecordsDown(state, recordList) {
-      state.recordList = [...state.recordList, ...recordList];
+      if (recordList !== [])
+        state.recordList = [...state.recordList, ...recordList];
     },
     updateReplyList(state, {recordId, newReplyList}) {
       const index = state.recordList.findIndex(record => record.recordId === recordId);
@@ -53,6 +55,7 @@ export default {
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordList', response.data.data);
+        return response.data.data;
       })
     },
 
@@ -61,6 +64,7 @@ export default {
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordsUp', response.data.data);
+        return response.data.data;
       })
     },
 
@@ -69,6 +73,7 @@ export default {
       .then((response) => {
         console.log(response.data.data);
         commit('setRecordsDown', response.data.data);
+        return response.data.data;
       })
     },
 

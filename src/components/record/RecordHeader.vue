@@ -15,6 +15,14 @@ const dialog=ref(false);
 
 const keyword = ref(null);
 
+const calAttrs = ref([
+  {
+    key: 'today',
+    highlight: true,
+    dates: new Date(),
+  },
+]);
+
 function setStartDateStr(){
   store.commit('record/setStartDateStr', null);
 }
@@ -35,6 +43,11 @@ const route = useRoute();
 
 // 날짜 클릭하면 해당 날짜기준 조각 조회
 function handleDateClick({date}) {
+  if (date > new Date()) {
+    alert('미래는 조회할 수 없습니다.');
+    return;
+  }
+
   dialog.value = false;
   setKeyword(null);
   const clickedDate = new Date(date)
@@ -82,6 +95,7 @@ function goToCalendar(){
     </template>
         <VCalendar 
           @dayclick="handleDateClick"
+          :attributes="calAttrs"
         />
   </v-dialog>
       <input
