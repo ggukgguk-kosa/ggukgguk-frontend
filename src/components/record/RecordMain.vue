@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import RecordMap from './RecordMap.vue';
+import DateSeparation from './DateSeparation.vue';
 
 const store = useStore();
 
@@ -50,14 +51,13 @@ function getFriendList() {
 function clickFriend(friendId) {
     console.log("클릭");
     setFriendId(friendId);
-    setStartDateStr(new Date().toISOString().substring(0, 10));
+    setStartDateStr(formatDate(new Date()));
     noMoreDown.value = false;
     noMoreUp.value = false;
     getRecordList();
 }
 
 function formatDate(date) {
-  console.log(date);
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
@@ -66,9 +66,28 @@ function formatDate(date) {
 
 const recordList = computed(() => {
     return store.getters['record/recordList']
+});
+watch(recordList, () => {
+  noMoreDown.value = false;
+  noMoreUp.value = false;
+})
+
+// eslint-disable-next-line
+const recordCreatedAtByDayMap = computed(() => {
+  const map = {};
+  recordList.value.forEach(item => {
+    if (!Array.isArray(map[formatDate(new Date(item.recordCreatedAt))])) {
+      map[formatDate(new Date(item.recordCreatedAt))] = [];
+    }
+
+    const currentDateList = map[formatDate(new Date(item.recordCreatedAt))];
+    currentDateList.push(item);
+  })
+  return map;
 })
 
 const startDate = ref(new Date());
+
 // recordList 배열에서 가장 최근 recordCreatedAt 값을 추출
 const latestRecordCreatedAt = computed(() => {
   return recordList.value.reduce((latest, record) => {
@@ -89,6 +108,10 @@ const isLoading = ref(false);
 
 const noMoreUp = ref(false);
 const noMoreDown = ref(false);
+const noData = computed(() => {
+  if (recordList.value.length === 0) return true;
+  else return false;
+});
 
 function setStartDateStr(startDateStr) {
     store.commit('record/setStartDateStr', startDateStr);
@@ -129,7 +152,7 @@ function handleScroll() {
     const startDateStr = formatDate(startDate.value);
     setStartDateStr(startDateStr);
     console.log(startDateStr);
-    topElId.value = recordList.value[0].recordId;
+    topElId.value = recordList.value[0]?.recordId;
     getRecordsUp();
   }
 
@@ -172,8 +195,6 @@ function getRecordsUp() {
         isLoading.value = false;
         document.getElementById(topElId.value)?.scrollIntoView();
         document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
-        console.log('asdfasdf');
-        console.log(data);
         if (data?.length === 0) noMoreUp.value = true;
   })
   .catch((error) => {
@@ -312,11 +333,11 @@ function deleteReply(reply) {
 
 // 맨위로
 function scrollToTop() {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
+  window.scrollTo({
+    top: 10,
+    behavior: "smooth"
+  });
+}
 
 onMounted(() => {
   getRecordList();
@@ -338,8 +359,8 @@ onMounted(() => {
     ></v-progress-circular>
   </v-overlay>
 
-  <h1 v-if="!friendId">나</h1>
-  <h1 v-if="friendId">{{ friendNickname }} ({{ friendId }})</h1>
+  <h1 v-if="!friendId">조각들 |&nbsp;&nbsp;&nbsp;나 ({{ memberId }})</h1>
+  <h1 v-if="friendId">조각들 |&nbsp;&nbsp;&nbsp;{{ friendNickname }} ({{ friendId }})</h1>
 
   <v-slide-group
         show-arrows
@@ -361,9 +382,9 @@ onMounted(() => {
         </v-slide-group-item>
       </v-slide-group>
   <v-container>
-    <v-card v-if="noMoreUp">
+    <div class="msg" v-if="noMoreUp">
       더 이상 불러올 데이터가 없습니다.
-    </v-card>
+    </div>
     <v-row>
       <v-col
         v-for="record in recordList"
@@ -372,6 +393,10 @@ onMounted(() => {
         cols="12"
         xs="12"
       >
+          <date-separation
+            v-if="recordCreatedAtByDayMap[formatDate(new Date(record.recordCreatedAt))][0].recordId === record.recordId"
+            :date="formatDate(new Date(record.recordCreatedAt))"
+            :color="record.mainColor" />
           <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px' }">
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
           <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
@@ -432,9 +457,12 @@ onMounted(() => {
         </v-card>
       </v-col>
     </v-row>
-    <v-card v-if="noMoreDown">
+    <div class="msg" v-if="noMoreDown">
       더 이상 불러올 데이터가 없습니다.
-    </v-card>
+    </div>
+    <div class="msg" v-if="noData">
+      {{ store.getters['record/recordOption']?.startDateStr }} 부터 5일간 작성된 조각을 찾을 수 없습니다.
+    </div>
   </v-container>
     <v-btn
     @click="scrollToTop"
@@ -445,6 +473,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
+.msg {
+  text-align: center;
+}
 
 .card {
   margin: 20px;
