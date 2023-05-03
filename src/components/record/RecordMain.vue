@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import RecordMap from './RecordMap.vue';
+import DateSeparation from './DateSeparation.vue';
 
 const store = useStore();
 
@@ -57,7 +58,6 @@ function clickFriend(friendId) {
 }
 
 function formatDate(date) {
-  console.log(date);
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
@@ -66,6 +66,21 @@ function formatDate(date) {
 
 const recordList = computed(() => {
     return store.getters['record/recordList']
+})
+
+// eslint-disable-next-line
+const recordCreatedAtByDayMap = computed(() => {
+  const map = {};
+  recordList.value.forEach(item => {
+    if (!Array.isArray(map[formatDate(new Date(item.recordCreatedAt))])) {
+      map[formatDate(new Date(item.recordCreatedAt))] = [];
+    }
+
+    const currentDateList = map[formatDate(new Date(item.recordCreatedAt))];
+    currentDateList.push(item);
+  })
+  console.log(map);
+  return map;
 })
 
 const startDate = ref(new Date());
@@ -172,8 +187,6 @@ function getRecordsUp() {
         isLoading.value = false;
         document.getElementById(topElId.value)?.scrollIntoView();
         document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
-        console.log('asdfasdf');
-        console.log(data);
         if (data?.length === 0) noMoreUp.value = true;
   })
   .catch((error) => {
@@ -361,9 +374,9 @@ onMounted(() => {
         </v-slide-group-item>
       </v-slide-group>
   <v-container>
-    <v-card v-if="noMoreUp">
+    <div class="msg" v-if="noMoreUp">
       더 이상 불러올 데이터가 없습니다.
-    </v-card>
+    </div>
     <v-row>
       <v-col
         v-for="record in recordList"
@@ -372,6 +385,9 @@ onMounted(() => {
         cols="12"
         xs="12"
       >
+          <date-separation
+            v-if="recordCreatedAtByDayMap[formatDate(new Date(record.recordCreatedAt))][0].recordId === record.recordId"
+            :date="formatDate(new Date(record.recordCreatedAt))" />
           <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px' }">
           <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
           <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
@@ -432,9 +448,9 @@ onMounted(() => {
         </v-card>
       </v-col>
     </v-row>
-    <v-card v-if="noMoreDown">
+    <div class="msg" v-if="noMoreDown">
       더 이상 불러올 데이터가 없습니다.
-    </v-card>
+    </div>
   </v-container>
     <v-btn
     @click="scrollToTop"
@@ -445,6 +461,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
+.msg {
+  text-align: center;
+}
 
 .card {
   margin: 20px;
