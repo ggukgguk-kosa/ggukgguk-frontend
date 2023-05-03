@@ -97,5 +97,4 @@ async function getMemberDetailInfo() {
             <v-btn color="blue darken-1" text @click="modify">수정</v-btn>
         </v-card-actions>
     </v-card>
-    {{ memberDetailInfo }} 뭘까?<br>
 </template>

@@ -1,9 +1,9 @@
 <script setup>
-import MyInfoManagement from '../../components/member/MyInfoManagement.vue';
+import EditMemberInfo from '../../components/member/EditMemberInfo.vue';
 
 </script>
 
 <template>
     <!-- 나의 정보 수정 페이지 -->
-    <my-info-management/>
+    <edit-member-info/>
 </template>
