@@ -2,7 +2,7 @@
 import { ref, defineEmits } from 'vue';
 import Recorder from '@/util/recorder';
 
-const emit = defineEmits(['captured']);
+const emit = defineEmits(['captured', 'abort']);
 
 const format = ref('');
 const audioSrc = ref('');
@@ -75,22 +75,34 @@ function bolbHandler(blob) {
 
 <template>
     <div class="wrapper">
-      <div class="inner">
-        <div class="waveform-wrapper">
-          <av-media :media="currentStream" type="wform">asdf</av-media>
+      <div class="close-btn">
+        <div class="pr-12 pt-8">
+          <v-btn icon @click="() => {emit('abort')}"><v-icon>mdi-window-close</v-icon></v-btn>
         </div>
-        <v-btn @click="startRecord" :disabled="nowRecording" icon="mdi-record" color="red"></v-btn>
-        <v-btn @click="stopRecord" :disabled="!nowRecording" icon="mdi-stop" color="red"></v-btn>
-        <v-btn @click="pauseRecord" :disabled="!nowRecording" :icon="pauseBtnLabel === 'pause' ? 'mdi-pause' : 'mdi-play-pause'"></v-btn>
+      </div>
+      <div class="outer">
+        <div class="inner">
+          <div class="waveform-wrapper">
+            <av-media :media="currentStream" type="wform">asdf</av-media>
+          </div>
+          <v-btn @click="startRecord" :disabled="nowRecording" icon="mdi-record" color="red"></v-btn>
+          <v-btn @click="stopRecord" :disabled="!nowRecording" icon="mdi-stop" color="red"></v-btn>
+          <v-btn @click="pauseRecord" :disabled="!nowRecording" :icon="pauseBtnLabel === 'pause' ? 'mdi-pause' : 'mdi-play-pause'"></v-btn>
+        </div>
       </div>
     </div>
 </template>
 
 <style scoped>
-    video {
-        width: 100vw;
-        height: 90vh;
-        object-fit: contain;
+    .close-btn {
+      text-align: right;
+    }
+
+    .outer {
+      display: flex;
+      height: 85%;
+      width: 100%;
+      align-items: center;
     }
 
     .inner {
@@ -106,7 +118,6 @@ function bolbHandler(blob) {
         height: 100vh;
         width: 100vw;
         text-align: center;
-        display: flex;
-        align-items: center;
+        z-index: 1100;
     }
 </style>
