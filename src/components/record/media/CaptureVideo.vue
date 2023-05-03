@@ -12,7 +12,7 @@ onMounted(() => {
     getMedia();
 })
 
-const emit = defineEmits(['captured']);
+const emit = defineEmits(['captured', 'aborted']);
 
 const errorMsg = ref('');
 const videoEl = ref(null);
@@ -143,8 +143,16 @@ function stopRecord() {
 
 <template>
     <div class="wrapper">
-        <video ref="videoEl" autoplay playsinline muted></video>
-        <div>{{ errorMsg }}</div>
+        <div class="close-btn">
+            <div class="pr-12 pt-8">
+              <v-btn icon @click="() => {emit('abort')}"><v-icon>mdi-window-close</v-icon></v-btn>
+          </div>
+        </div>
+
+        <div class="inner">
+          <video ref="videoEl" autoplay playsinline muted></video>
+          <div>{{ errorMsg }}</div>
+        </div>
 
         <div class="toolbar mt-8">
             <div>
@@ -170,8 +178,24 @@ function stopRecord() {
 
     video {
         width: 100vw;
-        height: 90vh;
         object-fit: contain;
+    }
+
+    .inner {
+      text-align: center;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1200;
+    }
+
+    .toolbar {
+      position: fixed;
+      left: 48vw;
+      bottom: 20px;
     }
 
     .wrapper {
@@ -181,13 +205,13 @@ function stopRecord() {
         left: 0;
         height: 100vh;
         width: 100vw;
-        text-align: center;
+        z-index: 1100;
     }
 
-    .toolbar {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
+    @media (min-width: 800px) {
+      video {
+        height: 93vh;
+        object-fit: contain;
+      }
     }
 </style>

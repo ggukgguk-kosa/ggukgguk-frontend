@@ -9,7 +9,7 @@ const query = ref('');
 const resultList = ref([]);
 const coord = ref(null);
 
-const emit = defineEmits(['captured']);
+const emit = defineEmits(['captured', 'abort']);
 
 function initMap() {
   // eslint-disable-next-line
@@ -108,12 +108,13 @@ function selectCoord() {
           <div class="map-toolbar">
             <div class="map-toolbar-left">
               <input type="text" class="map-search" placeholder=" 키워드 입력 후 엔터" v-model="query" @keyup.enter="searchLocal">
-              <v-btn prepend-icon="mdi-vuetify" @click="selectCoord">
-                선택 완료
+              <v-btn prepend-icon="mdi-check" @click="selectCoord">
+                선택
               </v-btn>
             </div>
             <div class="map-toolbar-right">
               <v-btn icon="mdi-crosshairs-gps" @click="selectCurrentLocation"></v-btn>
+              <v-btn icon="mdi-window-close" @click="() => {emit('abort')}"></v-btn>
             </div>
           </div>
           <div class="result mt-4" v-if="resultList.length > 0">
@@ -183,5 +184,6 @@ function selectCoord() {
         text-align: center;
         display: flex;
         align-items: center;
+        z-index: 1100;
     }
 </style>

@@ -21,15 +21,25 @@ export default {
     duplicateId(memberId) {
         console.log(memberId);
         return axios.get(`/auth/exist/${memberId}`,
-        {
-            memberId
-        });
+            {
+                memberId
+            });
     },
-    // 구글로그인 인가코드 전달
-    handleGoogleAuth(code){
-        console.log(code);
-        return axios.post(`/auth/social/google`, null, {
-            params: { code },
+    // 카카오 로그인 권한 토큰 전달.
+    directKakaoAuth(AccessToken) {
+        console.log("axios: " + AccessToken);
+        return axios.get(`/auth/social/kakao`, {
+            params: { AccessToken },
+        });
+    }
+    ,   // 구글로그인 인가코드 전달
+    directGoogleUrl(token) {
+        console.log(token);
+        return axios.get(`/auth/social/google`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            params: { token },
         });
     }
 }
