@@ -1,3 +1,8 @@
+/*
+Original Author: Matt Diamond
+Original Repo: https://github.com/mattdiamond/Recorderjs
+*/
+
 import InlineWorker from 'inline-worker';
 
 export class Recorder {
