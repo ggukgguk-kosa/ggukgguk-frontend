@@ -12,6 +12,9 @@ import RecordAddView from '../views/record/RecordAddView.vue';
 import ColorView from '../views/record/ColorView.vue';
 import MemberView from '../views/member/MemberView.vue';
 import RegiseterView from '../views/auth/RegisterView.vue';
+import CheckView from '../views/auth/CheckView.vue';
+import KaKaoRedirect from '../components/auth/KakaoRedirect.vue';
+import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 
 const routes = [
   {
@@ -82,7 +85,22 @@ const routes = [
     path: '/register',
     name: 'memberRegiseter',
     component : RegiseterView
-  }
+  },
+  {
+    path: '/check',
+    name: 'loginCheck',
+    component : CheckView
+  },
+  {
+    path: '/login/kakao-redirect',
+    name: 'KaKaoRedirect',
+    component: KaKaoRedirect,
+  },
+  {
+    path: "/login/redirect-google",
+    name: "RedirectGoogle",
+    component: RedirectGoogle,
+  },
 ]
 
 const router = createRouter({
