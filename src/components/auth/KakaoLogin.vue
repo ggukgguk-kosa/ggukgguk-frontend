@@ -1,4 +1,4 @@
-<!-- KakaoLogin.vue -->
+
 <template>
   <section class="test">
     <v-btn @click="loginWithKakao" block class="mt-2">Kakao</v-btn>
@@ -6,7 +6,7 @@
 </template>
 
 <script>
-export default {
+export default{
   name: "KakaoLogin",
   methods: {
     loginWithKakao() {

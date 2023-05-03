@@ -7,5 +7,5 @@ import GoogleLogin from '../../components/auth/GoogleLogin.vue';
 <template>
     <login-form />
     <google-login/>
-    <kakao-login />
+    <kakao-login/>
 </template>

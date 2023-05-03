@@ -15,6 +15,7 @@ import RegiseterView from '../views/auth/RegisterView.vue';
 import CheckView from '../views/auth/CheckView.vue';
 import KaKaoRedirect from '../components/auth/KakaoRedirect.vue';
 import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
+import MyFriendView from "../views/member/MyFriend.vue";
 
 const routes = [
   {
@@ -100,6 +101,12 @@ const routes = [
     path: "/login/redirect-google",
     name: "RedirectGoogle",
     component: RedirectGoogle,
+  },
+  {
+    path: '/friend',
+    name: 'MyFriend',
+    component: MyFriendView,
+    meta: { requiresAuth: true }
   },
 ]
 
