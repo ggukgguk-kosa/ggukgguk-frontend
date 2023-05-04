@@ -105,9 +105,6 @@ function goToCalendar(){
   ></v-progress-circular>
 </v-overlay>
 <v-app-bar class="text-center align-content-center w-full">
-  <v-btn icon @click="$router.go(-1)">
-    <v-icon>mdi-arrow-left</v-icon>
-  </v-btn>
  <v-dialog v-model="dialog" max-width="290" @click:outside="dialog = false">
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props">
