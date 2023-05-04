@@ -32,6 +32,9 @@ watch(currentPage, () => {
 
 function getNoticeList() {
     store.dispatch("admin/getNoticeList")
+    .then(() => {
+        console.log('성공');
+    })
     .catch((error) => {
         console.error('공지사항 리스트 조회 실패');
         console.error(error);

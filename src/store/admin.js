@@ -8,7 +8,7 @@ export default {
       size: 10
     },
     noticeList: [],
-    noticeTotal: 0
+    noticeTotal: 0,
   },
   getters: {
     noticeOption(state) {
@@ -19,7 +19,7 @@ export default {
     },
     noticeTotal(state) {
       return state.noticeTotal;
-    }
+    },
   },
   mutations: {
     setNoticePage(state, page) {
@@ -30,7 +30,7 @@ export default {
     },
     setNoticeTotal(state, noticeTotal) {
       state.noticeTotal = noticeTotal;
-    }
+    },
   },
   actions: {
     // eslint-disable-next-line
@@ -45,7 +45,7 @@ export default {
         commit('setNoticeList', response.data.data.list);
         commit('setNoticeTotal', response.data.data.total)
       })
-    }
+    },
   }
 };
 

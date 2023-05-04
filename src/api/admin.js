@@ -5,7 +5,7 @@ const axios = apiFactory.getInstance();
 
 export default {
     addNotice ({ noticeTitle, noticeContent }) {
-        return axios.post('/admin/notice', {
+        return axios.post('/admin/notice/list', {
             noticeTitle, noticeContent
         },
         {
@@ -15,14 +15,11 @@ export default {
         });
     },
     getNoticeList({ page, size }) {
-        return axios.get('/admin/notice',
+        return axios.get('/admin/notice/list',
         {
-            params: { page, size },
-            headers: {
-                Authorization: `Bearer ${store.getters['auth/accessToken']}`
-            }
+            params: { page, size }
         });
-    }
+    },
 }
 
 // 백엔드 API 호출을 수행하는 코드를 포함하는 위치 이 폴더는 API 호출을 추상화하고 모듈화하여 코드의 재사용성과 유지 보수성을 높이는 데 도움됨
