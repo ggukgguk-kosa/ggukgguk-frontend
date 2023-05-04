@@ -52,5 +52,15 @@ export default {
 
     postRecord(formData) {
         return axios.post('/record', formData);
+    },
+
+    addPush( ) {
+        return axios.post('/push',
+        {
+            headers: {
+                Authorization: `Bearer ${store.getters['auth/accessToken']}`
+            }
+        });
     }
+
 };

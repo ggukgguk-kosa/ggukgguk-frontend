@@ -76,10 +76,11 @@ export default {
     addReply( { commit }, { memberId, recordId, replyContent } ) {
       return record.addReply( memberId, recordId, replyContent )
       .then((response) => {
+        record.addPush();
         commit('updateReplyList', 
         { recordId : recordId,
           newReplyList : response.data.data 
-      });
+        });
       })
     },
     
