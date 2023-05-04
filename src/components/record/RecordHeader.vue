@@ -11,9 +11,19 @@ const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
-const dialog=ref(false);
+const isLoading = ref(false);
+
+const dialog = ref(false);
 
 const keyword = ref(null);
+
+const calAttrs = ref([
+  {
+    key: 'today',
+    highlight: true,
+    dates: new Date(),
+  },
+]);
 
 function setStartDateStr(){
   store.commit('record/setStartDateStr', null);
@@ -35,6 +45,11 @@ const route = useRoute();
 
 // 날짜 클릭하면 해당 날짜기준 조각 조회
 function handleDateClick({date}) {
+  if (date > new Date()) {
+    alert('미래는 조회할 수 없습니다.');
+    return;
+  }
+
   dialog.value = false;
   setKeyword(null);
   const clickedDate = new Date(date)
@@ -51,11 +66,16 @@ function formatDate(date) {
 }
 
 function getRecordList() {
+  isLoading.value = true;
+
   store.dispatch("record/getRecordList", memberId.value)
+  .then(() => {
+    isLoading.value = false;
+  })
   .catch((error) => {
         console.error('조각 리스트 조회 실패');
         console.error(error);
-  })
+  });
 }
 
 function goToRecord(){
@@ -73,6 +93,17 @@ function goToCalendar(){
 </script>
 
 <template>
+<v-overlay
+  v-model="isLoading"
+  scroll-strategy="block"
+  persistent
+>
+  <v-progress-circular
+    color="primary"
+    indeterminate
+    size="64"
+  ></v-progress-circular>
+</v-overlay>
 <v-app-bar class="text-center align-content-center w-full">
  <v-dialog v-model="dialog" max-width="290" @click:outside="dialog = false">
     <template v-slot:activator="{ props }">
@@ -82,6 +113,7 @@ function goToCalendar(){
     </template>
         <VCalendar 
           @dayclick="handleDateClick"
+          :attributes="calAttrs"
         />
   </v-dialog>
       <input
@@ -126,3 +158,11 @@ function goToCalendar(){
 </v-app-bar>
 
 </template>
+
+<style scoped>
+.v-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
