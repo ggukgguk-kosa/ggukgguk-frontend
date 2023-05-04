@@ -5,7 +5,7 @@ onMounted(() => {
     getMedia();
 })
 
-const emit = defineEmits(['captured']);
+const emit = defineEmits(['captured', 'abort']);
 
 const errorMsg = ref('');
 const videoEl = ref(null);
@@ -96,11 +96,19 @@ function takePicture() {
 
 <template>
     <div class="wrapper">
-        <video ref="videoEl" autoplay playsinline></video>
-        <div>{{ errorMsg }}</div>
-        <canvas :height="height" :width="width" ref="canvasEl" />
-        <v-btn @click="takePicture" icon="mdi-record-circle-outline"></v-btn>
-        <img :src="pictureDataUri" width="500">
+        <div class="close-btn">
+          <div class="pr-12 pt-8">
+            <v-btn icon @click="() => {emit('abort')}"><v-icon>mdi-window-close</v-icon></v-btn>
+          </div>
+        </div>
+        <div class="inner">
+          <video ref="videoEl" autoplay playsinline></video>
+          <div>{{ errorMsg }}</div>
+          <canvas :height="height" :width="width" ref="canvasEl" />
+          <div class="toolbar">
+            <v-btn @click="takePicture" icon="mdi-record-circle-outline"></v-btn>
+          </div>
+        </div>
     </div>
 </template>
 
@@ -111,8 +119,24 @@ function takePicture() {
 
     video {
         width: 100vw;
-        height: 90vh;
         object-fit: contain;
+    }
+
+    .inner {
+      text-align: center;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1200;
+    }
+
+    .toolbar {
+      position: fixed;
+      left: 48vw;
+      bottom: 20px;
     }
 
     .wrapper {
@@ -122,6 +146,13 @@ function takePicture() {
         left: 0;
         height: 100vh;
         width: 100vw;
-        text-align: center;
+        z-index: 1100;
+    }
+
+    @media (min-width: 800px) {
+      video {
+        height: 93vh;
+        object-fit: contain;
+      }
     }
 </style>
