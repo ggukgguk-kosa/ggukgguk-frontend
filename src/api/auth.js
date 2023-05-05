@@ -31,8 +31,8 @@ export default {
         return axios.get(`/auth/social/kakao`, {
             params: { AccessToken },
         });
-    }
-    ,   // 구글로그인 인가코드 전달
+    },
+    // 구글로그인 인가코드 전달
     directGoogleUrl(token) {
         console.log(token);
         return axios.get(`/auth/social/google`, {
@@ -41,5 +41,15 @@ export default {
             },
             params: { token },
         });
+    },
+
+    // 아이디 찾기 (이메일로)
+    findIdByEmail(memberEmail) {
+        console.log(memberEmail);
+        return axios.get(`/auth/${memberEmail}`,{
+            params: { memberEmail },
+
+    });
     }
+
 }

@@ -103,13 +103,23 @@ export default {
 
     // 구글 로그인 시작 (백엔드에서만 구현할 예정)
     // eslint-disable-next-line
-    handleGoogleAuth({},token) {
-      return auth.directGoogleUrl(token).then((response)=>{
+    handleGoogleAuth({ }, token) {
+      return auth.directGoogleUrl(token).then((response) => {
         console.log(response);
         // const memberInfo = response.data.data;
         // window.location.href = googleLoginUrl;
         return response
       })
     },
+    // 이메일로 아이디찾기
+    // eslint-disable-next-line
+    handleFindId({ }, email) {
+      return auth.findIdByEmail(email)
+      .then((response) => { 
+        console.log('리스폰스 받음');
+        console.log(response);
+        return response;
+      })
+    }
   }
 };

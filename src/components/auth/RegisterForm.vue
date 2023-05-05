@@ -22,8 +22,8 @@ const IdRules = [
   (value) => {
     return (
       (!!value || "아이디를 입력해주세요.") &&
-      ((value && value.length <= 16) || "16자 이내로 입력하세요.")&&
-      (!duplicated.value || "아이디가 중복되었습니다. 다시 작성해주세요")  
+      ((value && value.length <= 16) || "16자 이내로 입력하세요.") &&
+      (!duplicated.value || "아이디가 중복되었습니다. 다시 작성해주세요")
     );
   }
 ];
@@ -80,62 +80,45 @@ function checkDuplicateId() {
 }
 </script>
 <template>
-  <h1>회원 가입 창</h1>
-  <form>
-    <v-row>
-      <v-col cols="10">
-        <v-text-field
-          v-model="memberId"
-          :counter="16"
-          :rules="IdRules"
-          :success="!!memberId"
-          label="id"
-        ></v-text-field>
-        <!-- <v-container class="duplicate-indicator">
+  <v-card-title class="text-center">회원가입</v-card-title>
+  <v-sheet width="300" class="mx-auto">
+    <form>
+      <v-row>
+        <v-col cols="10">
+          <v-text-field v-model="memberId" :counter="16" :rules="IdRules" :success="!!memberId" label="id"></v-text-field>
+          <!-- <v-container class="duplicate-indicator">
           {{
             dupblicated
               ? `${memberId} ID is not available.` 
               : ""
           }}
         </v-container> -->
-      </v-col>
-      <v-col cols="2">
-        <v-btn class="check-duplicate" @click="checkDuplicateId">
-          중복확인
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-text-field
-      v-model="memberPw"
-      :counter="128"
-      label="비밀번호 입력"
-    ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-btn class="check-duplicate" @click="checkDuplicateId">
+            중복확인
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-text-field v-model="memberPw" :counter="128" label="비밀번호 입력"></v-text-field>
 
-    <v-text-field
-      v-model="memberName"
-      :counter="16"
-      label="이름"
-    ></v-text-field>
+      <v-text-field v-model="memberName" :counter="16" label="이름"></v-text-field>
 
-    <v-text-field v-model="memberNickname" label="닉네임"></v-text-field>
+      <v-text-field v-model="memberNickname" label="닉네임"></v-text-field>
 
-    <v-text-field
-      v-model="memberEmail"
-      label="이메일"
-      :rules="EmailRules"
-    ></v-text-field>
+      <v-text-field v-model="memberEmail" label="이메일" :rules="EmailRules"></v-text-field>
 
-    <v-text-field v-model="memberPhone" label="휴대번호 입력"></v-text-field>
+      <v-text-field v-model="memberPhone" label="휴대번호 입력"></v-text-field>
 
-    <v-text-field v-model="memberBirth" label="생년월일"></v-text-field>
+      <v-text-field v-model="memberBirth" label="생년월일"></v-text-field>
 
-    <v-checkbox value="1" label="이용약관" type="checkbox"></v-checkbox>
+      <v-checkbox value="1" label="이용약관" type="checkbox"></v-checkbox>
 
-    <v-checkbox value="1" label="개인정보처리" type="checkbox"></v-checkbox>
+      <v-checkbox value="1" label="개인정보처리" type="checkbox"></v-checkbox>
 
-    <v-btn class="me-4" @click="register">등록</v-btn>
-    <!-- <v-btn @click="handleReset"> 지우기 </v-btn> -->
-  </form>
+      <v-btn class="me-4" @click="register">등록</v-btn>
+      <!-- <v-btn @click="handleReset"> 지우기 </v-btn> -->
+    </form>
+  </v-sheet>
 </template>
-<style scoped>
-</style>
+<style scoped></style>
