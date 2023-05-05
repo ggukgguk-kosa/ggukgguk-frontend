@@ -91,11 +91,12 @@ export default {
       });
     },
     // 카카오 인가코드 전달.
-    handleKakaoAuth({ commit }, AccessToken, refreshToken) {
+    handleKakaoAuth({ commit }, AccessToken) {
       // console.log("테스트 :" + code);
       return auth.directKakaoAuth(AccessToken).then((response) => {
-        const memberInfo = response.data.data;
-        commit("setMemberInfo", { memberInfo, refreshToken, AccessToken });
+        console.log('리스폰스 받음');
+        console.log(response);
+        commit('setMemberInfo', response.data.data);
         return response;
       });
     },

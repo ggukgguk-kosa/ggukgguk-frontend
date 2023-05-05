@@ -1,9 +1,11 @@
 <script setup>
 import { ref,onMounted } from "vue";
 import { useStore } from "vuex";
+import { useRouter} from "vue-router";
 import axios from "axios";
 
 const store = useStore();
+const router = useRouter();
 
 async function getKakaoToken(code) {
   console.log("loginWithKakao");
@@ -33,7 +35,7 @@ async function getKakaoToken(code) {
 }
 
 const AccessToken = ref("");
-const refreshToken = ref("");
+// const refreshToken = ref("");
 onMounted(async () => {
   const queryParams = new URLSearchParams(window.location.search);
   const code = queryParams.get("code");
@@ -43,11 +45,13 @@ onMounted(async () => {
       const tokenResult = await getKakaoToken(code);
       console.log("Kakao Token", tokenResult);
       AccessToken.value = tokenResult.data.access_token;
-      refreshToken.value = tokenResult.data.refresh_token;
-      store.dispatch("auth/handleKakaoAuth",AccessToken.value,refreshToken.value)
+      // refreshToken.value = tokenResult.data.refresh_token;
+      store.dispatch("auth/handleKakaoAuth",AccessToken.value)
+      // store.dispatch("auth/handleKakaoAuth",AccessToken.value,refreshToken.value)
       .then((response) =>{
         console.log("카카오 로그인 성공");
         console.log(response);
+        router.push({ name: "recordMain" });
       });
     } catch (error) {
       console.error("Failed to get Kakao token", error);
@@ -56,7 +60,6 @@ onMounted(async () => {
 });
 
 </script>
-
 <template>
-<h1>테스트 중입니다.</h1>
+<h1>메인 페이지로 이동</h1>
 </template>
