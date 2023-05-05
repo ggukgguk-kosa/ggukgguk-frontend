@@ -51,10 +51,21 @@ async function login() {
       console.error(error);
     });
 }
+async function loginWithKakao() {
+      const params = {
+        redirectUri: "https://localhost:9090/login/kakao-redirect",
+      };
+      window.Kakao.Auth.authorize(params);
+    }
 
 onMounted(() => {
   store.commit("auth/updateAccessToken", { accessToken: "" });
 });
+
+async function findId(){
+  router.push({ name: "findMemberId" });
+
+}
 
 </script>
 <template>
@@ -74,7 +85,18 @@ onMounted(() => {
         label="비밀번호"
       ></v-text-field>
       <v-btn type="submit" @click="login" block class="mt-2">로그인</v-btn>
+      <v-btn @click="loginWithKakao" block class="mt-2">Kakao</v-btn>
       <hr />
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-btn @click="findId">아이디 찾기</v-btn>
+          </v-col>
+          <v-col>
+            <v-btn @click="searchPassword">비빌번호 찾기</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-form>
   </v-sheet>
 </template>

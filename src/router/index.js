@@ -16,6 +16,8 @@ import CheckView from '../views/auth/CheckView.vue';
 import KaKaoRedirect from '../components/auth/KakaoRedirect.vue';
 import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 import MyFriendView from "../views/member/MyFriend.vue";
+import FriendAddDelete from "../views/member/FriendAddView.vue";
+import FindbyIdView from '../views/auth/FindbyIdView.vue';
 
 const routes = [
   {
@@ -107,6 +109,17 @@ const routes = [
     name: 'MyFriend',
     component: MyFriendView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/friend/new',
+    name: 'friendAdd',
+    component: FriendAddDelete,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/auth/findId',
+    name: 'findMemberId',
+    component: FindbyIdView
   },
 ]
 
