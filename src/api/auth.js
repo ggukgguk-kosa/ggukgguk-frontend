@@ -46,10 +46,21 @@ export default {
     // 아이디 찾기 (이메일로)
     findIdByEmail(memberEmail) {
         console.log(memberEmail);
-        return axios.get(`/auth/${memberEmail}`,{
+        return axios.get(`/auth/${memberEmail}`, {
             params: { memberEmail },
 
-    });
-    }
+        });
+    },
+
+    // 비밀번호 찾기
+    findPwByIdEmail({memberEmail, memberId}) {
+        console.log(memberEmail );
+        console.log(memberId);
+        return axios.get(`/auth`, {
+            params: { memberEmail, memberId },
+
+        });
+    },
+
 
 }
