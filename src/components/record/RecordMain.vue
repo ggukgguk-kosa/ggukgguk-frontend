@@ -57,11 +57,17 @@ function clickFriend(friendId) {
     getRecordList();
 }
 
-function formatDate(date) {
+function formatDate(date, isCardHeader) {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+
+  if (isCardHeader)
+    return `${month < 10 ? '0' + month : month}월 ${day < 10 ? '0' + day : day}일 ${hour}시 ${minute}분`;
+  else
+    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
 }
 
 const recordList = computed(() => {
@@ -392,68 +398,89 @@ onMounted(() => {
         :id="record.recordId"
         cols="12"
         xs="12"
+        style="display: flex; flex-direction: column; align-items: center;"
       >
           <date-separation
             v-if="recordCreatedAtByDayMap[formatDate(new Date(record.recordCreatedAt))][0].recordId === record.recordId"
+            style="width: 100%;"
+            class="my-8"
             :date="formatDate(new Date(record.recordCreatedAt))"
             :color="record.mainColor" />
-          <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px' }">
-          <v-card-text>{{ record.recordCreatedAt }}</v-card-text>
-          <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
-          <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
-          <v-card-text v-if="friendId && record.memberId !== friendId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
-          <v-card-text v-if="friendId && record.recordShareTo && record.memberId === friendId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
-          <v-card v-if="record.mediaTypeId || record.recordLocationX !==0" class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px', display: 'flex', justifyContent: 'center' }">
-            <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
-            <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
-            <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
-            <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media map-container"></record-map>
-          </v-card>
-            <v-card-text style="display: flex; justify-content: center;">{{ record.recordComment }}</v-card-text>
-          <v-divider></v-divider>
-          <v-list dense>
-            <div>댓글</div>
-            <v-list-item v-for="reply in record.replyList" :key="reply.replyId">
-              <v-list-item-title v-if="reply.replyId !== 0">
-              <div class="mb-2">
-                <v-row>
-                  <v-col cols="10">
-                    <span class="font-weight-bold">{{ reply.memberNickname }}</span>
-                    <span>{{ reply.replyContent }}</span>
-                  </v-col>
-                  <v-col cols="2" v-if="reply.memberId === memberId" class="d-flex justify-end">
-                    <span @click="openEditReplyForm(reply)">수정</span>
-                    <span @click="openDeleteReplyDialog(reply)">삭제</span>
-                  </v-col>
-                </v-row>
-                <v-form v-if="editReplyForm && reply.replyId === editReplyId">
-                  <v-row>
-                    <v-col cols="10">
-                      <v-text-field v-model="editReplyContent" required></v-text-field>
-                    </v-col>
-                    <v-col cols="2">
-                      <v-btn
-                      :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
-                      class= "button"
-                      @click="editReply(reply)">수정</v-btn>
-                      <v-btn 
-                      :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
-                      class= "button"
-                      @click="cancelEditReply">취소</v-btn>
-                    </v-col>
-                  </v-row>
-                </v-form>
-              </div>
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-          <v-form class="d-flex align-center">
-            <v-text-field :value="newReplyContent[record.recordId]" @input="newReplyContent[record.recordId] = $event.target.value" required></v-text-field>
-            <v-btn 
-            :style="{ border: '2px solid ' + record.mainColor, color: 'black', backgroundColor: record.mainColor }"
-            class= "button"
-            @click="addReply(record.recordId); newReplyContent[record.recordId] = ''" :disabled="newReplyContent === ''">등록</v-btn>
-          </v-form>
+
+          <!-- 조각 카드 -->
+          <v-card class="card" :style="{ borderColor: record.mainColor }" variant="outlined">
+
+            <!-- 헤더 영역 -->
+            <v-card-text>{{ formatDate(new Date(record.recordCreatedAt), true) }}</v-card-text>
+            <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
+            <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
+            <v-card-text v-if="friendId && record.memberId !== friendId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
+            <v-card-text v-if="friendId && record.recordShareTo && record.memberId === friendId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
+
+            <!-- 본문 영역 -->
+            <v-card-text class="mb-8 record-comment" style="white-space: pre-wrap">
+              {{ record.recordComment }}
+            </v-card-text>
+
+            <!-- 미디어 영역 -->
+            <div v-if="record.mediaTypeId || record.recordLocationX !==0" class="media-wrapper">
+              <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media map-container"></record-map>
+              <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
+              <v-img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media" />
+              <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+            </div>
+
+            <v-divider></v-divider>
+
+            <!-- 댓글 영역 -->
+            <!-- 댓글이 없을 때에도 replyId가 0인 값이 반환되는 버그가 있어, -->
+            <!-- 우선 리스트 마지막 값의 replyId가 0이면 보이지 않도록 해놓음  -->
+            <div class="ma-2">댓글</div>
+            <v-list dense v-if="record?.replyList[record.replyList.length-1]?.replyId !== 0">
+              <v-list-item v-for="reply in record.replyList" :key="reply.replyId">
+                <v-list-item-title v-if="reply.replyId !== 0">
+                  <div class="mb-2">
+                    <div>
+                      <div style="display: flex; justify-content: space-between;">
+                        <div class="font-weight-bold mr-2">{{ reply.memberNickname }}</div>
+                        <div>
+                          <span @click="openEditReplyForm(reply)" class="mr-1">수정 |</span>
+                          <span @click="openDeleteReplyDialog(reply)">삭제</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div style="white-space: normal">{{ reply.replyContent }}</div>
+                      </div>
+                    </div>
+                    <v-form v-if="editReplyForm && reply.replyId === editReplyId">
+                      <v-row>
+                        <v-col cols="10">
+                          <v-text-field v-model="editReplyContent" required></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn
+                          :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
+                          class= "button"
+                          @click="editReply(reply)">수정</v-btn>
+                          <v-btn 
+                          :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
+                          class= "button"
+                          @click="cancelEditReply">취소</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-form>
+                  </div>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+
+            <v-form class="d-flex align-center">
+              <v-text-field class="ml-1" :value="newReplyContent[record.recordId]" @input="newReplyContent[record.recordId] = $event.target.value" required></v-text-field>
+              <v-btn 
+              :style="{ border: '1px solid ' + record.mainColor, color: 'black', backgroundColor: record.mainColor }"
+              class= "button"
+              @click="addReply(record.recordId); newReplyContent[record.recordId] = ''" :disabled="newReplyContent === ''">등록</v-btn>
+            </v-form>
         </v-card>
       </v-col>
     </v-row>
@@ -479,26 +506,54 @@ onMounted(() => {
 }
 
 .card {
-  margin: 20px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.media-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: auto;
 }
 
 .media {
-  margin: 20px;
+  margin: 2px;
+  width: 100%;
 }
 
 .button {
-  margin: 8px;
+  margin: 6px;
 }
 
 .map-container {
-  height: 400px;
-  width: 400px;
+  height: 150px;
+  width: 100%;
+}
+
+.record-comment {
+  font-size: 100%;
+  line-height: 170%;
 }
 
 .v-overlay {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* 데스크탑 */
+@media (min-width: 1200px) {
+  .card {
+    width: 800px;
+  }
+
+  .record-comment {
+    font-size: 120%;
+    text-align: left;
+    line-height: 190%;
+  }
 }
 
 </style>
