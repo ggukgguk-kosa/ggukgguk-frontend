@@ -4,17 +4,6 @@ import store from '../store'
 const axios = apiFactory.getInstance();
 
 export default {
-    adminMain () {
-        return axios.get('/admin', {
-            
-        },
-        {
-            headers: {
-                Authorization: `Bearer ${store.getters['auth/accessToken']}`
-            }
-        });
-    },
-
     addNotice ({ noticeTitle, noticeContent }) {
         return axios.post('/admin/notice/list', {
             noticeTitle, noticeContent
@@ -25,7 +14,6 @@ export default {
             }
         });
     },
-    
     getNoticeList({ page, size }) {
         return axios.get('/admin/notice/list',
         {

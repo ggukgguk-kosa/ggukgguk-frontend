@@ -46,6 +46,10 @@ function setPage(page) {
     if (page < 1 || page > totalPage.value) return;
     store.commit('admin/setContentPage', page);
 }
+
+function contentDetail(recordId){
+
+}
 </script>
 
 <template>
@@ -56,7 +60,9 @@ function setPage(page) {
         :text="`[${content.recordId}, ${content.memberId}, ${content.recordCreatedAt}, 
                  ${content.mediaFileBlocked}, ${content.mediaFileChecked}]` + content.contentContent"
         :key="content.recordId"
-    ></v-card>
+    >
+        <v-btn @click="contentDetail(content.recordId)">상세보기</v-btn>
+    </v-card>
     <v-btn @click="setPage(currentPage-1)">이전</v-btn>
     {{ currentPage }} / {{ totalPage }}
     <v-btn @click="setPage(currentPage+1)">다음</v-btn>

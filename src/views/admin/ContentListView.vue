@@ -4,7 +4,10 @@ import ContentListContainer from '@/components/admin/ContentListContainer.vue';
 
 
 <template>
-    컨테츠 목록
+    컨텐츠 목록
 
     <content-list-container />
 </template>
+<style>
+
+</style>

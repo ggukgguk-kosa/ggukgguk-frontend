@@ -32,6 +32,7 @@ export default {
       page: 1,
       size: 10
     },
+    contentDetail:[]
   },
   getters: {
 
@@ -59,6 +60,9 @@ export default {
     },
     contentTotal(state) {
       return state.contentTotal;
+    },
+    contentDetail(state) {
+      return state.contentDetail;
     },
   },
   mutations: {
@@ -90,7 +94,9 @@ export default {
     setContentTotal(state, contentTotal) {
       state.contentTotal = contentTotal;
     },
-
+    setContentDetail(state, contentDetail){
+      state.contentDetail = contentDetail;
+    }
   },
   actions: {
     setAdminMain(context, newAdminMain) {
@@ -132,8 +138,10 @@ export default {
         commit('setContentTotal', response.data.data.total)
       })
     },
-
-  }
+    contentDetail({}){
+      
+    },
+  }   
 };
 
 // Vue.js 애플리케이션에서 사용되는 상태 관리를 위한 Vuex Store를 포함하는 위치
