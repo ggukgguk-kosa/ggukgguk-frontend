@@ -32,9 +32,6 @@ function goToRecordNew() {
     router.push({ name: 'recordAdd' });
 }
 
-function goToSetting() {
-    router.push({ name: 'settingView' });
-}
 
 function goToNotify() {
     router.push({ name: 'notificationView' });
@@ -60,7 +57,7 @@ function goToNotify() {
             <v-icon>mdi-account</v-icon>
         </v-btn>
 
-        <v-btn value="setting" @click="goToSetting" >
+        <v-btn value="setting">
             <v-icon>mdi-cog</v-icon>
         </v-btn>
     </v-bottom-navigation>
