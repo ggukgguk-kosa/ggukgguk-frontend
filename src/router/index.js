@@ -122,27 +122,27 @@ const routes = [
     component: MyFriendView,
     meta: { requiresAuth: true }
   },
-  {
-    path: '/friend/new',
-    name: 'friendAdd',
-    component: FriendAddDelete,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/auth/findId',
-    name: 'findMemberId',
-    component: FindbyIdView
-  },
-  {
-    path: '/auth/findPw',
-    name: 'findMemberPw',
-    component: FindPwView
-  },
-  {
-    path: '/notify',
-    name: 'notificationView',
-    component: NotificationView
-  }
+  // {
+  //   path: '/friend/new',
+  //   name: 'friendAdd',
+  //   component: FriendAddDelete,
+  //   meta: { requiresAuth: true }
+  // },
+  // {
+  //   path: '/auth/findId',
+  //   name: 'findMemberId',
+  //   component: FindbyIdView
+  // },
+  // {
+  //   path: '/auth/findPw',
+  //   name: 'findMemberPw',
+  //   component: FindPwView
+  // },
+  // {
+  //   path: '/notify',
+  //   name: 'notificationView',
+  //   component: NotificationView
+  // }
 ]
 
 const router = createRouter({
