@@ -39,16 +39,20 @@ function goToRecordNew() {
             <v-icon>mdi-home</v-icon>
         </v-btn>
 
-        <v-btn value="setting">
-            <v-icon>mdi-cog</v-icon>
+        <v-btn value="noti">
+            <v-icon>mdi-bell</v-icon>
         </v-btn>
 
-        <v-btn value="record" size="large" class="record-btn" color="red" @click="goToRecordNew">
+        <v-btn value="record" class="record-btn" color="red" @click="goToRecordNew">
             <v-icon>mdi-circle</v-icon>
         </v-btn>
 
-        <v-btn value="noti">
-            <v-icon>mdi-bell</v-icon>
+        <v-btn value="member">
+            <v-icon>mdi-account</v-icon>
+        </v-btn>
+
+        <v-btn value="setting">
+            <v-icon>mdi-cog</v-icon>
         </v-btn>
     </v-bottom-navigation>
 </template>
@@ -57,5 +61,9 @@ function goToRecordNew() {
 .record-btn {
     font-size: xx-large !important;
     color: red;
+}
+
+.v-bottom-navigation .v-bottom-navigation__content > .v-btn {
+    min-width: 70px;
 }
 </style>

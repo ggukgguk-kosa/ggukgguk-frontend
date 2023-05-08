@@ -104,7 +104,7 @@ function goToCalendar(){
     size="64"
   ></v-progress-circular>
 </v-overlay>
-<v-app-bar class="text-center align-content-center w-full">
+<v-app-bar class="text-center align-content-center w-full" color="primary">
  <v-dialog v-model="dialog" max-width="290" @click:outside="dialog = false">
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props">
@@ -120,9 +120,9 @@ function goToCalendar(){
         v-model="keyword"
         class="v-input v-text-field__input v-text-field__input--enclosed v-text-field__input--placeholder v-text-field__input--solo w-full"
         type="text"
-        placeholder="Enter search keyword"
+        placeholder="검색"
         @keydown.enter="handleSearch"
-        style="max-width: none;"
+        style="max-width: none; color:#FFFFFF;"
       />
   <v-btn icon
   @click="handleSearch">
@@ -164,5 +164,9 @@ function goToCalendar(){
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+input::placeholder {
+  color: #FFFFFF;
 }
 </style>
