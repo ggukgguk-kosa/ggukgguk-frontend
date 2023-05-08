@@ -124,7 +124,7 @@ function setStartDateStr(startDateStr) {
 }
 
 let lastScrollPosition = 0;
-const scrollThreshold = 10;
+const scrollThreshold = 5;
 
 function handleScroll() {
   const scrollY = window.scrollY || document.documentElement.scrollTop;

@@ -120,7 +120,7 @@ function goToCalendar(){
         v-model="keyword"
         class="v-input v-text-field__input v-text-field__input--enclosed v-text-field__input--placeholder v-text-field__input--solo w-full"
         type="text"
-        placeholder="Enter search keyword"
+        placeholder="검색"
         @keydown.enter="handleSearch"
         style="max-width: none;"
       />
