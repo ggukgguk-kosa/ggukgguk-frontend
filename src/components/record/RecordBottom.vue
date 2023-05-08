@@ -31,6 +31,12 @@ function getRecordList() {
 function goToRecordNew() {
     router.push({ name: 'recordAdd' });
 }
+
+
+function goToNotify() {
+    router.push({ name: 'notificationView' });
+}
+
 </script>
 
 <template>
@@ -39,7 +45,7 @@ function goToRecordNew() {
             <v-icon>mdi-home</v-icon>
         </v-btn>
 
-        <v-btn value="noti">
+        <v-btn value="noti" @click="goToNotify">
             <v-icon>mdi-bell</v-icon>
         </v-btn>
 
