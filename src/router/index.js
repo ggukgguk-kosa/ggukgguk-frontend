@@ -83,7 +83,7 @@ const routes = [
   },
   {
     path: '/member',
-    name: 'MemberMain',
+    name: 'MemberInfo',
     component: MemberView,
     meta: { requiresAuth: true }
   },

@@ -41,6 +41,7 @@ function goTo(from) {
     }
     router.push({ name });
 }
+
 </script>
 
 <template>
