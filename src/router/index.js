@@ -16,6 +16,8 @@ import CheckView from '../views/auth/CheckView.vue';
 import KaKaoRedirect from '../components/auth/KakaoRedirect.vue';
 import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 import MyFriendView from "../views/member/MyFriend.vue";
+import AdminMain from "../views/admin/AdminMain.vue";
+import ContentListView from "../views/admin/ContentListView.vue"
 
 const routes = [
   {
@@ -29,9 +31,21 @@ const routes = [
     component: LoginView
   },
   {
+    path: '/admin',
+    name:'adminMain',
+    component: AdminMain,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin/notice',
     name: 'noticeList',
     component: NoticeListView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/content',
+    name: 'contentList',
+    component: ContentListView,
     meta: { requiresAuth: true }
   },
   {

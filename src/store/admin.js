@@ -1,5 +1,16 @@
 import { admin } from '../api';
 
+// {
+// 	"status": "success",
+// 	"message": "admim page 조회 성공",
+// 	"data": {
+// 		"totalMember": 16,
+// 		"todayMember": 0,
+// 		"totalContent": 197,
+// 		"todayContent": 1
+// 	}
+// }
+
 export default {
   namespaced: true,
   state: {
@@ -7,10 +18,27 @@ export default {
       page: 1,
       size: 10
     },
+    adminMain:[],
     noticeList: [],
     noticeTotal: 0,
+    analysisData: {
+      totalMember: 0,
+      todayMember: 0,
+      totalContent: 0,
+      todayContent: 0
+    },
+    contentList:[],
+    contentOption: {
+      page: 1,
+      size: 10
+    },
   },
   getters: {
+
+    // 다른 컴포넌트에서 이 값을 호출할 때 사용
+    getAdminMain(state){
+      return state.adminMain
+    },
     noticeOption(state) {
       return state.noticeOption
     },
@@ -20,8 +48,27 @@ export default {
     noticeTotal(state) {
       return state.noticeTotal;
     },
+    analysisData(state) {
+      return state.analysisData;
+    },
+    contentOption(state){
+      return state.contentOption
+    },
+    contentList(state) {
+      return state.contentList
+    },
+    contentTotal(state) {
+      return state.contentTotal;
+    },
   },
   mutations: {
+
+    // actions가 호출
+    // actions로부터 데이터를 받음
+
+    setAdminMain(state, newAdminMain){
+      state.adminMain = newAdminMain
+    },
     setNoticePage(state, page) {
       state.noticeOption.page = page;
     },
@@ -31,8 +78,32 @@ export default {
     setNoticeTotal(state, noticeTotal) {
       state.noticeTotal = noticeTotal;
     },
+    setAnalysisData(state, analysisData) {
+      state.analysisData = analysisData;
+    },
+    setContentPage(state, page) {
+      state.contentOption.page = page;
+    },
+    setContentList(state, contentList) {
+      state.contentList = contentList;
+    },
+    setContentTotal(state, contentTotal) {
+      state.contentTotal = contentTotal;
+    },
+
   },
   actions: {
+    setAdminMain(context, newAdminMain) {
+      context.commit("setAdminMain", newAdminMain);
+    },
+    getAdminMain(){
+      return admin.adminMain()
+      .then((response) => {
+        console.log(response)
+        //commit('setAdminMain', response.data.data.)
+      })
+    },
+
     // eslint-disable-next-line
     uploadNotice({ commit }, { noticeTitle, noticeContent }) {
       return admin.addNotice({ noticeTitle, noticeContent });
@@ -46,6 +117,22 @@ export default {
         commit('setNoticeTotal', response.data.data.total)
       })
     },
+    getAnalysisData({ commit }) {
+      return admin.getAnalysisData()
+      .then((response) => {
+        commit('setAnalysisData', response.data.data)
+      })
+    },
+    getContentList({ commit, state }) {
+      const { page, size } = state.contentOption;
+
+      return admin.getContentList({ page, size })
+      .then((response) => {
+        commit('setContentList', response.data.data.list);
+        commit('setContentTotal', response.data.data.total)
+      })
+    },
+
   }
 };
 
