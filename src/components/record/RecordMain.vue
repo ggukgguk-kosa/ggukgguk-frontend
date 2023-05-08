@@ -141,6 +141,7 @@ function handleScroll() {
     startDate.value = earliestRecordCreatedAt.value;
     startDate.value.setDate(startDate.value.getDate() - 1); // startDate를 5일 전으로 수정
     const startDateStr = formatDate(startDate.value);
+    console.log('맨 위', startDateStr);
     setStartDateStr(startDateStr);
     getRecordsDown();
   }
@@ -156,6 +157,7 @@ function handleScroll() {
     startDate.value.setDate(startDate.value.getDate() + 5); // startDate를 5일 후로 수정
     console.log(startDate.value);
     const startDateStr = formatDate(startDate.value);
+    console.log('맨 아래', startDateStr);
     setStartDateStr(startDateStr);
     console.log(startDateStr);
     topElId.value = recordList.value[0]?.recordId;

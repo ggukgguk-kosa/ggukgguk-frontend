@@ -20,6 +20,8 @@ import FriendAddDelete from "../views/member/FriendAddView.vue";
 import FindbyIdView from '../views/auth/FindbyIdView.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
+import SettingMainView from '../views/setting/SettingMainView.vue';
+
 const routes = [
   {
     path: '/',
@@ -131,6 +133,11 @@ const routes = [
     path: '/notify',
     name: 'notificationView',
     component: NotificationView
+  },
+  {
+    path: '/setting',
+    name: 'settingMain',
+    component: SettingMainView
   }
 ]
 
