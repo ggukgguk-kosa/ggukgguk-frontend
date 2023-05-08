@@ -18,6 +18,11 @@ import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 import MyFriendView from "../views/member/MyFriend.vue";
 import AdminMain from "../views/admin/AdminMain.vue";
 import ContentListView from "../views/admin/ContentListView.vue"
+import FriendAddDelete from "../views/member/FriendAddView.vue";
+import FindbyIdView from '../views/auth/FindbyIdView.vue';
+import FindPwView from '../views/auth/FindPwView.vue';
+import NotificationView from '../views/notification/NotificationView.vue'
+import SettingMainView from '../views/setting/SettingMainView.vue';
 
 const routes = [
   {
@@ -143,6 +148,11 @@ const routes = [
     name: 'notificationView',
     component: NotificationView
   },
+  {
+    path: '/setting',
+    name: 'settingMain',
+    component: SettingMainView
+  }
 ]
 
 const router = createRouter({

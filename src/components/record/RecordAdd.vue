@@ -48,6 +48,8 @@
     const friendsSearchResultList = ref([]);
     const friendSearchVisible = ref(false);
 
+    const recordIsOpen = ref(true);
+
     watch(friendListRaw, () => {
         friendsSearchResultList.value = friendWholeList.value;
     });
@@ -180,6 +182,7 @@
         const formData = new FormData();
         formData.append('recordComment', recordComment.value);
         formData.append('memberId', memberId.value);
+        formData.append('recordIsOpen', recordIsOpen.value);
 
         if (friendSearch.value !== '') {
             formData.append('recordShareTo', friendSearch.value);
@@ -282,6 +285,17 @@
                 <video v-if="recordVideoUrl !== ''" :src="recordVideoUrl" class="media-preview" autoplay playsinline controls />
                 <audio :src="recordAudioUrl" controls v-if="recordAudioUrl != ''"></audio>
             </div>
+
+            <v-row>
+                <v-col>
+                    <v-switch
+                        v-model="recordIsOpen"
+                        :label="recordIsOpen ? '공개' : '비공개'"
+                        color="primary"
+                        hide-details
+                    ></v-switch>
+                </v-col>
+            </v-row>
 
             <div>
                 <v-textarea
