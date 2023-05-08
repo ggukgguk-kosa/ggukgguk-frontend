@@ -81,7 +81,7 @@ const routes = [
   },
   {
     path: '/member',
-    name: 'MemberMain',
+    name: 'MemberInfo',
     component: MemberView,
     meta: { requiresAuth: true }
   },
@@ -131,7 +131,7 @@ const routes = [
     path: '/notify',
     name: 'notificationView',
     component: NotificationView
-  }
+  },
 ]
 
 const router = createRouter({
