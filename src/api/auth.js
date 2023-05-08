@@ -61,6 +61,18 @@ export default {
 
         });
     },
+    // 인증번호 요청
+    requestAuthenticationCode({sendTo}){
+        return axios.get(`/auth/mailCertification`,{
+            params: { sendTo }
+        });
+    },
 
+    // 인증번호 확인
+    findAuthenticationCode({certificationNumber, sendTo}){
+        return axios.get(`/auth/mailCertificationNumberCheck`,{
+            params: { certificationNumber, sendTo }
+        });
+    }
 
 }

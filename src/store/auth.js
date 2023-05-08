@@ -133,6 +133,15 @@ export default {
         })
     },
 
-
+    // 메일 인증번호 요청하기 
+    // eslint-disable-next-line
+    handleCertification({ }, {sendTo}) {
+      return auth.requestAuthenticationCode({sendTo})
+        .then((response) => {
+          console.log('storehandleCertification 처리');
+          console.log(response);
+          return response;
+        })
+    },
   }
 };
