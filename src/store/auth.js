@@ -115,11 +115,24 @@ export default {
     // eslint-disable-next-line
     handleFindId({ }, email) {
       return auth.findIdByEmail(email)
-      .then((response) => { 
-        console.log('리스폰스 받음');
-        console.log(response);
-        return response;
-      })
-    }
+        .then((response) => {
+          console.log('리스폰스 받음');
+          console.log(response);
+          return response;
+        })
+    },
+
+    // 아이디와 이메일로 비밀번호 찾기
+    // eslint-disable-next-line
+    handleFindPw({ }, {memberEmail,memberId}) {
+      return auth.findPwByIdEmail({memberEmail,memberId})
+        .then((response) => {
+          console.log('리스폰스 받음');
+          console.log(response);
+          return response;
+        })
+    },
+
+
   }
 };

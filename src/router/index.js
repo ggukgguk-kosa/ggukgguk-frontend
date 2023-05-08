@@ -18,7 +18,8 @@ import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 import MyFriendView from "../views/member/MyFriend.vue";
 import FriendAddDelete from "../views/member/FriendAddView.vue";
 import FindbyIdView from '../views/auth/FindbyIdView.vue';
-
+import FindPwView from '../views/auth/FindPwView.vue';
+import NotificationView from '../views/notification/NotificationView.vue'
 const routes = [
   {
     path: '/',
@@ -121,6 +122,16 @@ const routes = [
     name: 'findMemberId',
     component: FindbyIdView
   },
+  {
+    path: '/auth/findPw',
+    name: 'findMemberPw',
+    component: FindPwView
+  },
+  {
+    path: '/notify',
+    name: 'notificationView',
+    component: NotificationView
+  }
 ]
 
 const router = createRouter({
