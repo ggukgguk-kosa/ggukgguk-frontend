@@ -8,7 +8,9 @@ export default {
       keyword: null,
       friendId: null
     },
-    recordList: []
+    recordList: [],
+    record: [],
+    unacceptedRecordList: []
   },
   getters: {
     recordOption(state) {
@@ -16,6 +18,12 @@ export default {
     },
     recordList(state) {
       return state.recordList
+    },
+    record(state) {
+      return state.record
+    },
+    unacceptedRecordList(state) {
+      return state.unacceptedRecordList
     }
   },
   mutations: {
@@ -45,6 +53,12 @@ export default {
     updateReplyList(state, {recordId, newReplyList}) {
       const index = state.recordList.findIndex(record => record.recordId === recordId);
       state.recordList[index].replyList = newReplyList;
+    },
+    setRecord(state, record) {
+      state.record = record;
+    },
+    setUnacceptedRecordList(state, unacceptedRecordList) {
+      state.unacceptedRecordList = unacceptedRecordList;
     }
   },
   actions: {
@@ -113,6 +127,34 @@ export default {
     // eslint-disable-next-line
     addRecord({ }, formData) {
       return record.postRecord(formData);
+    },
+
+    // eslint-disable-next-line
+    updateRecord({ }, { recordId, recordComment } ) {
+      return record.updateRecord(recordId, recordComment);
+    },
+
+    // eslint-disable-next-line
+    deleteRecord({ }, recordId ) {
+      return record.deleteRecord(recordId);
+    },
+    
+    // eslint-disable-next-line
+    getUnacceptedRecordList({ commit, state }, memberId ) {
+      return record.getUnacceptedRecordList( memberId )
+      .then((response) => {
+        console.log(response.data.data);
+        commit('setUnacceptedRecordList', response.data.data);
+        return response.data.data;
+      })
+    },
+
+    // eslint-disable-next-line
+    updateUnaccepted({ }, recordId ) {
+      return record.updateUnaccepted( recordId )
+      .then((response) => {
+        console.log(response.data.data);
+      })
     }
   },
 };
