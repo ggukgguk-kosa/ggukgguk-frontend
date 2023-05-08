@@ -67,6 +67,12 @@ async function findId(){
 
 }
 
+async function findPassword(){
+  router.push({ name: "findMemberPw" });
+
+}
+
+
 </script>
 <template>
   <div class="img-wrap">
@@ -93,7 +99,7 @@ async function findId(){
             <v-btn @click="findId">아이디 찾기</v-btn>
           </v-col>
           <v-col>
-            <v-btn @click="searchPassword">비빌번호 찾기</v-btn>
+            <v-btn @click="findPassword">비빌번호 찾기</v-btn>
           </v-col>
         </v-row>
       </v-container>

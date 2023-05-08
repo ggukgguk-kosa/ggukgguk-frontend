@@ -7,13 +7,17 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 
+const MENUS = {
+    home: 'recordMain',
+    bell: 'notificationView',
+    record: 'recordAdd',
+    people: '',
+    cog: 'settingMain'
+};
+
 const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
-
-function goToRecord() {
-    route.name === "recordMain" ? getRecordList() : router.push('/record');
-}
 
 function setFriendId(friendId) {
     store.commit('record/setFriendId', friendId);
@@ -28,27 +32,38 @@ function getRecordList() {
   })
 }
 
-function goToRecordNew() {
-    router.push({ name: 'recordAdd' });
+function goTo(from) {
+    const name = MENUS[from];
+
+    if (name === 'recordMain' && route.name === 'recordMain') {
+        getRecordList();
+        return;
+    }
+    router.push({ name });
 }
+
 </script>
 
 <template>
     <v-bottom-navigation>
-        <v-btn value="home" @click="goToRecord">
+        <v-btn value="home" @click="goTo('home')">
             <v-icon>mdi-home</v-icon>
         </v-btn>
 
-        <v-btn value="setting">
-            <v-icon>mdi-cog</v-icon>
+        <v-btn value="bell" @click="goTo('bell')">
+            <v-icon>mdi-bell</v-icon>
         </v-btn>
 
-        <v-btn value="record" size="large" class="record-btn" color="red" @click="goToRecordNew">
+        <v-btn value="record" class="record-btn" color="red" @click="goTo('record')">
             <v-icon>mdi-circle</v-icon>
         </v-btn>
 
-        <v-btn value="noti">
-            <v-icon>mdi-bell</v-icon>
+        <v-btn value="people" @click="goTo('people')">
+            <v-icon>mdi-account-multiple</v-icon>
+        </v-btn>
+
+        <v-btn value="cog" @click="goTo('cog')">
+            <v-icon>mdi-cog</v-icon>
         </v-btn>
     </v-bottom-navigation>
 </template>
@@ -57,5 +72,9 @@ function goToRecordNew() {
 .record-btn {
     font-size: xx-large !important;
     color: red;
+}
+
+.v-bottom-navigation .v-bottom-navigation__content > .v-btn {
+    min-width: 70px;
 }
 </style>

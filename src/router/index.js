@@ -20,6 +20,10 @@ import MyFriendView from "../views/member/MyFriend.vue";
 import FriendAddDelete from "../views/member/FriendAddView.vue";
 import FindbyIdView from '../views/auth/FindbyIdView.vue';
 import RecordUnaccepted from '../views/record/RecordUnaccepted.vue';
+import FindPwView from '../views/auth/FindPwView.vue';
+import NotificationView from '../views/notification/NotificationView.vue'
+import SettingMainView from '../views/setting/SettingMainView.vue';
+
 
 const routes = [
   {
@@ -94,7 +98,7 @@ const routes = [
   },
   {
     path: '/member',
-    name: 'MemberMain',
+    name: 'MemberInfo',
     component: MemberView,
     meta: { requiresAuth: true }
   },
@@ -135,6 +139,21 @@ const routes = [
     name: 'findMemberId',
     component: FindbyIdView
   },
+  {
+    path: '/auth/findPw',
+    name: 'findMemberPw',
+    component: FindPwView
+  },
+  {
+    path: '/notify',
+    name: 'notificationView',
+    component: NotificationView
+  },
+  {
+    path: '/setting',
+    name: 'settingMain',
+    component: SettingMainView
+  }
 ]
 
 const router = createRouter({
