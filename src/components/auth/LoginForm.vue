@@ -59,7 +59,7 @@ async function loginWithKakao() {
     }
 
 onMounted(() => {
-  store.commit("auth/updateAccessToken", { accessToken: "" });
+  store.commit("auth/setMemberInfo", { memberInfo: {}, accessToken: "", refreshToken: "" });
 });
 
 async function findId(){
