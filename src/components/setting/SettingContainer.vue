@@ -2,6 +2,10 @@
 import { ref } from 'vue';
 const allowEmail = ref(false);
 
+// const MENUS = {
+//     logout: 'login'
+// }
+
 </script>
 
 <template>
