@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import WriteNewNoticeView from '../views/admin/WriteNewNoticeView.vue'
 import NoticeListView from '../views/admin/NoticeListView.vue';
+import AdminMember from '../views/admin/AdminMember.vue';
 import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
@@ -17,13 +18,14 @@ import CheckView from '../views/auth/CheckView.vue';
 import KaKaoRedirect from '../components/auth/KakaoRedirect.vue';
 import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 import MyFriendView from "../views/member/MyFriend.vue";
+import AdminMain from "../views/admin/AdminMain.vue";
+import ContentListView from "../views/admin/ContentListView.vue"
 import FriendAddDelete from "../views/member/FriendAddView.vue";
 import FindbyIdView from '../views/auth/FindbyIdView.vue';
 import RecordUnaccepted from '../views/record/RecordUnaccepted.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
-
 
 const routes = [
   {
@@ -37,9 +39,27 @@ const routes = [
     component: LoginView
   },
   {
+    path: '/admin',
+    name: 'adminMain',
+    component: AdminMain,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin/notice',
     name: 'noticeList',
     component: NoticeListView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/content',
+    name: 'contentList',
+    component: ContentListView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/member',
+    name: 'memberList',
+    component: AdminMember,
     meta: { requiresAuth: true }
   },
   {
@@ -105,12 +125,12 @@ const routes = [
   {
     path: '/register',
     name: 'memberRegiseter',
-    component : RegiseterView
+    component: RegiseterView
   },
   {
     path: '/check',
     name: 'loginCheck',
-    component : CheckView
+    component: CheckView
   },
   {
     path: '/login/kakao-redirect',
