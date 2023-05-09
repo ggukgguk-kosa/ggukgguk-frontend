@@ -52,5 +52,27 @@ export default {
 
     postRecord(formData) {
         return axios.post('/record', formData);
+    },
+
+    updateRecord(recordId, recordComment) {
+        return axios.put(`/record/${recordId}`, {
+            recordId,
+            recordComment
+        });
+    },
+
+    deleteRecord(recordId){
+        return axios.delete(`/record/${recordId}`);
+    },
+
+    getUnacceptedRecordList(memberId) {
+        return axios.get('/record/unaccepted',
+        {
+            params: { memberId }
+        });
+    },
+
+    updateUnaccepted(recordId) {
+        return axios.put(`/record/unaccepted/${recordId}`)
     }
 };

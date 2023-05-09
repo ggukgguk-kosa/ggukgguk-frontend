@@ -9,6 +9,7 @@ import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
 import CalendarView from '../views/record/CalendarView.vue';
 import RecordAddView from '../views/record/RecordAddView.vue';
+import RecordUpdateView from '../views/record/RecordUpdateView.vue'
 import ColorView from '../views/record/ColorView.vue';
 import MemberView from '../views/member/MemberView.vue';
 import RegiseterView from '../views/auth/RegisterView.vue';
@@ -18,9 +19,11 @@ import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 import MyFriendView from "../views/member/MyFriend.vue";
 import FriendAddDelete from "../views/member/FriendAddView.vue";
 import FindbyIdView from '../views/auth/FindbyIdView.vue';
+import RecordUnaccepted from '../views/record/RecordUnaccepted.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
+
 
 const routes = [
   {
@@ -61,6 +64,18 @@ const routes = [
     path: '/record/new',
     name: 'recordAdd',
     component: RecordAddView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/record/update',
+    name: 'recordUpdate',
+    component: RecordUpdateView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/record/unaccepted',
+    name: 'recordUnaccepted',
+    component: RecordUnaccepted,
     meta: { requiresAuth: true }
   },
   {

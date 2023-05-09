@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
-import { useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
@@ -52,22 +52,22 @@ async function login() {
     });
 }
 async function loginWithKakao() {
-      const params = {
-        redirectUri: "https://localhost:9090/login/kakao-redirect",
-      };
-      window.Kakao.Auth.authorize(params);
-    }
+  const params = {
+    redirectUri: "https://localhost:9090/login/kakao-redirect",
+  };
+  window.Kakao.Auth.authorize(params);
+}
 
 onMounted(() => {
   store.commit("auth/setMemberInfo", { memberInfo: {}, accessToken: "", refreshToken: "" });
 });
 
-async function findId(){
+async function findId() {
   router.push({ name: "findMemberId" });
 
 }
 
-async function findPassword(){
+async function findPassword() {
   router.push({ name: "findMemberPw" });
 
 }
@@ -80,16 +80,8 @@ async function findPassword(){
   </div>
   <v-sheet width="300" class="mx-auto">
     <v-form @submit.prevent ref="form">
-      <v-text-field
-        v-model="memberId"
-        :rules="idRules"
-        label="아이디"
-      ></v-text-field>
-      <v-text-field
-        v-model="memberPw"
-        :rules="pwRules"
-        label="비밀번호"
-      ></v-text-field>
+      <v-text-field v-model="memberId" :rules="idRules" label="아이디"></v-text-field>
+      <v-text-field type="password" v-model="memberPw" :rules="pwRules" label="비밀번호"></v-text-field>
       <v-btn type="submit" @click="login" block class="mt-2">로그인</v-btn>
       <v-btn @click="loginWithKakao" block class="mt-2">Kakao</v-btn>
       <hr />
