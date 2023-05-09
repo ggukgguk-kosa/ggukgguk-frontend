@@ -23,6 +23,7 @@ import RecordUnaccepted from '../views/record/RecordUnaccepted.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
+import AdminMainView from '../views/admin/AdminMainView.vue';
 
 
 const routes = [
@@ -147,12 +148,20 @@ const routes = [
   {
     path: '/notify',
     name: 'notificationView',
-    component: NotificationView
+    component: NotificationView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/setting',
     name: 'settingMain',
-    component: SettingMainView
+    component: SettingMainView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/adminTest',
+    name: 'AdminMainTest',
+    component: AdminMainView,
+    meta: { requiresAuth: true }
   }
 ]
 

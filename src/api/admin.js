@@ -22,5 +22,8 @@ export default {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
             }
         });
+    },
+    getDailyReportAll() {
+        return axios.get('/admin/report/daily');
     }
 }

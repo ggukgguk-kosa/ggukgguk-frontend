@@ -8,7 +8,8 @@ export default {
       size: 10
     },
     noticeList: [],
-    noticeTotal: 0
+    noticeTotal: 0,
+    dailyReport: {}
   },
   getters: {
     noticeOption(state) {
@@ -19,6 +20,9 @@ export default {
     },
     noticeTotal(state) {
       return state.noticeTotal;
+    },
+    dailyReport(state) {
+      return state.dailyReport;
     }
   },
   mutations: {
@@ -30,6 +34,9 @@ export default {
     },
     setNoticeTotal(state, noticeTotal) {
       state.noticeTotal = noticeTotal;
+    },
+    setDailyReportAll(state, dailyReport) {
+      state.dailyReport = dailyReport;
     }
   },
   actions: {
@@ -44,6 +51,12 @@ export default {
       .then((response) => {
         commit('setNoticeList', response.data.data.list);
         commit('setNoticeTotal', response.data.data.total)
+      })
+    },
+    getDailyReportAll({ commit }) {
+      return admin.getDailyReportAll()
+      .then((response) => {
+        commit('setDailyReportAll', response.data.data);
       })
     }
   }
