@@ -17,10 +17,12 @@
     })
 
     const recordComment = ref('');
+    const recordIsOpen = ref(true);
 
     onMounted(() => {
         console.log(record.value);
         recordComment.value = record.value.recordComment;
+        recordIsOpen.value = record.value.recordIsOpen;
     })
 
     const commentLength = computed(() => {
@@ -102,6 +104,17 @@
                 variant="outlined" />
                 <div class="comment-length">{{ commentLength }} / {{ MAX_COMMENT_LENGTH }}</div>
             </div>
+
+            <v-row>
+                <v-col>
+                    <v-switch
+                        v-model="recordIsOpen"
+                        :label="recordIsOpen ? '공개' : '비공개'"
+                        color="primary"
+                        hide-details
+                    ></v-switch>
+                </v-col>
+            </v-row>
 
             <div class="toolbar">
                 <v-btn icon="mdi-arrow-up-thin-circle-outline" color="primary" @click="updateRecord"></v-btn>

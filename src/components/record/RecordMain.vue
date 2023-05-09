@@ -436,8 +436,11 @@ onMounted(() => {
             :color="record.mainColor" />
           <!-- 조각 카드 -->
           <v-card class="card" :style="{ borderColor: record.mainColor }" variant="outlined">
-
+            <!-- 헤더 영역 -->
             <v-row>
+                <v-col cols="10">
+                  {{ formatDate(new Date(record.recordCreatedAt), true) }}
+                </v-col>
                 <v-col cols="2" class="d-flex justify-end">
                   <span
                   v-if="memberId === record.memberId && !record.recordShareTo"
@@ -447,9 +450,6 @@ onMounted(() => {
                   @click="openDeleteRemoveDialog(record.recordId)">삭제</span>
                 </v-col>
             </v-row>
-
-            <!-- 헤더 영역 -->
-            <v-card-text>{{ formatDate(new Date(record.recordCreatedAt), true) }}</v-card-text>
             <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
             <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
             <v-card-text v-if="friendId && record.memberId !== friendId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>

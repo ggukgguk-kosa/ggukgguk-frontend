@@ -286,17 +286,6 @@
                 <audio :src="recordAudioUrl" controls v-if="recordAudioUrl != ''"></audio>
             </div>
 
-            <v-row>
-                <v-col>
-                    <v-switch
-                        v-model="recordIsOpen"
-                        :label="recordIsOpen ? '공개' : '비공개'"
-                        color="primary"
-                        hide-details
-                    ></v-switch>
-                </v-col>
-            </v-row>
-
             <div>
                 <v-textarea
                 v-model="recordComment"
@@ -316,6 +305,17 @@
                     <v-list @click:select="handleSelectFriend" :items="friendsSearchResultList"></v-list>
                 </v-card>
             </div>
+            
+            <v-row>
+                <v-col>
+                    <v-switch
+                        v-model="recordIsOpen"
+                        :label="recordIsOpen ? '공개' : '비공개'"
+                        color="primary"
+                        hide-details
+                    ></v-switch>
+                </v-col>
+            </v-row>
 
             <div class="toolbar">
                 <v-btn icon="mdi-arrow-up-thin-circle-outline" color="primary" @click="uploadRecord"></v-btn>
