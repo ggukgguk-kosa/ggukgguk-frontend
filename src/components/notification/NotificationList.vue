@@ -25,6 +25,7 @@ function notifyListHandler() {
 
 </script>
 <template>
+  <h1>알림 목록</h1>
   <div>
     <v-card v-for="notify in notifyList" :key="notify.notificationId" :id="notify.notificationId" cols="12" xs="12"
     class="mx-auto mb-3" max-width="450">
