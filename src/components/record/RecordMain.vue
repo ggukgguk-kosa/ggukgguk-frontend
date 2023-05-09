@@ -257,6 +257,37 @@ watch(selectedMonth, async () => {
     router.push('/calendar');
 })
 
+// 레코드 수정
+
+function setRecord(record) {
+    store.commit('record/setRecord', record);
+}
+
+function goToRecordUpdate(record) {
+    setRecord(record);
+    router.push('/record/update');
+}
+
+// 레코드 삭제
+function openDeleteRemoveDialog(recordId) {
+
+    if (confirm("삭제하시겠습니까?")) {
+      deleteRecord(recordId);
+    }
+}
+
+
+function deleteRecord(recordId) {
+    console.log("삭제 실행");
+    store.dispatch('record/deleteRecord', recordId)
+    .then(() => {
+    console.log("삭제 성공");
+    getRecordList();
+    })
+    .catch((error) =>
+    console.log(error));
+}
+
 // 댓글
 
 // 댓글 추가
@@ -314,17 +345,12 @@ function openDeleteReplyDialog(reply) {
   
   deleteReplyId.value = reply.replyId;
 
-    if (!confirm("삭제 또는 취소를 선택해주세요.")) {
+    if (confirm("삭제하시겠습니까?")) {
       deleteReply(reply);
   } else {
       deleteReplyId.value = 0;
   }
 }
-
-// function closeDeleteReplyDialog() {
-//   deleteDialog.value = false;
-//   deleteReplyId.value = 0;
-// }
 
 function deleteReply(reply) {
   store.dispatch("record/deleteReply", {
@@ -408,12 +434,22 @@ onMounted(() => {
             class="my-8"
             :date="formatDate(new Date(record.recordCreatedAt))"
             :color="record.mainColor" />
-
           <!-- 조각 카드 -->
           <v-card class="card" :style="{ borderColor: record.mainColor }" variant="outlined">
-
             <!-- 헤더 영역 -->
-            <v-card-text>{{ formatDate(new Date(record.recordCreatedAt), true) }}</v-card-text>
+            <v-row>
+                <v-col cols="10">
+                  {{ formatDate(new Date(record.recordCreatedAt), true) }}
+                </v-col>
+                <v-col cols="2" class="d-flex justify-end">
+                  <span
+                  v-if="memberId === record.memberId && !record.recordShareTo"
+                  @click="goToRecordUpdate(record)">수정</span>
+                  <span
+                  v-if="!friendId"
+                  @click="openDeleteRemoveDialog(record.recordId)">삭제</span>
+                </v-col>
+            </v-row>
             <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
             <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
             <v-card-text v-if="friendId && record.memberId !== friendId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>

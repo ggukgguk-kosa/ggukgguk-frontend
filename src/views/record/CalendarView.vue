@@ -7,6 +7,10 @@ import RecordBottom from '../../components/record/RecordBottom.vue';
 
 <template>
     <record-header />
-    <calendar-main />
+    <v-main>
+        <v-container>
+            <calendar-main />
+        </v-container>
+    </v-main>
     <record-bottom />
 </template>
