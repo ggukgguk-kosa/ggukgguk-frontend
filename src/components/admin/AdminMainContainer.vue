@@ -29,6 +29,8 @@ function requestAnalysisData(){
     })
 }
 </script>
+
+
 <template>
     <v-overlay
         v-model="isLoading"
@@ -42,7 +44,6 @@ function requestAnalysisData(){
         ></v-progress-circular>
     </v-overlay>
 
-    <h1>TEST</h1>
     {{ analysisData }}
     <div>{{ analysisData.totalMember }}</div>
     <div>{{ analysisData.todayMember }}</div>

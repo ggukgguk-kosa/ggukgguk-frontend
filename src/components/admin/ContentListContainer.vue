@@ -46,10 +46,6 @@ function setPage(page) {
     if (page < 1 || page > totalPage.value) return;
     store.commit('admin/setContentPage', page);
 }
-
-function contentDetail(recordId){
-
-}
 </script>
 
 <template>

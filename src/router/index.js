@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import WriteNewNoticeView from '../views/admin/WriteNewNoticeView.vue'
 import NoticeListView from '../views/admin/NoticeListView.vue';
+import AdminMember from '../views/admin/AdminMember.vue';
 import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
@@ -23,7 +24,6 @@ import FindbyIdView from '../views/auth/FindbyIdView.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
-
 const routes = [
   {
     path: '/',
@@ -37,7 +37,7 @@ const routes = [
   },
   {
     path: '/admin',
-    name:'adminMain',
+    name: 'adminMain',
     component: AdminMain,
     meta: { requiresAuth: true }
   },
@@ -51,6 +51,12 @@ const routes = [
     path: '/admin/content',
     name: 'contentList',
     component: ContentListView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/member',
+    name: 'memberList',
+    component: AdminMember,
     meta: { requiresAuth: true }
   },
   {
@@ -104,12 +110,12 @@ const routes = [
   {
     path: '/register',
     name: 'memberRegiseter',
-    component : RegiseterView
+    component: RegiseterView
   },
   {
     path: '/check',
     name: 'loginCheck',
-    component : CheckView
+    component: CheckView
   },
   {
     path: '/login/kakao-redirect',
