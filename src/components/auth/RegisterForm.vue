@@ -19,7 +19,7 @@ const memberAuthority = "NORMAL";
 const duplicated = ref(false); // 아이디 중복값 확인
 const appearCertification = ref(false);  // 인증 번호 창 출력 
 const certificationNumber = ref(""); // 인증번호 조회
-
+const memberAllowEmail = ref(false); // 메일 인증 여부
 
 // 각 요소별로 입력 조건 명시
 const IdRules = [
@@ -88,7 +88,7 @@ function methodToExecuteWhenTemplateAppears() {
   store.dispatch('auth/handleCertification', {
     sendTo: memberEmail.value
   }).then((response) => {
-    appearCertification.value = true;
+    appearCertification.value = true; 
     alert("해당 메일에 인증 코드를 전송하였습니다.")
     console.log("인증번호 전달 완료")
     console.log(response);
@@ -106,6 +106,7 @@ function cetificationCheck() {
   }).then((response) => {
     console.log("인증번호 일치")
     console.log(response);
+    memberAllowEmail.value = true; // 메일 인증 성공.
     alert('인증번호가 일치하여 계속해서 회원 가입을 진행해 주세요.');
     return response;
   }).catch(() => {

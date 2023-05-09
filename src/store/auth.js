@@ -146,5 +146,18 @@ export default {
           return response;
         })
     },
+
+     // 비밀번호 찾기시 메일 인증번호 요청하기 
+    // eslint-disable-next-line
+    handleCertificationPw({ }, {sendTo}) {
+      return auth.requestPwAuthenticationCode({sendTo})
+        .then((response) => {
+          console.log('storehandleCertification 처리');
+          console.log(response);
+          return response;
+        })
+    },
+
+
   }
 };
