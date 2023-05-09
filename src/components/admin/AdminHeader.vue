@@ -8,8 +8,11 @@ const router = useRouter();
 
 const MENUS = {
     logout: 'login',
-    modifyMemberInfo: 'MemberInfo',
-    initLocalStorage: 'initLocalStorage'
+    main: 'adminMain',
+    content: 'contentList',
+    member: 'memberList',
+    batch: 'batchStatus',
+    notice: 'noticeList'
 }
 
 const memberInfo = computed(() => {
@@ -38,11 +41,11 @@ function goTo(from) {
             <v-list-item style="text-align: center">
                 <h1 style="color: #0f2a0f">꾹꾹 서비스관리</h1>
             </v-list-item>
-            </v-list>
+        </v-list>
 
-            <v-divider></v-divider>
+        <v-divider></v-divider>
 
-            <v-list>
+        <v-list>
             <v-list-item
                 :title="`${memberInfo.memberName} 관리자님`"
                 :subtitle="memberRole"
@@ -51,16 +54,41 @@ function goTo(from) {
                     <v-btn variant="text" class="mt-2" @click="goTo('logout')">로그아웃</v-btn>
                 </v-list-action>
             </v-list-item>
-            </v-list>
+        </v-list>
 
-            <v-divider></v-divider>
+        <v-divider></v-divider>
 
-            <v-list density="compact" nav>
-            <v-list-item prepend-icon="mdi-google-analytics" title="메인 (통계)" value="myfiles"></v-list-item>
-            <v-list-item prepend-icon="mdi-account-multiple" title="컨텐츠 관리" value="shared"></v-list-item>
-            <v-list-item prepend-icon="mdi-account-group" title="회원 관리" value="회원 관리"></v-list-item>
-            <v-list-item prepend-icon="mdi-application-cog" title="배치작업 현황" value="배치작업 현황"></v-list-item>
-            <v-list-item prepend-icon="mdi-newspaper-variant-multiple" title="공지사항" value="공지사항"></v-list-item>
+        <v-list density="compact" nav>
+            <v-list-item
+                prepend-icon="mdi-google-analytics"
+                title="메인 (통계)"
+                value="main"
+                @click="goTo('main')"
+            ></v-list-item>
+            <v-list-item
+                prepend-icon="mdi-account-multiple"
+                title="컨텐츠 관리"
+                value="content"
+                @click="goTo('content')"
+            ></v-list-item>
+            <v-list-item
+                prepend-icon="mdi-account-group"
+                title="회원 관리"
+                value="member"
+                @click="goTo('member')"
+            ></v-list-item>
+            <v-list-item
+                prepend-icon="mdi-application-cog"
+                title="배치작업 현황"
+                value="batch"
+                @click="goTo('batch')"
+            ></v-list-item>
+            <v-list-item
+                prepend-icon="mdi-newspaper-variant-multiple"
+                title="공지사항"
+                value="notice"
+                @click="goTo('notice')"
+            ></v-list-item>
         </v-list>
     </v-navigation-drawer>
 </template>

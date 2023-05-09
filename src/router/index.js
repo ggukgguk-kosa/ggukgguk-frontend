@@ -26,7 +26,7 @@ import RecordUnaccepted from '../views/record/RecordUnaccepted.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
-import AdminMainView from '../views/admin/AdminMainView.vue';
+import AdminBatchView from '../views/admin/AdminBatchView.vue';
 
 const routes = [
   {
@@ -61,6 +61,12 @@ const routes = [
     path: '/admin/member',
     name: 'memberList',
     component: AdminMember,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/batch',
+    name: 'batchStatus',
+    component: AdminBatchView,
     meta: { requiresAuth: true }
   },
   {
@@ -175,12 +181,6 @@ const routes = [
     path: '/setting',
     name: 'settingMain',
     component: SettingMainView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/adminTest',
-    name: 'AdminMainTest',
-    component: AdminMainView,
     meta: { requiresAuth: true }
   }
 ]

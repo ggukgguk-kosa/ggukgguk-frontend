@@ -96,7 +96,6 @@ export default {
     },
     setDailyReportAll(state, dailyReport) {
       state.dailyReport = dailyReport;
-    }
     },
     setAnalysisData(state, analysisData) {
       state.analysisData = analysisData;
@@ -157,13 +156,6 @@ export default {
       .then((response) => {
         commit('setDailyReportAll', response.data.data);
       })
-    }
-  }
-};
-        .then((response) => {
-          commit('setNoticeList', response.data.data.list);
-          commit('setNoticeTotal', response.data.data.total)
-        })
     },
     getAnalysisData({ commit }) {
       return admin.getAnalysisData()
