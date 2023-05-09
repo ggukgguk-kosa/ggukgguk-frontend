@@ -37,6 +37,9 @@ export default {
             params: { page, size }
         });
     },
+    getDailyReportAll() {
+        return axios.get('/admin/report/daily');
+    }
 }
 
 // 백엔드 API 호출을 수행하는 코드를 포함하는 위치 이 폴더는 API 호출을 추상화하고 모듈화하여 코드의 재사용성과 유지 보수성을 높이는 데 도움됨

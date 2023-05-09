@@ -28,6 +28,7 @@ export default {
     contentDetail: [],
     memberList: [],
     memberDetail: [],
+    dailyReport: {}
   },
 
   getters: {
@@ -72,6 +73,9 @@ export default {
     memberDetail(state) {
       return state.memberDetail;
     },
+    dailyReport(state) {
+      return state.dailyReport;
+    }
   },
   mutations: {
 
@@ -89,6 +93,9 @@ export default {
     },
     setNoticeTotal(state, noticeTotal) {
       state.noticeTotal = noticeTotal;
+    },
+    setDailyReportAll(state, dailyReport) {
+      state.dailyReport = dailyReport;
     },
     setAnalysisData(state, analysisData) {
       state.analysisData = analysisData;
@@ -139,10 +146,16 @@ export default {
       const { page, size } = state.noticeOption;
 
       return admin.getNoticeList({ page, size })
-        .then((response) => {
-          commit('setNoticeList', response.data.data.list);
-          commit('setNoticeTotal', response.data.data.total)
-        })
+      .then((response) => {
+        commit('setNoticeList', response.data.data.list);
+        commit('setNoticeTotal', response.data.data.total)
+      })
+    },
+    getDailyReportAll({ commit }) {
+      return admin.getDailyReportAll()
+      .then((response) => {
+        commit('setDailyReportAll', response.data.data);
+      })
     },
     getAnalysisData({ commit }) {
       return admin.getAnalysisData()

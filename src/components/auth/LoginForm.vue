@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 
@@ -10,6 +10,10 @@ const router = useRouter();
 const form = ref("");
 const memberId = ref("");
 const memberPw = ref("");
+
+const memberInfo = computed(() => {
+  return store.getters['auth/memberInfo'];
+})
 
 // const to = computed(() => {
 //   return route.params.redirect;
@@ -41,7 +45,12 @@ async function login() {
     .then(() => {
       // alert('로그인 성공');
       // router.push({path: to.value})
-      router.push({ name: "recordMain" });
+      if (memberInfo.value?.memberAuthority === 'SYSTEM_ADMIN'
+          || memberInfo.value?.memberAuthority === 'SERVICE_ADMIN') {
+        router.push({ name: "adminMain" });
+      } else {
+        router.push({ name: "recordMain" });
+      }
     })
     .catch((error) => {
       if (error.code === "ERR_BAD_REQUEST") {
