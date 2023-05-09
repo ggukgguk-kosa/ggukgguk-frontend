@@ -36,6 +36,9 @@ export default {
     },
     updateAccessToken(state, { accessToken }) {
       state.accessToken = accessToken;
+    },
+    updateMemberAllowEmail(state, isAllow) {
+      state.memberInfo.memberAllowEmail = isAllow;
     }
   },
   actions: {

@@ -22,11 +22,11 @@ export default {
 
     // 회원 정보 수정
     memberModify({ memberId, memberPw, memberName, memberNickname,
-        memberEmail, memberPhone, memberBirth }) {
+        memberEmail, memberPhone, memberBirth, memberAllowEmail }) {
         return axios.put(`/member/${memberId}`,
             {
                 memberPw, memberName, memberNickname,
-                memberEmail, memberPhone, memberBirth
+                memberEmail, memberPhone, memberBirth, memberAllowEmail
             },
             {
                 headers: {

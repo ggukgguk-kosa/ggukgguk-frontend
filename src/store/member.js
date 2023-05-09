@@ -47,9 +47,9 @@ export default {
         },
          // 회원 정보 수정
          modfiyMemberInfo({commit},{memberId, memberPw, memberName, memberNickname,
-            memberEmail, memberPhone, memberBirth }){
+            memberEmail, memberPhone, memberBirth, memberAllowEmail }){
             return member.memberModify({ memberId, memberPw, memberName, memberNickname,
-                memberEmail, memberPhone, memberBirth })
+                memberEmail, memberPhone, memberBirth, memberAllowEmail })
             .then((response)=>{
                 console.log('리스폰스 받음');
                 console.log(response);
