@@ -167,6 +167,17 @@ onMounted(onMountedHandler)
           class="calendar"
           />
     </v-row>
+    <v-row>
+      <v-col
+        v-for="keyword in diaryList.diaryKeywordList"
+        :key="keyword.diaryKeywordId"
+        :id="keyword.diaryKeywordId"
+        cols="1"
+        class="text-center"
+      >
+        {{ keyword.diaryKeyword }}
+      </v-col>  
+    </v-row>
   </v-container>
   <v-icon
     @click="goToColor"
