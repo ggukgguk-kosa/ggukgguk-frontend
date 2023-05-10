@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -11,13 +11,19 @@ const MENUS = {
     home: 'recordMain',
     bell: 'notificationView',
     record: 'recordAdd',
-    people: '',
+    people: 'MyFriend',
     cog: 'settingMain'
 };
 
 const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
-        })
+})
+
+// 읽지 않은 알림 수 조회
+const unNotifyList = computed(() => {
+  return store.getters['notification/unReadNotify'];
+})
+
 
 function setFriendId(friendId) {
     store.commit('record/setFriendId', friendId);
@@ -42,6 +48,22 @@ function goTo(from) {
     router.push({ name });
 }
 
+// 읽지 않은 알림 수 
+function getunreadNotify() {
+  store.dispatch("notification/getUnReadNotify")
+    .then((response) => {
+      console.log("읽지 않은 알림의 수 : " + response.data.data);
+      console.log(response)
+    }).catch(() => {
+    });
+}
+
+
+onMounted(() => {
+    getunreadNotify();
+})
+
+
 </script>
 
 <template>
@@ -52,6 +74,7 @@ function goTo(from) {
 
         <v-btn value="bell" @click="goTo('bell')">
             <v-icon>mdi-bell</v-icon>
+            <div v-if="unNotifyList > 0" class="red-dot"></div>
         </v-btn>
 
         <v-btn value="record" class="record-btn" color="red" @click="goTo('record')">
@@ -76,5 +99,14 @@ function goTo(from) {
 
 .v-bottom-navigation .v-bottom-navigation__content > .v-btn {
     min-width: 70px;
+}
+.red-dot {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: red;
 }
 </style>
