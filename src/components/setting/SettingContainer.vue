@@ -1,10 +1,53 @@
 <script setup>
-import { ref } from 'vue';
-const allowEmail = ref(false);
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
-// const MENUS = {
-//     logout: 'login'
-// }
+const store = useStore();
+const router = useRouter();
+
+const MENUS = {
+    logout: 'login',
+    modifyMemberInfo: 'MemberInfo',
+    initLocalStorage: 'initLocalStorage'
+}
+
+const memberInfo = computed(() => {
+    return store.getters['auth/memberInfo'];
+})
+
+const allowEmail = ref(memberInfo.value.memberAllowEmail);
+
+function goTo(from) {
+    const name = MENUS[from];
+
+    if (name === 'initLocalStorage') {
+        window.localStorage.clear();
+        router.push({ name: MENUS['logout'] });
+        return;
+    }
+        
+    router.push({ name });
+}
+
+function updateEmailAllow() {
+    const newMemberInfo = {...memberInfo.value};
+    newMemberInfo.memberAllowEmail = allowEmail.value;
+    store.dispatch('member/modfiyMemberInfo', newMemberInfo)
+    .then(() => {
+        console.log('이메일 수신 여부 업데이트 성공');
+        store.commit('auth/updateMemberAllowEmail', allowEmail.value);
+    })
+    .catch((error) => {
+        console.error('이메일 수신 여부 업데이트 실패');
+        console.error(error);
+        alert('이메일 수신 여부 업데이트에 실패했습니다.\n문제가 반복되면 고객센터로 문의해주세요.');
+    });
+}
+
+watch(allowEmail, () => {
+    updateEmailAllow();
+});
 
 </script>
 
@@ -18,14 +61,14 @@ const allowEmail = ref(false);
             <v-list-item>
                 <v-card>
                     <v-card-subtitle>
-                        임영택(limo)님
+                        {{ `${memberInfo.memberName}(${memberInfo.memberId})님` }}
                     </v-card-subtitle>
                     <v-card-actions>
-                        <v-btn>로그아웃</v-btn>
+                        <v-btn @click="goTo('logout')">로그아웃</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-list-item>
-            <v-list-item value="modifyMemberInfo">
+            <v-list-item value="modifyMemberInfo" @click="goTo('modifyMemberInfo')">
                 <v-list-item-title>회원정보 수정</v-list-item-title>
             </v-list-item>
         </v-list>
@@ -33,7 +76,7 @@ const allowEmail = ref(false);
         <v-divider></v-divider>
 
         <v-list >
-            <v-list-item value="restoreLocalStorage">
+            <v-list-item value="initLocalStorage" @click="goTo('initLocalStorage')">
                 <v-list-item-title>어플리케이션 초기화</v-list-item-title>
                 <v-list-item-subtitle>어플리케이션이 사용하는 로컬스토리지를 초기화합니다.</v-list-item-subtitle>
             </v-list-item>

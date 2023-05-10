@@ -47,7 +47,6 @@ function regiserInfo(){
       <br>
       <router-link :to="{name: 'login'}" v-if="!isLogin">로그인</router-link> <br>
       <button @click="onLogout" v-if="isLogin">로그아웃</button> <br>
-      <router-link :to="{name: 'testMain'}" v-if="isLogin">테스트 메인</router-link>
     </div>
   </div>
 </template>
