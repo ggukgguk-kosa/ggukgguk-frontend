@@ -74,7 +74,7 @@ onMounted(() => {
 
         <v-btn value="bell" @click="goTo('bell')">
             <v-icon>mdi-bell</v-icon>
-            <div v-if="unNotifyList !== 0" class="red-dot"></div>
+            <div v-if="unNotifyList > 0" class="red-dot"></div>
         </v-btn>
 
         <v-btn value="record" class="record-btn" color="red" @click="goTo('record')">
