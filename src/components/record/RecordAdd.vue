@@ -244,6 +244,7 @@
         v-model="isLoading"
         scroll-strategy="block"
         persistent
+        class="loading-overlay"
     >
         <v-progress-circular
         color="primary"
@@ -377,7 +378,7 @@ input {
     display: none;
 }
 
-.v-overlay {
+.loading-overlay {
   display: flex;
   justify-content: center;
   align-items: center;
