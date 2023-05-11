@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useStore } from "vuex";
-// import { useRouter } from "vue-router";
+import { auth } from '../../api';
+import { useRouter } from "vue-router";
 
 const store = useStore();
-// const router = useRouter();
+const router = useRouter();
 
 // 변수 초기화
 const memberId = ref("");
@@ -15,7 +16,10 @@ const memberEmail = ref("");
 const memberPhone = ref("");
 const memberBirth = ref("");
 const memberAuthority = "NORMAL";
-const duplicated = ref(false);
+const duplicated = ref(false); // 아이디 중복값 확인
+const appearCertification = ref(false);  // 인증 번호 창 출력 
+const certificationNumber = ref(""); // 인증번호 조회
+const memberAllowEmail = ref(false); // 메일 인증 여부
 
 // 각 요소별로 입력 조건 명시
 const IdRules = [
@@ -55,7 +59,7 @@ function register() {
       alert("회원 가입에 성공했습니다.등록한 아이디로 다시 로그인 해주세요.");
       console.log("성공");
       console.log(response);
-      //router.push({ name: "login" }); // 성공시 로그인 url로 이동.
+      router.push({ name: "login" }); // 성공시 로그인 url로 이동.
     })
     .catch((error) => {
       console.error("실패");
@@ -77,7 +81,39 @@ function checkDuplicateId() {
       duplicated.value = false;
     }
   });
+
 }
+// 메일 인증코드 요청.
+function methodToExecuteWhenTemplateAppears() {
+  store.dispatch('auth/handleCertification', {
+    sendTo: memberEmail.value
+  }).then((response) => {
+    appearCertification.value = true; 
+    alert("해당 메일에 인증 코드를 전송하였습니다.")
+    console.log("인증번호 전달 완료")
+    console.log(response);
+  }).catch(() => {
+    alert("이미 가입되어 있는 이메일입니다. 다른 이메일을 작성해주세요. ")
+    // console.error(error);
+  });
+}
+
+// 인증번호 확인
+function cetificationCheck() {
+  return auth.findAuthenticationCode({
+    sendTo: memberEmail.value,
+    certificationNumber: certificationNumber.value
+  }).then((response) => {
+    console.log("인증번호 일치")
+    console.log(response);
+    memberAllowEmail.value = true; // 메일 인증 성공.
+    alert('인증번호가 일치하여 계속해서 회원 가입을 진행해 주세요.');
+    return response;
+  }).catch(() => {
+    alert('인증번호가 일치하지 않습니다. 다시 인증해주세요');
+  });
+}
+
 </script>
 <template>
   <v-card-title class="text-center">회원가입</v-card-title>
@@ -100,14 +136,33 @@ function checkDuplicateId() {
           </v-btn>
         </v-col>
       </v-row>
-      <v-text-field v-model="memberPw" :counter="128" label="비밀번호 입력"></v-text-field>
+      <v-text-field type="password" v-model="memberPw" :counter="128" label="비밀번호 입력"></v-text-field>
 
       <v-text-field v-model="memberName" :counter="16" label="이름"></v-text-field>
 
       <v-text-field v-model="memberNickname" label="닉네임"></v-text-field>
-
-      <v-text-field v-model="memberEmail" label="이메일" :rules="EmailRules"></v-text-field>
-
+      <v-row>
+        <v-col cols="10">
+          <v-text-field v-model="memberEmail" label="이메일" :rules="EmailRules"></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-btn @click="methodToExecuteWhenTemplateAppears">
+            인증하기
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-form>
+        <v-row v-if="appearCertification">
+          <v-col cols="10">
+            <v-text-field v-model="certificationNumber" label="인증번호 입력"></v-text-field>
+          </v-col>
+          <v-col cols="2">
+            <v-btn @click="cetificationCheck">
+              전송하기
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
       <v-text-field v-model="memberPhone" label="휴대번호 입력"></v-text-field>
 
       <v-text-field v-model="memberBirth" label="생년월일"></v-text-field>

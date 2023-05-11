@@ -7,6 +7,10 @@ import RecordBottom from '../../components/record/RecordBottom.vue';
 
 <template>
     <record-header />
-    <diary-main />
+    <v-main>
+        <v-container>
+            <diary-main />
+        </v-container>
+    </v-main>
     <record-bottom />
 </template>

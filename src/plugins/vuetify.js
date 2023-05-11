@@ -11,7 +11,7 @@ const ggukggukTheme = {
     background: '#FFFFFF',
     surface: '#FFFFFF',
     primary: '#3AA73A',
-    'primary-darken-1': '#3700B3',
+    'primary-darken-1': '#0f2a0f',
     secondary: '#d6f2c2',
     'secondary-darken-1': '#1f591f',
     error: '#B00020',

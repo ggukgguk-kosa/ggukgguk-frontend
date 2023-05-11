@@ -18,8 +18,20 @@ function onLogout() {
   store.dispatch('auth/logout');
 }
 
+function skipLogin() {
+  if (!isLogin.value) {
+    return;
+  }
+
+  if (loginInfo.value?.memberAuthority === 'NORMAL')
+    router.push({name: 'recordMain'});
+  else if (loginInfo.value?.memberAuthority === 'SYSTEM_ADMIN'
+          || loginInfo.value?.memberAuthority === 'SERVICE_ADMIN' )
+    router.push({name: 'adminMain'});
+}
+
 onMounted(() => {
-  if (isLogin.value) router.push({name: 'recordMain'});
+  skipLogin();
 })
 
 function regiserInfo(){
@@ -47,7 +59,6 @@ function regiserInfo(){
       <br>
       <router-link :to="{name: 'login'}" v-if="!isLogin">로그인</router-link> <br>
       <button @click="onLogout" v-if="isLogin">로그아웃</button> <br>
-      <router-link :to="{name: 'testMain'}" v-if="isLogin">테스트 메인</router-link>
     </div>
   </div>
 </template>

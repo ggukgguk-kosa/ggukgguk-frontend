@@ -48,6 +48,8 @@
     const friendsSearchResultList = ref([]);
     const friendSearchVisible = ref(false);
 
+    const recordIsOpen = ref(true);
+
     watch(friendListRaw, () => {
         friendsSearchResultList.value = friendWholeList.value;
     });
@@ -180,6 +182,7 @@
         const formData = new FormData();
         formData.append('recordComment', recordComment.value);
         formData.append('memberId', memberId.value);
+        formData.append('recordIsOpen', recordIsOpen.value);
 
         if (friendSearch.value !== '') {
             formData.append('recordShareTo', friendSearch.value);
@@ -241,6 +244,7 @@
         v-model="isLoading"
         scroll-strategy="block"
         persistent
+        class="loading-overlay"
     >
         <v-progress-circular
         color="primary"
@@ -302,6 +306,17 @@
                     <v-list @click:select="handleSelectFriend" :items="friendsSearchResultList"></v-list>
                 </v-card>
             </div>
+            
+            <v-row>
+                <v-col>
+                    <v-switch
+                        v-model="recordIsOpen"
+                        :label="recordIsOpen ? '공개' : '비공개'"
+                        color="primary"
+                        hide-details
+                    ></v-switch>
+                </v-col>
+            </v-row>
 
             <div class="toolbar">
                 <v-btn icon="mdi-arrow-up-thin-circle-outline" color="primary" @click="uploadRecord"></v-btn>
@@ -363,7 +378,7 @@ input {
     display: none;
 }
 
-.v-overlay {
+.loading-overlay {
   display: flex;
   justify-content: center;
   align-items: center;

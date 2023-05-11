@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted} from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-import { useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
@@ -10,6 +10,10 @@ const router = useRouter();
 const form = ref("");
 const memberId = ref("");
 const memberPw = ref("");
+
+const memberInfo = computed(() => {
+  return store.getters['auth/memberInfo'];
+})
 
 // const to = computed(() => {
 //   return route.params.redirect;
@@ -41,7 +45,12 @@ async function login() {
     .then(() => {
       // alert('로그인 성공');
       // router.push({path: to.value})
-      router.push({ name: "recordMain" });
+      if (memberInfo.value?.memberAuthority === 'SYSTEM_ADMIN'
+          || memberInfo.value?.memberAuthority === 'SERVICE_ADMIN') {
+        router.push({ name: "adminMain" });
+      } else {
+        router.push({ name: "recordMain" });
+      }
     })
     .catch((error) => {
       if (error.code === "ERR_BAD_REQUEST") {
@@ -52,22 +61,22 @@ async function login() {
     });
 }
 async function loginWithKakao() {
-      const params = {
-        redirectUri: "https://localhost:9090/login/kakao-redirect",
-      };
-      window.Kakao.Auth.authorize(params);
-    }
+  const params = {
+    redirectUri: "https://localhost:9090/login/kakao-redirect",
+  };
+  window.Kakao.Auth.authorize(params);
+}
 
 onMounted(() => {
-  store.commit("auth/updateAccessToken", { accessToken: "" });
+  store.commit("auth/setMemberInfo", { memberInfo: {}, accessToken: "", refreshToken: "" });
 });
 
-async function findId(){
+async function findId() {
   router.push({ name: "findMemberId" });
 
 }
 
-async function findPassword(){
+async function findPassword() {
   router.push({ name: "findMemberPw" });
 
 }
@@ -80,16 +89,8 @@ async function findPassword(){
   </div>
   <v-sheet width="300" class="mx-auto">
     <v-form @submit.prevent ref="form">
-      <v-text-field
-        v-model="memberId"
-        :rules="idRules"
-        label="아이디"
-      ></v-text-field>
-      <v-text-field
-        v-model="memberPw"
-        :rules="pwRules"
-        label="비밀번호"
-      ></v-text-field>
+      <v-text-field v-model="memberId" :rules="idRules" label="아이디"></v-text-field>
+      <v-text-field type="password" v-model="memberPw" :rules="pwRules" label="비밀번호"></v-text-field>
       <v-btn type="submit" @click="login" block class="mt-2">로그인</v-btn>
       <v-btn @click="loginWithKakao" block class="mt-2">Kakao</v-btn>
       <hr />

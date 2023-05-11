@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import RecordMap from './RecordMap.vue';
@@ -124,7 +124,8 @@ function setStartDateStr(startDateStr) {
 }
 
 let lastScrollPosition = 0;
-const scrollThreshold = 5;
+// const scrollThreshold = 5;
+const scrollThreshold = 0; // 모바일에서 아예 상단 스크롤 감지가 되지 않는 문제 때문에 0으로 수정
 
 function handleScroll() {
   const scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -199,8 +200,10 @@ function getRecordsUp() {
   .then((data) => {
         isLoadingForScrollEvent.value = false;
         isLoading.value = false;
-        document.getElementById(topElId.value)?.scrollIntoView();
-        document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
+        setTimeout(() => {
+          document.getElementById(topElId.value)?.scrollIntoView();
+          document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
+        }, 500) // 모든 DOM의 위치가 확정된 후 스크롤 위치가 변경될 수 있도록 비동기 처리
         if (data?.length === 0) noMoreUp.value = true;
   })
   .catch((error) => {
@@ -254,6 +257,37 @@ watch(selectedMonth, async () => {
     await getDiaryList();
     router.push('/calendar');
 })
+
+// 레코드 수정
+
+function setRecord(record) {
+    store.commit('record/setRecord', record);
+}
+
+function goToRecordUpdate(record) {
+    setRecord(record);
+    router.push('/record/update');
+}
+
+// 레코드 삭제
+function openDeleteRemoveDialog(recordId) {
+
+    if (confirm("삭제하시겠습니까?")) {
+      deleteRecord(recordId);
+    }
+}
+
+
+function deleteRecord(recordId) {
+    console.log("삭제 실행");
+    store.dispatch('record/deleteRecord', recordId)
+    .then(() => {
+    console.log("삭제 성공");
+    getRecordList();
+    })
+    .catch((error) =>
+    console.log(error));
+}
 
 // 댓글
 
@@ -312,17 +346,12 @@ function openDeleteReplyDialog(reply) {
   
   deleteReplyId.value = reply.replyId;
 
-    if (!confirm("삭제 또는 취소를 선택해주세요.")) {
+    if (confirm("삭제하시겠습니까?")) {
       deleteReply(reply);
   } else {
       deleteReplyId.value = 0;
   }
 }
-
-// function closeDeleteReplyDialog() {
-//   deleteDialog.value = false;
-//   deleteReplyId.value = 0;
-// }
 
 function deleteReply(reply) {
   store.dispatch("record/deleteReply", {
@@ -350,6 +379,9 @@ onMounted(() => {
   getFriendList();
 })
 
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+})
 </script>
 
 <template>
@@ -357,6 +389,7 @@ onMounted(() => {
     v-model="isLoading"
     scroll-strategy="block"
     persistent
+    class="loading-overlay"
   >
     <v-progress-circular
       color="primary"
@@ -391,7 +424,7 @@ onMounted(() => {
     <div class="msg" v-if="noMoreUp">
       더 이상 불러올 데이터가 없습니다.
     </div>
-    <v-row>
+    <!-- <v-row> -->
       <v-col
         v-for="record in recordList"
         :key="record.recordId"
@@ -406,12 +439,22 @@ onMounted(() => {
             class="my-8"
             :date="formatDate(new Date(record.recordCreatedAt))"
             :color="record.mainColor" />
-
           <!-- 조각 카드 -->
           <v-card class="card" :style="{ borderColor: record.mainColor }" variant="outlined">
-
             <!-- 헤더 영역 -->
-            <v-card-text>{{ formatDate(new Date(record.recordCreatedAt), true) }}</v-card-text>
+            <v-row>
+                <v-col cols="10">
+                  {{ formatDate(new Date(record.recordCreatedAt), true) }}
+                </v-col>
+                <v-col cols="2" class="d-flex justify-end">
+                  <span
+                  v-if="memberId === record.memberId && !record.recordShareTo"
+                  @click="goToRecordUpdate(record)"><v-icon icon="mdi-pencil-outline"></v-icon></span>
+                  <span
+                  v-if="!friendId"
+                  @click="openDeleteRemoveDialog(record.recordId)"><v-icon icon="mdi-delete-outline"></v-icon></span>
+                </v-col>
+            </v-row>
             <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
             <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
             <v-card-text v-if="friendId && record.memberId !== friendId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
@@ -483,7 +526,7 @@ onMounted(() => {
             </v-form>
         </v-card>
       </v-col>
-    </v-row>
+    <!-- </v-row> -->
     <div class="msg" v-if="noMoreDown">
       더 이상 불러올 데이터가 없습니다.
     </div>
@@ -537,7 +580,7 @@ onMounted(() => {
   line-height: 170%;
 }
 
-.v-overlay {
+.loading-overlay {
   display: flex;
   justify-content: center;
   align-items: center;

@@ -4,11 +4,13 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import WriteNewNoticeView from '../views/admin/WriteNewNoticeView.vue'
 import NoticeListView from '../views/admin/NoticeListView.vue';
+import AdminMember from '../views/admin/AdminMember.vue';
 import TestMainView from '../views/test/TestMainView.vue';
 import RecordView from '../views/record/RecordView.vue'
 import DiaryView from '../views/record/DiaryView.vue';
 import CalendarView from '../views/record/CalendarView.vue';
 import RecordAddView from '../views/record/RecordAddView.vue';
+import RecordUpdateView from '../views/record/RecordUpdateView.vue'
 import ColorView from '../views/record/ColorView.vue';
 import MemberView from '../views/member/MemberView.vue';
 import RegiseterView from '../views/auth/RegisterView.vue';
@@ -16,10 +18,16 @@ import CheckView from '../views/auth/CheckView.vue';
 import KaKaoRedirect from '../components/auth/KakaoRedirect.vue';
 import RedirectGoogle from "../components/auth/GoogleRedirect.vue";
 import MyFriendView from "../views/member/MyFriend.vue";
+import AdminMain from "../views/admin/AdminMain.vue";
+import ContentListView from "../views/admin/ContentListView.vue"
 import FriendAddDelete from "../views/member/FriendAddView.vue";
 import FindbyIdView from '../views/auth/FindbyIdView.vue';
+import RecordUnaccepted from '../views/record/RecordUnaccepted.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
+import SettingMainView from '../views/setting/SettingMainView.vue';
+import AdminBatchView from '../views/admin/AdminBatchView.vue';
+
 const routes = [
   {
     path: '/',
@@ -32,9 +40,33 @@ const routes = [
     component: LoginView
   },
   {
+    path: '/admin',
+    name: 'adminMain',
+    component: AdminMain,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin/notice',
     name: 'noticeList',
     component: NoticeListView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/content',
+    name: 'contentList',
+    component: ContentListView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/member',
+    name: 'memberList',
+    component: AdminMember,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/batch',
+    name: 'batchStatus',
+    component: AdminBatchView,
     meta: { requiresAuth: true }
   },
   {
@@ -62,6 +94,18 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/record/update',
+    name: 'recordUpdate',
+    component: RecordUpdateView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/record/unaccepted',
+    name: 'recordUnaccepted',
+    component: RecordUnaccepted,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/diary',
     name: 'diaryMain',
     component: DiaryView,
@@ -81,19 +125,19 @@ const routes = [
   },
   {
     path: '/member',
-    name: 'MemberMain',
+    name: 'MemberInfo',
     component: MemberView,
     meta: { requiresAuth: true }
   },
   {
     path: '/register',
     name: 'memberRegiseter',
-    component : RegiseterView
+    component: RegiseterView
   },
   {
     path: '/check',
     name: 'loginCheck',
-    component : CheckView
+    component: CheckView
   },
   {
     path: '/login/kakao-redirect',
@@ -130,7 +174,14 @@ const routes = [
   {
     path: '/notify',
     name: 'notificationView',
-    component: NotificationView
+    component: NotificationView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/setting',
+    name: 'settingMain',
+    component: SettingMainView,
+    meta: { requiresAuth: true }
   }
 ]
 
