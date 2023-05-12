@@ -29,7 +29,7 @@ export default {
     editReply( memberId, recordId, replyId, replyContent ) {
         return axios.put(`/record/reply/${replyId}`,
         {
-            memberId, recordId, replyContent
+            memberId, recordId, replyId, replyContent
         },
         {
             headers: {
@@ -38,11 +38,13 @@ export default {
         });
     },
 
-    deleteReply( recordId, replyId ) {
+    deleteReply( recordId, replyId, memberId ) {
         return axios.delete(`/record/reply/${replyId}`,
         {
             data: {
-                recordId
+                recordId,
+                replyId,
+                memberId
               },
             headers: {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
@@ -54,15 +56,22 @@ export default {
         return axios.post('/record', formData);
     },
 
-    updateRecord(recordId, recordComment) {
+    updateRecord(recordId, recordComment, memberId) {
         return axios.put(`/record/${recordId}`, {
+            memberId,
             recordId,
             recordComment
         });
     },
 
-    deleteRecord(recordId){
-        return axios.delete(`/record/${recordId}`);
+    deleteRecord(recordId, memberId){
+        return axios.delete(`/record/${recordId}`,
+        {
+            data: {
+                memberId,
+                recordId
+            }
+        });
     },
 
     getUnacceptedRecordList(memberId) {
@@ -72,7 +81,10 @@ export default {
         });
     },
 
-    updateUnaccepted(recordId) {
-        return axios.put(`/record/unaccepted/${recordId}`)
+    updateUnaccepted(recordId, recordShareTo) {
+        return axios.put(`/record/unaccepted/${recordId}`, {
+            recordId,
+            recordShareTo
+        })
     }
 };

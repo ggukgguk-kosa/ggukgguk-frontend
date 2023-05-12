@@ -23,8 +23,8 @@ function getUnacceptedRecordList() {
   })
 }
 
-function acceptRecord(recordId) {
-  store.dispatch("record/updateUnaccepted", recordId)
+function acceptRecord(record) {
+  store.dispatch("record/updateUnaccepted", { recordId: record.recordId, recordShareTo: record.recordShareTo })
   .then(() => {
     console.log("성공");
     alert("교환일기가 수락되었습니다.");
@@ -93,7 +93,7 @@ onMounted(() => {
           <v-col class="d-flex justify-end">
             <v-btn
             class= "button"
-            @click="acceptRecord(record.recordId)">수락</v-btn>
+            @click="acceptRecord(record)">수락</v-btn>
           </v-col>
         </v-card>
       </v-col>
