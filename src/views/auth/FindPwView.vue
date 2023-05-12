@@ -19,7 +19,7 @@ watch(doubleCheck, (newValue) => {
 // 인증번호 전달.
 function methodToExecuteWhenTemplateAppears() {
     console.log('doubleCheck가 true이면 실행되는 메서드 코드 작성');
-    store.dispatch('auth/handleCertification', {
+    store.dispatch('auth/handleCertificationPw', {
         sendTo: memberEmail.value
     }).then((response) => {
         console.log("인증번호 전달 완료")

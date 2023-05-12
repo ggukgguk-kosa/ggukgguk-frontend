@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import RecordMap from './RecordMap.vue';
@@ -124,7 +124,8 @@ function setStartDateStr(startDateStr) {
 }
 
 let lastScrollPosition = 0;
-const scrollThreshold = 5;
+// const scrollThreshold = 5;
+const scrollThreshold = 0; // 모바일에서 아예 상단 스크롤 감지가 되지 않는 문제 때문에 0으로 수정
 
 function handleScroll() {
   const scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -199,8 +200,10 @@ function getRecordsUp() {
   .then((data) => {
         isLoadingForScrollEvent.value = false;
         isLoading.value = false;
-        document.getElementById(topElId.value)?.scrollIntoView();
-        document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
+        setTimeout(() => {
+          document.getElementById(topElId.value)?.scrollIntoView();
+          document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
+        }, 500) // 모든 DOM의 위치가 확정된 후 스크롤 위치가 변경될 수 있도록 비동기 처리
         if (data?.length === 0) noMoreUp.value = true;
   })
   .catch((error) => {
@@ -377,6 +380,9 @@ onMounted(() => {
   getFriendList();
 })
 
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+})
 </script>
 
 <template>
@@ -384,6 +390,7 @@ onMounted(() => {
     v-model="isLoading"
     scroll-strategy="block"
     persistent
+    class="loading-overlay"
   >
     <v-progress-circular
       color="primary"
@@ -418,7 +425,7 @@ onMounted(() => {
     <div class="msg" v-if="noMoreUp">
       더 이상 불러올 데이터가 없습니다.
     </div>
-    <v-row>
+    <!-- <v-row> -->
       <v-col
         v-for="record in recordList"
         :key="record.recordId"
@@ -443,7 +450,7 @@ onMounted(() => {
                 <v-col cols="2" class="d-flex justify-end">
                   <span
                   v-if="memberId === record.memberId && !record.recordShareTo"
-                  @click="goToRecordUpdate(record)">수정</span>
+                  @click="goToRecordUpdate(record)"><v-icon icon="mdi-pencil-outline"></v-icon></span>
                   <span
                   v-if="!friendId"
                   @click="openDeleteRemoveDialog(record)">삭제</span>
@@ -520,7 +527,7 @@ onMounted(() => {
             </v-form>
         </v-card>
       </v-col>
-    </v-row>
+    <!-- </v-row> -->
     <div class="msg" v-if="noMoreDown">
       더 이상 불러올 데이터가 없습니다.
     </div>
@@ -574,7 +581,7 @@ onMounted(() => {
   line-height: 170%;
 }
 
-.v-overlay {
+.loading-overlay {
   display: flex;
   justify-content: center;
   align-items: center;

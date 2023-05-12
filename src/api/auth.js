@@ -61,9 +61,16 @@ export default {
 
         });
     },
-    // 인증번호 요청
+    // 회원가입 시 인증번호 요청
     requestAuthenticationCode({sendTo}){
         return axios.get(`/auth/mailCertification`,{
+            params: { sendTo }
+        });
+    },
+
+    // 비번번호 찾기시 인증번호 요청
+    requestPwAuthenticationCode({sendTo}){
+        return axios.get(`/auth/mailCertificationPw`,{
             params: { sendTo }
         });
     },
