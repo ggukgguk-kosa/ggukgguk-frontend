@@ -43,15 +43,16 @@ export default {
 
         // 알림 읽음 수행.
         readNotify({ commit }, { notificationId, notificationIsRead }) {
-        return notification.putNotify(notificationId, notificationIsRead)
-            .then((response) => {
-                console.log("store에 알림 읽음 처리");
-                return notification.getNotifyList()
-                .then(updatedResponse => {
-                    commit('setNotifyList', updatedResponse.data.data);
-                    return response;
+            return notification.putNotify(notificationId, notificationIsRead)
+                .then((response) => {
+                    console.log("store에 알림 읽음 처리");
+                    return notification.getNotifyList()
+                        .then(updatedResponse => {
+                            commit('setNotifyList', updatedResponse.data.data);
+                            return response;
+                        });
                 });
-            });
         }
+
     }
-};
+}
