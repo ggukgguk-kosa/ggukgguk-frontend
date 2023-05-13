@@ -53,16 +53,29 @@ export default {
         });
     },
     // 나의 친구요청 테이블 조회
-    selectMyFriendRequestList({ friendRequestId }){
+    selectMyFriendRequestList({ friendRequestId }) {
         console.log(friendRequestId);
-        return axios.get(`/friend/requestFriendlist`, 
-        {
-            params: {
-                friendRequestId: friendRequestId
-            },
-            headers: {
-                Authorization: `Bearer ${store.getters['auth/accessToken']}`
-            }
-        });
+        return axios.get(`/friend/requestFriendlist`,
+            {
+                params: {
+                    friendRequestId: friendRequestId
+                },
+                headers: {
+                    Authorization: `Bearer ${store.getters['auth/accessToken']}`
+                }
+            });
+    },
+    // 상대방에게 친구 요청 안내 메일 전송
+    friendRequestInfo({ sendTo }) {
+        return axios.get(`/friend/mailCertification`,
+            {
+                params: {
+                    sendTo
+                },
+                headers: {
+                    Authorization: `Bearer ${store.getters['auth/accessToken']}`
+                }
+            });
+
     }
 }
