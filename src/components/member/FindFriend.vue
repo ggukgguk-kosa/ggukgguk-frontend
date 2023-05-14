@@ -13,11 +13,16 @@ const memberId = computed(() => {
 })
 
 // 친구 추가하기
-function addFriend(friendId) {
-    store.dispatch('friend/additionFriendId', friendId)
+async function addFriend(friendId,memberEmail) {
+    // console.log("테스트");
+    console.log(friendId);
+    console.log(memberEmail);
+    await store.dispatch('friend/additionFriendId', friendId)
     .then(() => {
     alert('상대방에게 친구 요청을 보냈습니다.');
     });
+    friendRequestEmail(memberEmail)
+
 }
 
 // 친구 차단하기 
@@ -54,6 +59,20 @@ async function findFriendList() {
         // Handle error here
     }
 }
+
+// 상대방에게 친구 요청 안내 메일 전송
+async function friendRequestEmail(memberEmail){
+    console.log(memberEmail)
+    return await friend.friendRequestInfo({
+        sendTo: memberEmail,
+    }).then((response) => {
+        console.log("친구 요청 안내메일 전송")
+        return response;
+    }).catch(() => {
+
+    });
+}
+
 </script>
 
 <template>
@@ -80,7 +99,7 @@ async function findFriendList() {
                     <v-card-text :style="{ fontStyle: 'italic' }"> {{ friend.memberEmail }} </v-card-text>
                     <v-card-text class="text-end">
                         <span>
-                            <v-btn v-if="!isFriend(friend.memberId)" @click="addFriend(friend.memberId)">추가</v-btn>
+                            <v-btn v-if="!isFriend(friend.memberId)" @click="addFriend(friend.memberId,friend.memberEmail)">추가</v-btn>
                             <v-btn v-if="isFriend(friend.memberId)" @click="refuseFriend(friend.memberId)">차단</v-btn>
                         </span>
                     </v-card-text>
