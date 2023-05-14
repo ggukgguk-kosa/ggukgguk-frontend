@@ -157,6 +157,7 @@ onMounted(() => {
                             </div>
                             <ul class="mt-2">
                                 <li>인스턴스 ID &nbsp; {{ execution.jobInstanceId }}</li>
+                                <li>실행 ID &nbsp; {{ execution.jobExecutionId }}</li>
                                 <li>시작 &nbsp; {{ execution.createTime }}</li>
                                 <li>종료 &nbsp; {{ execution.endTime }}</li>
                             </ul>
@@ -181,6 +182,7 @@ onMounted(() => {
                             </div>
                             <ul class="mt-2">
                                 <li>인스턴스 ID &nbsp; {{ execution.jobInstanceId }}</li>
+                                <li>실행 ID &nbsp; {{ execution.jobExecutionId }}</li>
                                 <li>시작 &nbsp; {{ execution.createTime }}</li>
                                 <li>종료 &nbsp; {{ execution.endTime }}</li>
                             </ul>
