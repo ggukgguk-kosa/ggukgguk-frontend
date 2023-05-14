@@ -50,9 +50,9 @@ function goTo(from) {
                 :title="`${memberInfo.memberName} 관리자님`"
                 :subtitle="memberRole"
             >
-                <v-list-action>
+                <v-list-item-action>
                     <v-btn variant="text" class="mt-2" @click="goTo('logout')">로그아웃</v-btn>
-                </v-list-action>
+                </v-list-item-action>
             </v-list-item>
         </v-list>
 
