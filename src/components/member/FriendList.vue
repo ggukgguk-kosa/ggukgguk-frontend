@@ -25,7 +25,7 @@ function getFriendList() {
 function goToFriendAndblock() {
     router.push('/friend/new');
 }
-// 임의로 작성한 코드로 수행
+// 카톡 주소록의 친구들에게 나의 꾹꾹 아이디를 공유하기
 function sendLinkDefault() {
     // 꾹꾹 회원으로 로그인 시, 나의 아이디를 공유하기 위해 먼저 카카오 로그인을 먼저 수행해야 함.
     if (!window.Kakao.isInitialized()) {
@@ -39,7 +39,7 @@ function sendLinkDefault() {
         description: '친구분의 아이디는 '+ memberId.value + 
         '이며 당신과 교류하고 싶습니다. #꾹꾹 #일기 #교환일기',
         imageUrl:
-          'http://k.kakaocdn.net/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png',
+          'https://app.ggukgguk.online/img/landing_main.png',
         link: {
           mobileWebUrl: 'https://app.ggukgguk.online/login',
           webUrl: 'https://app.ggukgguk.online/login',
