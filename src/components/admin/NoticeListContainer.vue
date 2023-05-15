@@ -5,7 +5,7 @@ import { useStore } from 'vuex';
 const store = useStore();
 
 onMounted(() => {
-  getNoticeList();
+    getNoticeList();
 })
 
 const noticeList = computed(() => {
@@ -24,21 +24,21 @@ const totalPage = computed(() => {
 
 watch(currentPage, () => {
     store.dispatch("admin/getNoticeList")
-    .catch((error) => {
-        console.error('공지사항 리스트 조회 실패');
-        console.error(error);
-    })
+        .catch((error) => {
+            console.error('공지사항 리스트 조회 실패');
+            console.error(error);
+        })
 })
 
 function getNoticeList() {
     store.dispatch("admin/getNoticeList")
-    .then(() => {
-        console.log('성공');
-    })
-    .catch((error) => {
-        console.error('공지사항 리스트 조회 실패');
-        console.error(error);
-    })
+        .then(() => {
+            console.log('성공');
+        })
+        .catch((error) => {
+            console.error('공지사항 리스트 조회 실패');
+            console.error(error);
+        })
 }
 
 function setPage(page) {
@@ -48,16 +48,11 @@ function setPage(page) {
 </script>
 
 <template>
-    <v-card
-        v-for="notice in noticeList"
-        width="400"
-        :title="notice.noticeTitle"
-        :text="`[${notice.noticeId}]` + notice.noticeContent"
-        :key="notice.noticeId"
-    ></v-card>
-    <v-btn @click="setPage(currentPage-1)">이전</v-btn>
+    <v-card v-for="notice in noticeList" width="400" :title="notice.noticeTitle"
+        :text="`[${notice.noticeId}]` + notice.noticeContent" :key="notice.noticeId"></v-card>
+    <v-btn @click="setPage(currentPage - 1)">이전</v-btn>
     {{ currentPage }} / {{ totalPage }}
-    <v-btn @click="setPage(currentPage+1)">다음</v-btn>
+    <v-btn @click="setPage(currentPage + 1)">다음</v-btn>
 </template>
 
 <!-- 컴포넌트를 포함하는 위치

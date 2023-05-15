@@ -1,6 +1,22 @@
 <script setup>
 import NoticeListContainer from '@/components/admin/NoticeListContainer.vue';
 import AdminMainLayout from './AdminMainLayout.vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+onMounted(() => {
+    getNoticeList();
+});
+
+function getNoticeList() {
+    store.dispatch('admin/getNoticeList')
+        .catch((error) => {
+            console.error('공지사항 리스트 조회 실패');
+            console.error(error);
+        });
+}
+
 </script>
 
 <template>
