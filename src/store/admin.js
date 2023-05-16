@@ -28,7 +28,14 @@ export default {
     contentDetail: [],
     memberList: [],
     memberDetail: [],
-    dailyReport: {}
+    dailyReport: {},
+    recentBatch: {},
+    batchDetail: [],
+    batchOption: {
+      page: 1,
+      size: 10,
+      jobName: 'extractKeywordJob'
+    }
   },
 
   getters: {
@@ -75,6 +82,15 @@ export default {
     },
     dailyReport(state) {
       return state.dailyReport;
+    },
+    recentBatch(state) {
+      return state.recentBatch;
+    },
+    batchDetail(state) {
+      return state.batchDetail;
+    },
+    batchOption(state) {
+      return state.batchOption;
     }
   },
   mutations: {
@@ -124,6 +140,15 @@ export default {
     setMemberDetail(state, memberDetail) {
       state.memberDetail = memberDetail;
     },
+    setRecentBatch(state, recentBatch) {
+      state.recentBatch = recentBatch;
+    },
+    setBatchDetail(state, batchDetail) {
+      state.batchDetail = batchDetail;
+    },
+    updateBatchOption(state, batchOption) {
+      state.batchOption = {...state.batchOption, ...batchOption};
+    }
   },
 
   actions: {
@@ -182,6 +207,20 @@ export default {
           commit('setMemberTotal', response.data.data.total)
         })
     },
+    getRecentBatch({ commit }) {
+      return admin.getRecentBatch()
+        .then((response) => {
+          commit('setRecentBatch', response.data.data);
+        })
+    },
+    getBatchDetail({ commit, state }) {
+      const { jobName, page, size } = state.batchOption;
+
+      return admin.getBatchDetail({ jobName, page, size })
+        .then((response) => {
+          commit('setBatchDetail', response.data.data);
+        })
+    }
   }
 }
 

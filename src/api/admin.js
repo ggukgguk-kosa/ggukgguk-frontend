@@ -39,6 +39,15 @@ export default {
     },
     getDailyReportAll() {
         return axios.get('/admin/report/daily');
+    },
+    getRecentBatch() {
+        return axios.get('/admin/batch');
+    },
+    getBatchDetail({ jobName, page, size }) {
+        return axios.get(`/admin/batch/${jobName}`,
+        {
+            params: { page, size }
+        });
     }
 }
 

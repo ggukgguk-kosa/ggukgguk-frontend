@@ -53,7 +53,7 @@
 
         isLoading.value = true;
 
-        store.dispatch('record/updateRecord', { recordId: record.value.recordId, recordComment: recordComment.value })
+        store.dispatch('record/updateRecord', { recordId: record.value.recordId, recordComment: recordComment.value, memberId: record.value.memberId })
         .then((response) => {
             isLoading.value = false;
             console.log('성공');

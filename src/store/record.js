@@ -113,8 +113,8 @@ export default {
       })
     },
 
-    deleteReply( { commit }, { recordId, replyId } ) {
-      return record.deleteReply( recordId, replyId )
+    deleteReply( { commit }, { recordId, replyId, memberId } ) {
+      return record.deleteReply( recordId, replyId, memberId )
       .then((response) => {
         commit('updateReplyList',
         {
@@ -130,13 +130,13 @@ export default {
     },
 
     // eslint-disable-next-line
-    updateRecord({ }, { recordId, recordComment } ) {
-      return record.updateRecord(recordId, recordComment);
+    updateRecord({ }, { recordId, recordComment, memberId } ) {
+      return record.updateRecord(recordId, recordComment, memberId);
     },
 
     // eslint-disable-next-line
-    deleteRecord({ }, recordId ) {
-      return record.deleteRecord(recordId);
+    deleteRecord({ }, { recordId, memberId } ) {
+      return record.deleteRecord(recordId, memberId);
     },
     
     // eslint-disable-next-line
@@ -150,8 +150,8 @@ export default {
     },
 
     // eslint-disable-next-line
-    updateUnaccepted({ }, recordId ) {
-      return record.updateUnaccepted( recordId )
+    updateUnaccepted({ }, { recordId, recordShareTo } ) {
+      return record.updateUnaccepted( recordId, recordShareTo )
       .then((response) => {
         console.log(response.data.data);
       })

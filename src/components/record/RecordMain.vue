@@ -270,17 +270,17 @@ function goToRecordUpdate(record) {
 }
 
 // 레코드 삭제
-function openDeleteRemoveDialog(recordId) {
+function openDeleteRemoveDialog(record) {
 
     if (confirm("삭제하시겠습니까?")) {
-      deleteRecord(recordId);
+      deleteRecord(record.recordId, record.memberId);
     }
 }
 
 
-function deleteRecord(recordId) {
+function deleteRecord(recordId, memberId) {
     console.log("삭제 실행");
-    store.dispatch('record/deleteRecord', recordId)
+    store.dispatch('record/deleteRecord', { recordId, memberId } )
     .then(() => {
     console.log("삭제 성공");
     getRecordList();
@@ -356,7 +356,8 @@ function openDeleteReplyDialog(reply) {
 function deleteReply(reply) {
   store.dispatch("record/deleteReply", {
     recordId : reply.recordId,
-    replyId : reply.replyId })
+    replyId : reply.replyId,
+    memberId : reply.memberId })
   .then(() => {
         deleteReplyId.value = 0;
   })
@@ -452,7 +453,7 @@ onUnmounted(() => {
                   @click="goToRecordUpdate(record)"><v-icon icon="mdi-pencil-outline"></v-icon></span>
                   <span
                   v-if="!friendId"
-                  @click="openDeleteRemoveDialog(record.recordId)"><v-icon icon="mdi-delete-outline"></v-icon></span>
+                  @click="openDeleteRemoveDialog(record)">삭제</span>
                 </v-col>
             </v-row>
             <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
