@@ -150,7 +150,7 @@ export default {
     },
 
     // eslint-disable-next-line
-    updateUnaccepted({ }, recordId, recordShareTo ) {
+    updateUnaccepted({ }, { recordId, recordShareTo } ) {
       return record.updateUnaccepted( recordId, recordShareTo )
       .then((response) => {
         console.log(response.data.data);
