@@ -1,9 +1,10 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const store = useStore();
+const route = useRoute();
 
 const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
@@ -52,7 +53,9 @@ async function getDiaryList() {
 
 const router = useRouter();
 
+
 const selectedYear = ref(diaryYear);
+// const selectedMonth = ref(store.getters['diary/diaryOption'].diaryMonth);
 const selectedMonth = ref(null);
 const years = [new Date().getFullYear(), new Date().getFullYear()-1, new Date().getFullYear()-2];
 const months = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
@@ -74,8 +77,29 @@ function clickDiary(diary) {
 }
 
 onMounted(() => {
-  setDiaryMonth(null);
+
+  // 월말 결산 알림으로 DiaryComponet 페이지를 접속한 경우
+  const yearFromParam = parseInt(route.query.year);
+  const monthFromParam = parseInt(route.query.month);
+  console.log(yearFromParam)
+  console.log(monthFromParam)
+
+  //알림으로 해당 연도와 월 값들이 받아와 진 경우
+  if (yearFromParam && monthFromParam) {
+    selectedYear.value = yearFromParam;
+    selectedMonth.value = monthFromParam;
+  } else {
+    // 기존에 다이어리 방식으로 접근 한 경우
+    setDiaryYear(selectedYear.value)
+    setDiaryMonth(selectedMonth.value)
+  }
+
   getDiaryList();
+
+  // setDiaryYear(selectedYear.value)
+  // // setDiaryMonth(selectedMonth.value)
+  // // setDiaryMonth(null)
+  // getDiaryList();
 })
 
 </script>

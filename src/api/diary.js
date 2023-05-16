@@ -33,5 +33,16 @@ export default {
                 Authorization: `Bearer ${store.getters['auth/accessToken']}`
             }
         });
+    },
+    // 다이어리 referenceId 값으로 해당 년, 월 값 가져오기 => 알림 
+    getNotifyDiaryList(referenceId){
+        return axios.get(`/diary/monthNotify`,
+        {
+            params: {referenceId },
+            headers: {
+                Authorization: `Bearer ${store.getters['auth/accessToken']}`
+            }
+        });
     }
+
 }
