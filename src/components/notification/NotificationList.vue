@@ -108,10 +108,9 @@ function detailNotify(referenceId,notificationTypeId){
         diaryMonth.value = response.data.data[0].diaryMonth
         console.log("월말결산 해당 연도 : " + diaryYear.value) //2023
         console.log("월말결산 해당 달 : " + diaryMonth.value) // 4
-        store.commit('diary/setDiaryYear', diaryYear);
+        store.commit('diary/setDiaryYear', diaryYear.value);
         store.commit('diary/setDiaryMonth', diaryMonth.value);
-        // router.push({ name: "diaryMain"})
-        router.push({ name: "diaryMain", query: { year: diaryYear.value, month: diaryMonth.value }});
+        router.push({ name: "CalendarMain"});
       })
 
   }
