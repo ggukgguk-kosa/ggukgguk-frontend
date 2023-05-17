@@ -487,7 +487,7 @@ onUnmounted(() => {
                     <div>
                       <div style="display: flex; justify-content: space-between;">
                         <div class="font-weight-bold mr-2">{{ reply.memberNickname }}</div>
-                        <div>
+                        <div v-if="reply.replyMemberId === memberId">
                           <span @click="openEditReplyForm(reply)" class="mr-1">수정 |</span>
                           <span @click="openDeleteReplyDialog(reply)">삭제</span>
                         </div>
