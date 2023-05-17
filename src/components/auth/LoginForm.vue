@@ -81,6 +81,16 @@ async function findPassword() {
 
 }
 
+async function loginWithGoogle() {
+  const params = new URLSearchParams({
+    client_id: process.env.VUE_APP_GOOGLE_LOGIN_KEY,
+    redirect_uri: 'https://localhost:9090/login/google-redirect',
+    response_type: 'code',
+    scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+  });
+
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+}
 
 </script>
 <template>
@@ -93,6 +103,7 @@ async function findPassword() {
       <v-text-field type="password" v-model="memberPw" :rules="pwRules" label="비밀번호"></v-text-field>
       <v-btn type="submit" @click="login" block class="mt-2">로그인</v-btn>
       <v-btn @click="loginWithKakao" block class="mt-2">Kakao</v-btn>
+      <v-btn @click="loginWithGoogle" block class="mt-2">Login with Google</v-btn>
       <hr />
       <v-container>
         <v-row>

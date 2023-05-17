@@ -27,7 +27,6 @@ import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
 import AdminBatchView from '../views/admin/AdminBatchView.vue';
-
 const routes = [
   {
     path: '/',
@@ -145,7 +144,7 @@ const routes = [
     component: KaKaoRedirect,
   },
   {
-    path: "/login/redirect-google",
+    path: "/login/google-redirect",
     name: "RedirectGoogle",
     component: RedirectGoogle,
   },

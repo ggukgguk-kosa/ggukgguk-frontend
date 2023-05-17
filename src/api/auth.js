@@ -32,13 +32,10 @@ export default {
             params: { AccessToken },
         });
     },
-    // 구글로그인 인가코드 전달
+    // 구글로그인 권한 토큰 전달
     directGoogleUrl(token) {
         console.log(token);
         return axios.get(`/auth/social/google`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            },
             params: { token },
         });
     },

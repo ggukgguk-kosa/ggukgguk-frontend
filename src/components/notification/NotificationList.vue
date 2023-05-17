@@ -118,7 +118,6 @@ function detailNotify(referenceId,notificationTypeId){
     router.push({ name: "recordUnaccepted"});
   }
 
-
 }
 
 
