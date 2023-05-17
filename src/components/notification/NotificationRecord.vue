@@ -1,292 +1,26 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, defineProps } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import RecordMap from './RecordMap.vue';
-import DateSeparation from './DateSeparation.vue';
 
 const store = useStore();
 
 const BASE_URI = window.baseURI;
 
-const topElId = ref(0);
-const OFFSET = 65;
-
 const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
         })
 
-const friendId = computed(() => {
-            return store.getters['record/recordOption'].friendId;
+const record = ref([]);
+
+const props = defineProps({
+  recordId: Number
 })
 
-const friendNickname = computed(() => {
-  let nick;
-  friendList.value.forEach((item) => {
-    if (item.memberId === friendId.value)
-      nick = item.memberNickname;
-  });
-  return nick;
-});
-
-const friendList = computed(() => {
-            return store.getters['friend/friendList'];
-})
-
-function setFriendId(friendId) {
-    store.commit('record/setFriendId', friendId);
-}
-
-function getFriendList() {
-  store.dispatch('friend/getFriendList', memberId)
-  .then(() => {
-    isLoading.value = false;
+function getRecord() {
+  store.dispatch("record/getRecord", {recordId : props.recordId})
+  .then((response) => {
+  console.log(response);
   })
-  .catch((error) => {
-    console.error('친구 리스트를 불러오던 중 오류가 발생했습니다.');
-    console.error(error);
-  })
-}
-
-function clickFriend(friendId) {
-    console.log("클릭");
-    setFriendId(friendId);
-    setStartDateStr(formatDate(new Date()));
-    noMoreDown.value = false;
-    noMoreUp.value = false;
-    getRecordList();
-}
-
-function formatDate(date, isCardHeader) {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-
-  if (isCardHeader)
-    return `${month < 10 ? '0' + month : month}월 ${day < 10 ? '0' + day : day}일 ${hour}시 ${minute}분`;
-  else
-    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-}
-
-const recordList = computed(() => {
-    return store.getters['record/recordList']
-});
-watch(recordList, () => {
-  noMoreDown.value = false;
-  noMoreUp.value = false;
-})
-
-// eslint-disable-next-line
-const recordCreatedAtByDayMap = computed(() => {
-  const map = {};
-  recordList.value.forEach(item => {
-    if (!Array.isArray(map[formatDate(new Date(item.recordCreatedAt))])) {
-      map[formatDate(new Date(item.recordCreatedAt))] = [];
-    }
-
-    const currentDateList = map[formatDate(new Date(item.recordCreatedAt))];
-    currentDateList.push(item);
-  })
-  return map;
-})
-
-const startDate = ref(new Date());
-
-// recordList 배열에서 가장 최근 recordCreatedAt 값을 추출
-const latestRecordCreatedAt = computed(() => {
-  return recordList.value.reduce((latest, record) => {
-    const createdAt = new Date(record.recordCreatedAt);
-    return createdAt > latest ? createdAt : latest;
-  }, new Date(0));
-})
-// recordList 배열에서 가장 과거 recordCreatedAt 값을 추출
-const earliestRecordCreatedAt = computed(() => {
-    return recordList.value.reduce((earliest, record) => {
-      const createdAt = new Date(record.recordCreatedAt);
-      return createdAt < earliest ? createdAt : earliest;
-    }, new Date());
-})
-
-const isLoadingForScrollEvent = ref(false);
-const isLoading = ref(false);
-
-const noMoreUp = ref(false);
-const noMoreDown = ref(false);
-const noData = computed(() => {
-  if (recordList.value.length === 0) return true;
-  else return false;
-});
-
-function setStartDateStr(startDateStr) {
-    store.commit('record/setStartDateStr', startDateStr);
-}
-
-let lastScrollPosition = 0;
-// const scrollThreshold = 5;
-const scrollThreshold = 0; // 모바일에서 아예 상단 스크롤 감지가 되지 않는 문제 때문에 0으로 수정
-
-function handleScroll() {
-  const scrollY = window.scrollY || document.documentElement.scrollTop;
-  const documentHeight = document.documentElement.scrollHeight;
-  const windowHeight = window.innerHeight;
-
-  // 스크롤이 맨 아래에 도달했는지 확인
-  if (Math.ceil(scrollY + windowHeight) >= documentHeight && !isLoadingForScrollEvent.value) {
-    if (noMoreDown.value) {
-      return;
-    }
-
-    isLoadingForScrollEvent.value = true;
-    startDate.value = earliestRecordCreatedAt.value;
-    startDate.value.setDate(startDate.value.getDate() - 1); // startDate를 5일 전으로 수정
-    const startDateStr = formatDate(startDate.value);
-    setStartDateStr(startDateStr);
-    getRecordsDown();
-  }
-
-  // 스크롤이 맨 위에 도달했는지 확인
-  if (scrollY === 0 && !isLoadingForScrollEvent.value && Math.abs(scrollY - lastScrollPosition) > scrollThreshold) {
-    if (noMoreUp.value) {
-      return;
-    }
-
-    isLoadingForScrollEvent.value = true;
-    startDate.value = latestRecordCreatedAt.value;
-    startDate.value.setDate(startDate.value.getDate() + 5); // startDate를 5일 후로 수정
-    console.log(startDate.value);
-    const startDateStr = formatDate(startDate.value);
-    setStartDateStr(startDateStr);
-    console.log(startDateStr);
-    topElId.value = recordList.value[0]?.recordId;
-    getRecordsUp();
-  }
-
-  lastScrollPosition = scrollY;
-}
-
-window.addEventListener('scroll', handleScroll);
-
-function setDiaryYear(year) {
-    if(year == null) {
-        year = new Date().getFullYear();
-    } 
-    store.commit('diary/setDiaryYear', year);
-}
-
-function setDiaryMonth(month){
-    store.commit('diary/setDiaryMonth', month);
-}
-
-function getRecordList() {
-  isLoading.value = true;
-
-  store.dispatch("record/getRecordList", memberId.value)
-  .then(() => {
-    isLoading.value = false;
-  })
-  .catch((error) => {
-        console.error('조각 리스트 조회 실패');
-        console.error(error);
-  })
-}
-
-function getRecordsUp() {
-  isLoadingForScrollEvent.value = true;
-  isLoading.value = true;
-
-  store.dispatch("record/getRecordsUp", memberId.value)
-  .then((data) => {
-        isLoadingForScrollEvent.value = false;
-        isLoading.value = false;
-        setTimeout(() => {
-          document.getElementById(topElId.value)?.scrollIntoView();
-          document.documentElement.scrollTop = document.documentElement.scrollTop - OFFSET;
-        }, 500) // 모든 DOM의 위치가 확정된 후 스크롤 위치가 변경될 수 있도록 비동기 처리
-        if (data?.length === 0) noMoreUp.value = true;
-  })
-  .catch((error) => {
-        console.error('조각 리스트 조회 실패');
-        console.error(error);
-  })
-}
-
-function getRecordsDown() {
-  isLoadingForScrollEvent.value = true;
-  isLoading.value = true;
-
-  store.dispatch("record/getRecordsDown", memberId.value)
-  .then((data) => {
-        isLoadingForScrollEvent.value = false;
-        isLoading.value = false;
-        if (data?.length === 0) noMoreDown.value = true;
-  })
-  .catch((error) => {
-        console.error('조각 리스트 조회 실패');
-        console.error(error);
-  })
-}
-
-async function getDiaryList() {
-    isLoading.value = true;
-
-    await store.dispatch("diary/getDiaryList", memberId.value)
-    .then(() => {
-      isLoading.value = false;
-    })
-    .catch((error) => {
-        console.error('다이어리 리스트 조회 실패');
-        console.error(error);
-    })
-}
-
-const router = useRouter();
-
-const selectedYear = ref(new Date().getFullYear());
-const selectedMonth = ref(null);
-
-watch(selectedYear, () => {
-    setDiaryYear(selectedYear.value);
-    setDiaryMonth(null);
-    getDiaryList();
-})
-
-watch(selectedMonth, async () => {
-    setDiaryMonth(selectedMonth.value);
-    await getDiaryList();
-    router.push('/calendar');
-})
-
-// 레코드 수정
-
-function setRecord(record) {
-    store.commit('record/setRecord', record);
-}
-
-function goToRecordUpdate(record) {
-    setRecord(record);
-    router.push('/record/update');
-}
-
-// 레코드 삭제
-function openDeleteRemoveDialog(record) {
-
-    if (confirm("삭제하시겠습니까?")) {
-      deleteRecord(record.recordId, record.memberId);
-    }
-}
-
-
-function deleteRecord(recordId, memberId) {
-    console.log("삭제 실행");
-    store.dispatch('record/deleteRecord', { recordId, memberId } )
-    .then(() => {
-    console.log("삭제 성공");
-    getRecordList();
-    })
-    .catch((error) =>
-    console.log(error));
 }
 
 // 댓글
@@ -367,100 +101,24 @@ function deleteReply(reply) {
   })
 }
 
-// 맨위로
-function scrollToTop() {
-  window.scrollTo({
-    top: 10,
-    behavior: "smooth"
-  });
-}
-
 onMounted(() => {
-  getRecordList();
-  getFriendList();
+  getRecord();
 })
 
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
-})
 </script>
 
 <template>
-  <v-overlay
-    v-model="isLoading"
-    scroll-strategy="block"
-    persistent
-    class="loading-overlay"
-  >
-    <v-progress-circular
-      color="primary"
-      indeterminate
-      size="64"
-    ></v-progress-circular>
-  </v-overlay>
-
-  <h1 v-if="!friendId">조각들 |&nbsp;&nbsp;&nbsp;나 ({{ memberId }})</h1>
-  <h1 v-if="friendId">조각들 |&nbsp;&nbsp;&nbsp;{{ friendNickname }} ({{ friendId }})</h1>
-
-  <v-slide-group
-        show-arrows
-        class = "mt-15"
-      >
-        <v-slide-group-item
-          v-for="friend in friendList"
-          :key="friend.memberId"
-          v-slot="{ isSelected }"
-        >
-          <v-btn
-            class="ma-2"
-            rounded
-            :color="isSelected ? 'primary' : undefined"
-            @click="clickFriend(friend.memberId)"
-          >
-            {{ friend.memberNickname }}
-          </v-btn>
-        </v-slide-group-item>
-      </v-slide-group>
-  <v-container>
-    <div class="msg" v-if="noMoreUp">
-      더 이상 불러올 데이터가 없습니다.
-    </div>
-    <!-- <v-row> -->
-      <v-col
-        v-for="record in recordList"
-        :key="record.recordId"
-        :id="record.recordId"
-        cols="12"
-        xs="12"
-        style="display: flex; flex-direction: column; align-items: center;"
-      >
-          <date-separation
-            v-if="recordCreatedAtByDayMap[formatDate(new Date(record.recordCreatedAt))][0].recordId === record.recordId"
-            style="width: 100%;"
-            class="my-8"
-            :date="formatDate(new Date(record.recordCreatedAt))"
-            :color="record.mainColor" />
-          <!-- 조각 카드 -->
+<!-- 조각 카드 -->
           <v-card class="card" :style="{ borderColor: record.mainColor }" variant="outlined">
             <!-- 헤더 영역 -->
             <v-row>
                 <v-col cols="10">
-                  {{ formatDate(new Date(record.recordCreatedAt), true) }}
-                </v-col>
-                <v-col cols="2" class="d-flex justify-end">
-                  <span
-                  v-if="memberId === record.memberId && !record.recordShareTo"
-                  @click="goToRecordUpdate(record)"><v-icon icon="mdi-pencil-outline"></v-icon></span>
-                  <span
-                  v-if="!friendId"
-                  @click="openDeleteRemoveDialog(record)">삭제</span>
+                  {{ record.recordCreatedAt }}
                 </v-col>
             </v-row>
-            <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
-            <v-card-text v-if="!friendId && record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
-            <v-card-text v-if="friendId && record.memberId !== friendId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
-            <v-card-text v-if="friendId && record.recordShareTo && record.memberId === friendId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
-
+            <v-card-text v-if="record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
+            <v-card-text v-if="record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
+            
             <!-- 본문 영역 -->
             <v-card-text class="mb-8 record-comment" style="white-space: pre-wrap">
               {{ record.recordComment }}
@@ -526,21 +184,6 @@ onUnmounted(() => {
               @click="addReply(record.recordId); newReplyContent[record.recordId] = ''" :disabled="newReplyContent === ''">등록</v-btn>
             </v-form>
         </v-card>
-      </v-col>
-    <!-- </v-row> -->
-    <div class="msg" v-if="noMoreDown">
-      더 이상 불러올 데이터가 없습니다.
-    </div>
-    <div class="msg" v-if="noData">
-      {{ store.getters['record/recordOption']?.startDateStr }} 부터 5일간 작성된 조각을 찾을 수 없습니다.
-    </div>
-  </v-container>
-    <v-btn
-    @click="scrollToTop"
-    style="position: fixed; bottom: 80px; right: 20px;"
-  >
-    <v-icon>mdi-chevron-up</v-icon>
-  </v-btn>
 </template>
 
 <style scoped>

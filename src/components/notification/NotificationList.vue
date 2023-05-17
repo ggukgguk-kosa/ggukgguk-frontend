@@ -4,6 +4,7 @@ import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
 import { friend } from '../../api';
 import { diary } from '../../api';
+import NotificationRecord from './NotificationRecord.vue';
 
 
 const store = useStore();
@@ -36,6 +37,7 @@ const unNotifyList = computed(() => {
 onMounted(() => {
   notifyListHandler();
   getunreadNotify();
+  console.log(notifyList);
 })
 
 // 알림 목록 조회
@@ -161,6 +163,12 @@ function readNotify(notificationId) {
       -->
       <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId); readNotify(notify.notificationId); }">
         수락 </v-btn>
+        <v-dialog
+          v-model="recordDialog"
+          width="auto"
+        >
+          <notification-record :recordId="notify.referenceId"></notification-record>
+       </v-dialog>
       </v-card-actions>
     </v-card>
   </div>
