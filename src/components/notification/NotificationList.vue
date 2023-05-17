@@ -112,8 +112,13 @@ function detailNotify(referenceId,notificationTypeId){
         store.commit('diary/setDiaryMonth', diaryMonth.value);
         router.push({ name: "CalendarMain"});
       })
-
+  } // 교환일기 요청 알림인 경우 
+  else if(notificationTypeId === 'EXCHANGE_DIARY'){
+    console.log(referenceId)
+    router.push({ name: "recordUnaccepted"});
   }
+
+
 }
 
 
@@ -159,7 +164,7 @@ function readNotify(notificationId) {
            친구 요청 알림은 수락 or 거절의 2가지 옵션이 있어서, 음 수락하려고 하면 수락버튼을 누르고 진행, 아니면 싫으면 단순히 체크박스를 클릭후 
            넘길 수 있게 하는게 어떨런지 궁금함.
       -->
-      <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId); readNotify(notify.notificationId); }">
+      <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId);}">
         수락 </v-btn>
       </v-card-actions>
     </v-card>
