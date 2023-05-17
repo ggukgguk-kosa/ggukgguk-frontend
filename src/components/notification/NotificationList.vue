@@ -1,10 +1,13 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from 'vue-router';
 import { friend } from '../../api';
+import { diary } from '../../api';
 
 
 const store = useStore();
+const router = useRouter();
 
 const checked = ref([]);
 const toMemberId = ref('');
@@ -89,6 +92,30 @@ async function applyFriendrelationShip(referenceId) {
     }).catch(() => {})
 
 }
+const diaryYear = ref('');
+const diaryMonth = ref('');
+
+// 알림 상세 보기 (라우터로 해당 댓글 / 월말 결산 / 교환일기 이동)
+function detailNotify(referenceId,notificationTypeId){
+ 
+  // 월말 결산 알림인 경우
+  if(notificationTypeId === 'MONTHLY_ANALYSIS'){
+      console.log(referenceId)
+      return diary.getNotifyDiaryList(referenceId)
+      .then((response)=>{
+        console.log(response);
+        diaryYear.value = response.data.data[0].diaryYear
+        diaryMonth.value = response.data.data[0].diaryMonth
+        console.log("월말결산 해당 연도 : " + diaryYear.value) //2023
+        console.log("월말결산 해당 달 : " + diaryMonth.value) // 4
+        store.commit('diary/setDiaryYear', diaryYear.value);
+        store.commit('diary/setDiaryMonth', diaryMonth.value);
+        router.push({ name: "CalendarMain"});
+      })
+
+  }
+}
+
 
 // 알림 읽음 처리
 function readNotify(notificationId) {
@@ -127,7 +154,7 @@ function readNotify(notificationId) {
       </v-card-text>
       <v-card-actions class="justify-end pt-1 pb-0">
         <v-checkbox v-model="checked" :value="notify.notificationId" class="mt-n4"
-          @change="readNotify(notify.notificationId)"></v-checkbox>
+          @change="() =>{detailNotify(notify.referenceId,notify.notificationTypeId); readNotify(notify.notificationId)}"></v-checkbox>
       <!-- 수락 컴포넌트를 만든 이유.. 음 체크박스는 단순히 읽음의 용도로와 해당 위치의 라우터로 넘길 수 있지만,
            친구 요청 알림은 수락 or 거절의 2가지 옵션이 있어서, 음 수락하려고 하면 수락버튼을 누르고 진행, 아니면 싫으면 단순히 체크박스를 클릭후 
            넘길 수 있게 하는게 어떨런지 궁금함.
