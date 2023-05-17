@@ -155,6 +155,15 @@ export default {
       .then((response) => {
         console.log(response.data.data);
       })
+    },
+
+    // eslint-disable-next-line
+    getRecord({ }, { recordId }) {
+      return record.getRecord( recordId )
+      .then((response) => {
+        console.log(response.data.data);
+      })
     }
-  },
+  }
+
 };
