@@ -1,10 +1,14 @@
 <script setup>
 import { computed, onMounted, ref, defineProps } from 'vue';
 import { useStore } from 'vuex';
+import RecordMap from '../record/RecordMap.vue';
+import apiFactory from "../../api/apiFactory"
 
 const store = useStore();
 
 const BASE_URI = window.baseURI;
+
+const axios = apiFactory.getInstance();
 
 const memberId = computed(() => {
             return store.getters['auth/memberInfo'].memberId;
@@ -19,24 +23,32 @@ const props = defineProps({
 function getRecord() {
   store.dispatch("record/getRecord", {recordId : props.recordId})
   .then((response) => {
-  console.log(response);
+    record.value=response.data.data;
+    console.log(record.value);
   })
 }
 
 // 댓글
 
 // 댓글 추가
-const newReplyContent = ref({});
+const newReplyContent = ref('');
 
 function addReply(recordId) {
-  store.dispatch("record/addReply", { 
-    memberId : memberId.value, 
-    recordId : recordId, 
-    replyContent : newReplyContent.value[recordId] })
-  .catch((error) => {
-        console.error('댓글 추가 실패');
-        console.error(error);
-  })
+
+return axios.post('/record/reply',
+        {
+            memberId : memberId.value,
+            recordId : recordId, 
+            replyContent: newReplyContent.value
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          record.value.replyList = response.data.data;
+        })
+        .catch((error) => {
+          console.error('댓글 추가 실패');
+          console.error(error);
+        })
 }
 
 // 댓글 수정
@@ -57,21 +69,26 @@ function cancelEditReply() {
 }
 
 function editReply(reply) {
-  store.dispatch("record/editReply", { 
-    memberId : memberId.value, 
-    recordId : reply.recordId,
-    replyId : reply.replyId, 
-    replyContent : editReplyContent.value })
-  .then(() => {
-        editReplyForm.value = false;
-        editReplyId.value = 0;
-        editReplyContent.value = '';
-  })
-  .catch((error) => {
-        console.error('댓글 수정 실패');
-        console.error(error);
-  })
+  return axios.put(`/record/reply/${reply.replyId}`,
+        {
+            memberId : memberId.value, 
+            recordId : reply.recordId,
+            replyId : reply.replyId, 
+            replyContent : editReplyContent.value
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          record.value.replyList = response.data.data;
+          editReplyForm.value = false;
+          editReplyId.value = 0;
+          editReplyContent.value = '';
+        })
+        .catch((error) => {
+              console.error('댓글 수정 실패');
+              console.error(error);
+        })
 }
+
 
 const deleteReplyId = ref(0);
 
@@ -87,18 +104,26 @@ function openDeleteReplyDialog(reply) {
   }
 }
 
+
 function deleteReply(reply) {
-  store.dispatch("record/deleteReply", {
-    recordId : reply.recordId,
-    replyId : reply.replyId,
-    memberId : reply.memberId })
-  .then(() => {
-        deleteReplyId.value = 0;
+  return axios.delete(`/record/reply/${reply.replyId}`,
+        {
+            data: {
+                recordId : reply.recordId,
+                replyId : reply.replyId,
+                memberId : reply.memberId
+              }
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          record.value.replyList = response.data.data;
+          deleteReplyId.value = 0;
+        })
+        .catch((error) => {
+              console.error('댓글 삭제 실패');
+              console.error(error);
   })
-  .catch((error) => {
-        console.error('댓글 삭제 실패');
-        console.error(error);
-  })
+
 }
 
 onMounted(() => {
@@ -108,8 +133,7 @@ onMounted(() => {
 </script>
 
 <template>
-<!-- 조각 카드 -->
-          <v-card class="card" :style="{ borderColor: record.mainColor }" variant="outlined">
+          <v-card class="card">
             <!-- 헤더 영역 -->
             <v-row>
                 <v-col cols="10">
@@ -138,14 +162,14 @@ onMounted(() => {
             <!-- 댓글이 없을 때에도 replyId가 0인 값이 반환되는 버그가 있어, -->
             <!-- 우선 리스트 마지막 값의 replyId가 0이면 보이지 않도록 해놓음  -->
             <div class="ma-2">댓글</div>
-            <v-list dense v-if="record?.replyList[record.replyList.length-1]?.replyId !== 0">
+            <v-list dense>
               <v-list-item v-for="reply in record.replyList" :key="reply.replyId">
                 <v-list-item-title v-if="reply.replyId !== 0">
                   <div class="mb-2">
                     <div>
                       <div style="display: flex; justify-content: space-between;">
                         <div class="font-weight-bold mr-2">{{ reply.memberNickname }}</div>
-                        <div>
+                        <div v-if="reply.replyMemberId === memberId">
                           <span @click="openEditReplyForm(reply)" class="mr-1">수정 |</span>
                           <span @click="openDeleteReplyDialog(reply)">삭제</span>
                         </div>
@@ -161,11 +185,9 @@ onMounted(() => {
                         </v-col>
                         <v-col cols="2">
                           <v-btn
-                          :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
                           class= "button"
                           @click="editReply(reply)">수정</v-btn>
-                          <v-btn 
-                          :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
+                          <v-btn
                           class= "button"
                           @click="cancelEditReply">취소</v-btn>
                         </v-col>
@@ -177,11 +199,10 @@ onMounted(() => {
             </v-list>
 
             <v-form class="d-flex align-center">
-              <v-text-field class="ml-1" :value="newReplyContent[record.recordId]" @input="newReplyContent[record.recordId] = $event.target.value" required></v-text-field>
+              <v-text-field class="ml-1" :value="newReplyContent" @input="newReplyContent = $event.target.value" required></v-text-field>
               <v-btn 
-              :style="{ border: '1px solid ' + record.mainColor, color: 'black', backgroundColor: record.mainColor }"
               class= "button"
-              @click="addReply(record.recordId); newReplyContent[record.recordId] = ''" :disabled="newReplyContent === ''">등록</v-btn>
+              @click="addReply(record.recordId); newReplyContent = ''" :disabled="newReplyContent === ''">등록</v-btn>
             </v-form>
         </v-card>
 </template>

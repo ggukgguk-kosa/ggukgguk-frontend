@@ -160,9 +160,6 @@ export default {
     // eslint-disable-next-line
     getRecord({ }, { recordId }) {
       return record.getRecord( recordId )
-      .then((response) => {
-        console.log(response.data.data);
-      })
     }
   }
 

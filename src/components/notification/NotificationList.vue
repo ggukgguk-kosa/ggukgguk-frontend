@@ -97,9 +97,13 @@ async function applyFriendrelationShip(referenceId) {
 const diaryYear = ref('');
 const diaryMonth = ref('');
 
+const recordDialog = ref(false);
+const recordId = ref(0);
+
 // 알림 상세 보기 (라우터로 해당 댓글 / 월말 결산 / 교환일기 이동)
 function detailNotify(referenceId,notificationTypeId){
- 
+
+
   // 월말 결산 알림인 경우
   if(notificationTypeId === 'MONTHLY_ANALYSIS'){
       console.log(referenceId)
@@ -114,6 +118,11 @@ function detailNotify(referenceId,notificationTypeId){
         store.commit('diary/setDiaryMonth', diaryMonth.value);
         router.push({ name: "CalendarMain"});
       })
+  }
+
+  if(notificationTypeId === 'NEW_REPLY'){
+    recordDialog.value = true;
+    recordId.value=referenceId;
   }
   
 }
@@ -163,13 +172,14 @@ function readNotify(notificationId) {
       -->
       <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId); readNotify(notify.notificationId); }">
         수락 </v-btn>
-        <v-dialog
-          v-model="recordDialog"
-          width="auto"
-        >
-          <notification-record :recordId="notify.referenceId"></notification-record>
-       </v-dialog>
       </v-card-actions>
     </v-card>
+    <v-dialog
+          v-model="recordDialog"
+          width="auto"
+      >
+        <notification-record :recordId="recordId"></notification-record>
+        <v-btn color="primary" block @click="recordDialog = false">닫기</v-btn>
+      </v-dialog>
   </div>
 </template>
