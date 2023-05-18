@@ -48,6 +48,21 @@ export default {
         {
             params: { page, size }
         });
+    },
+    getMediaFileDetail(mediaFileId) {
+        return axios.get(`/admin/content/media/${mediaFileId}`)
+    },
+    getMediaFileRecheckRequest({ mediaFileRecheckRequestStatus, mediaFileId, page, size }) {
+        return axios.get(`/admin/content/claim`, {
+            params: {
+                mediaFileRecheckRequestStatus, mediaFileId, page, size
+            }
+        })
+    },
+    postMediaFileRecheckRequest({ mediaFileId, mediaFileRecheckRequestClaim }) {
+        return axios.post(`/admin/content/claim`, {
+            mediaFileId, mediaFileRecheckRequestClaim
+        })
     }
 }
 
