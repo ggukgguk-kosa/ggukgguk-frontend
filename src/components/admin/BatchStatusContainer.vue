@@ -41,7 +41,7 @@ const batchDetailTotal = computed(() => {
 });
 
 const batchDetailTotalPage = computed(() => {
-    const computed = Math.floor(batchDetailTotal.value / 5);
+    const computed = Math.ceil(batchDetailTotal.value / 10);
     if (!computed) { // NaN인 경우 페이지네이션 컴포넌트의 Validation 로직에 걸리게 되므로 한 번 걸러준다
         return 1;
     }
