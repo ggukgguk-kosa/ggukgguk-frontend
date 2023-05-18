@@ -80,19 +80,6 @@ export default {
         })
     },
 
-    // 구글 인가 코드 전달.
-    // eslint-disable-next-line
-    handleGoogleAuth({ commit }, code) {
-      // console.log("테스트 :" + code);
-      return auth.handleGoogleAuth(code).then((response) => {
-        console.log("리스폰스 응답");
-        console.log(response);
-        // Extract the user information from the received JSON object
-        // Commit the setMemberInfo mutation with the user information
-        commit("setMemberInfo", response.data.data);
-        return response;
-      });
-    },
     // 카카오 인가코드 전달.
     handleKakaoAuth({ commit }, AccessToken) {
       // console.log("테스트 :" + code);
@@ -104,16 +91,16 @@ export default {
       });
     },
 
-    // 구글 로그인 시작 (백엔드에서만 구현할 예정)
+    // 구글 로그인 
     // eslint-disable-next-line
-    handleGoogleAuth({ }, token) {
+    handleGoogleAuth({ commit }, token) {
       return auth.directGoogleUrl(token).then((response) => {
         console.log(response);
-        // const memberInfo = response.data.data;
-        // window.location.href = googleLoginUrl;
+        commit('setMemberInfo', response.data.data);
         return response
       })
     },
+
     // 이메일로 아이디찾기
     // eslint-disable-next-line
     handleFindId({ }, email) {
