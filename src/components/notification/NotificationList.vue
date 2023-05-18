@@ -4,6 +4,7 @@ import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
 import { friend } from '../../api';
 import { diary } from '../../api';
+import NotificationRecord from './NotificationRecord.vue';
 
 
 const store = useStore();
@@ -36,6 +37,7 @@ const unNotifyList = computed(() => {
 onMounted(() => {
   notifyListHandler();
   getunreadNotify();
+  console.log(notifyList);
 })
 
 // 알림 목록 조회
@@ -95,9 +97,13 @@ async function applyFriendrelationShip(referenceId) {
 const diaryYear = ref('');
 const diaryMonth = ref('');
 
+const recordDialog = ref(false);
+const recordId = ref(0);
+
 // 알림 상세 보기 (라우터로 해당 댓글 / 월말 결산 / 교환일기 이동)
 function detailNotify(referenceId,notificationTypeId){
- 
+
+
   // 월말 결산 알림인 경우
   if(notificationTypeId === 'MONTHLY_ANALYSIS'){
       console.log(referenceId)
@@ -112,12 +118,12 @@ function detailNotify(referenceId,notificationTypeId){
         store.commit('diary/setDiaryMonth', diaryMonth.value);
         router.push({ name: "CalendarMain"});
       })
-  } // 교환일기 요청 알림인 경우 
-  else if(notificationTypeId === 'EXCHANGE_DIARY'){
-    console.log(referenceId)
-    router.push({ name: "recordUnaccepted"});
   }
 
+  if(notificationTypeId === 'NEW_REPLY'){
+    recordDialog.value = true;
+    recordId.value=referenceId;
+  }
 }
 
 
@@ -163,9 +169,16 @@ function readNotify(notificationId) {
            친구 요청 알림은 수락 or 거절의 2가지 옵션이 있어서, 음 수락하려고 하면 수락버튼을 누르고 진행, 아니면 싫으면 단순히 체크박스를 클릭후 
            넘길 수 있게 하는게 어떨런지 궁금함.
       -->
-      <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId);}">
+      <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId); readNotify(notify.notificationId); }">
         수락 </v-btn>
       </v-card-actions>
     </v-card>
+    <v-dialog
+          v-model="recordDialog"
+          width="auto"
+      >
+        <notification-record :recordId="recordId"></notification-record>
+        <v-btn color="primary" block @click="recordDialog = false">닫기</v-btn>
+      </v-dialog>
   </div>
 </template>

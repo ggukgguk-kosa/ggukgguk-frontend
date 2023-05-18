@@ -92,6 +92,7 @@ export default {
     },
 
     // 구글 로그인 
+    // eslint-disable-next-line
     handleGoogleAuth({ commit }, token) {
       return auth.directGoogleUrl(token).then((response) => {
         console.log(response);

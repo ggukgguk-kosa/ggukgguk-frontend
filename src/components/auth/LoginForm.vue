@@ -46,7 +46,7 @@ async function login() {
       // alert('로그인 성공');
       // router.push({path: to.value})
       if (memberInfo.value?.memberAuthority === 'SYSTEM_ADMIN'
-          || memberInfo.value?.memberAuthority === 'SERVICE_ADMIN') {
+        || memberInfo.value?.memberAuthority === 'SERVICE_ADMIN') {
         router.push({ name: "adminMain" });
       } else {
         router.push({ name: "recordMain" });
@@ -102,16 +102,20 @@ async function loginWithGoogle() {
       <v-text-field v-model="memberId" :rules="idRules" label="아이디"></v-text-field>
       <v-text-field type="password" v-model="memberPw" :rules="pwRules" label="비밀번호"></v-text-field>
       <v-btn type="submit" @click="login" block class="mt-2">로그인</v-btn>
-      <v-btn @click="loginWithKakao" block class="mt-2">Kakao</v-btn>
-      <v-btn @click="loginWithGoogle" block class="mt-2">Login with Google</v-btn>
+      <div class="center">
+        <div class="button-wrap">
+          <img class="button-icon" src="/img/google_login.png" @click="loginWithGoogle" />
+          <img class="button-icon" src="/img/kakao_login.png" @click="loginWithKakao" />
+        </div>
+      </div>
       <hr />
       <v-container>
         <v-row>
-          <v-col>
+          <v-col class="text-center">
             <v-btn @click="findId">아이디 찾기</v-btn>
           </v-col>
-          <v-col>
-            <v-btn @click="findPassword">비빌번호 찾기</v-btn>
+          <v-col class="text-center">
+            <v-btn @click="findPassword">비밀번호 찾기</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -125,7 +129,30 @@ async function loginWithGoogle() {
   text-align: center;
 }
 
-img {
+.img-wrap img {
   width: 300px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+.button-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.button-wrap img {
+  margin-left: 11px;
+  margin-right: 17px;
+}
+.button-icon{
+  width: 140px;
+}
+.text-center {
+  text-align: center;
 }
 </style>
