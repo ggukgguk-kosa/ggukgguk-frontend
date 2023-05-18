@@ -48,6 +48,40 @@ export default {
         {
             params: { page, size }
         });
+    },
+    getMediaFileDetail(mediaFileId) {
+        return axios.get(`/admin/content/media/${mediaFileId}`)
+    },
+    getMediaFileRecheckRequest({ mediaFileRecheckRequestStatus, mediaFileId, page, size }) {
+        return axios.get(`/admin/content/claim`, {
+            params: {
+                mediaFileRecheckRequestStatus, mediaFileId, page, size
+            }
+        })
+    },
+    postMediaFileRecheckRequest({ mediaFileId, mediaFileRecheckRequestClaim }) {
+        return axios.post(`/admin/content/claim`, {
+            mediaFileId, mediaFileRecheckRequestClaim
+        })
+    },
+    editMediaFileRecheckRequest({
+        mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+        mediaFileRecheckRequestClaim, mediaFileRecheckRequestReply,
+        mediaFileRecheckRequestStatus,
+        memberId, memberName, memberEmail, memberPhone
+    }) {
+        return axios.put(`/admin/content/claim/${mediaFileRecheckRequestId}`, {
+            mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+            mediaFileRecheckRequestClaim, mediaFileRecheckRequestReply,
+            mediaFileRecheckRequestStatus,
+            memberId, memberName, memberEmail, memberPhone
+        })
+    },
+    getMediaFileWithCredential({ mediaFileId, mediaType }) {
+        return axios.get(`/record/media/${mediaFileId}`, {
+            params: { mediaType },
+            responseType: 'blob'
+        })
     }
 }
 

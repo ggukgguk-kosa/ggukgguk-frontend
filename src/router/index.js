@@ -27,6 +27,8 @@ import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
 import AdminBatchView from '../views/admin/AdminBatchView.vue';
+import MediaRecheckRequestView from '../views/record/MediaRecheckRequestView.vue';
+
 const routes = [
   {
     path: '/',
@@ -102,6 +104,12 @@ const routes = [
     path: '/record/unaccepted',
     name: 'recordUnaccepted',
     component: RecordUnaccepted,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/record/media/recheck/:mediaFileId',
+    name: 'mediaRecheck',
+    component: MediaRecheckRequestView,
     meta: { requiresAuth: true }
   },
   {

@@ -91,6 +91,4 @@ export default {
     getRecord( recordId ) {
         return axios.get(`/record/${recordId}`);
     }
-
-    
 };

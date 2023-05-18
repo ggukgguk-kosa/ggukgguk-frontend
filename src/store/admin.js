@@ -35,7 +35,16 @@ export default {
       page: 1,
       size: 10,
       jobName: 'extractKeywordJob'
-    }
+    },
+    mediaFileDetail: {},
+    mediaFileRecheckRequest: [],
+    mediaFileRecheckRequestOption: {
+      page: 1,
+      size: 10,
+      mediaFileId: null,
+      mediaFileRecheckRequestStatus: null
+    },
+    mediaFileRecheckRequestTotal: 0
   },
 
   getters: {
@@ -91,6 +100,18 @@ export default {
     },
     batchOption(state) {
       return state.batchOption;
+    },
+    mediaFileDetail(state) {
+      return state.mediaFileDetail;
+    },
+    mediaFileRecheckRequest(state) {
+      return state.mediaFileRecheckRequest;
+    },
+    mediaFileRecheckRequestTotal(state) {
+      return state.mediaFileRecheckRequestTotal;
+    },
+    mediaFileRecheckRequestOption(state) {
+      return state.mediaFileRecheckRequestOption;
     }
   },
   mutations: {
@@ -148,6 +169,19 @@ export default {
     },
     updateBatchOption(state, batchOption) {
       state.batchOption = {...state.batchOption, ...batchOption};
+    },
+    setMediaFileDetail(state, mediaFileDetail) {
+      state.mediaFileDetail = mediaFileDetail;
+    },
+    setMediaFileRecheckRequest(state, mediaFileRecheckRequest) {
+      state.mediaFileRecheckRequest = mediaFileRecheckRequest;
+    },
+    setMediaFileRecheckRequestTotal(state, mediaFileRecheckRequestTotal) {
+      state.mediaFileRecheckRequestTotal = mediaFileRecheckRequestTotal;
+    },
+    updateMediaFileRecheckRequestOption(state, mediaFileRecheckRequestOption) {
+      state.mediaFileRecheckRequestOption =
+        {...state.mediaFileRecheckRequestOption, ...mediaFileRecheckRequestOption};
     }
   },
 
@@ -220,10 +254,28 @@ export default {
         .then((response) => {
           commit('setBatchDetail', response.data.data);
         })
-    }
+    },
+    getMediaFileDetail({ commit }, mediaFileId) {
+      return admin.getMediaFileDetail(mediaFileId)
+        .then((response) => {
+          commit('setMediaFileDetail', response.data.data);
+        })
+    },
+    // eslint-disable-next-line
+    uploadMediaFileRecheckRequest({ commit }, { mediaFileId, mediaFileRecheckRequestClaim }) {
+      return admin.postMediaFileRecheckRequest({ mediaFileId, mediaFileRecheckRequestClaim });
+    },
+    getMediaFileRecheckRequest({ commit, state }) {
+      const { mediaFileId, mediaFileRecheckRequestStatus, page, size } = state.mediaFileRecheckRequestOption;
+
+      return admin.getMediaFileRecheckRequest({ mediaFileId, mediaFileRecheckRequestStatus, page, size })
+        .then((response) => {
+          commit('setMediaFileRecheckRequest', response.data.data.list);
+          commit('setMediaFileRecheckRequestTotal', response.data.data.total)
+        })
+    },
   }
 }
-
 // Vue.js 애플리케이션에서 사용되는 상태 관리를 위한 Vuex Store를 포함하는 위치
 // Vuex는 Vue.js 애플리케이션에서 데이터를 중앙 집중화하여 구성하고, 다양한 컴포넌트에서 공유하여 사용할 수 있게 해줌. 이를 통해 애플리케이션에서 발생하는 복잡한 데이터 관리 문제 해결 가능
 // Vuex Store와 관련된 코드가 포함. 예를 들어, Vuex Store의 상태(state), 변이(mutation), 액션(action), 게터(getter) 및 모듈(module) 등의 코드가 포함될 수 있음
