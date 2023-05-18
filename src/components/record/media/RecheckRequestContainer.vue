@@ -30,6 +30,7 @@ const complainList = computed(() => {
 });
 
 function fetchRequestList() {
+    console.log('옵션 변경');
     store.commit('admin/updateMediaFileRecheckRequestOption', {
         mediaFileId: mediaFileId.value,
         page: 1,

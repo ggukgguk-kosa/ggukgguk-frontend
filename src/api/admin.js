@@ -64,6 +64,19 @@ export default {
             mediaFileId, mediaFileRecheckRequestClaim
         })
     },
+    editMediaFileRecheckRequest({
+        mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+        mediaFileRecheckRequestClaim, mediaFileRecheckRequestReply,
+        mediaFileRecheckRequestStatus,
+        memberId, memberName, memberEmail, memberPhone
+    }) {
+        return axios.put(`/admin/content/claim/${mediaFileRecheckRequestId}`, {
+            mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+            mediaFileRecheckRequestClaim, mediaFileRecheckRequestReply,
+            mediaFileRecheckRequestStatus,
+            memberId, memberName, memberEmail, memberPhone
+        })
+    },
     getMediaFileWithCredential({ mediaFileId, mediaType }) {
         return axios.get(`/record/media/${mediaFileId}`, {
             params: { mediaType },

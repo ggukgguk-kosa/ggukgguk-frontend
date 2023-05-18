@@ -14,6 +14,8 @@ const isLoading = ref(false);
 
 const showRequest = ref(false);
 
+const MAX_COMMENT_LENGTH = 1024;
+
 function changeView() {
     showRequest.value = !showRequest.value;
     if (showRequest.value) {
@@ -87,6 +89,28 @@ const detailRequestDiagVisible = ref(false);
 const detailRequestDaigContent = ref({});
 const detailRequestDaigContentMediaUrl = ref('');
 
+const requestReply = ref('');
+const replyLength = computed(() => {
+    return requestReply.value.length;
+});
+const STATUS = [{
+        label: '처리전',
+        value: 'BEFORE'
+    },
+    {
+        label: '검토중',
+        value: 'PROCEEDING'
+    },
+    {
+        label: '거절',
+        value: 'REJECTED'
+    },
+    {
+        label: '인용',
+        value: 'PASSED'
+}];
+const selectedStatus = ref('');
+
 const claimList = computed(() => {
     return store.getters['admin/mediaFileRecheckRequest'];
 })
@@ -128,9 +152,47 @@ function getClaimList() {
         })
 }
 
+function updateRequest() {
+    if (replyLength.value > MAX_COMMENT_LENGTH) {
+        alert(MAX_COMMENT_LENGTH + '를 초과하였습니다.')
+    }
+
+    const {
+        mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+        mediaFileRecheckRequestClaim, mediaFileRecheckRequestCreatedAt,
+        memberId, memberName, memberEmail, memberPhone
+    } = detailRequestDaigContent.value
+
+    const mediaFileRecheckRequestReply = requestReply.value;
+    const mediaFileRecheckRequestStatus = selectedStatus.value;
+
+    admin.editMediaFileRecheckRequest({
+        mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+        mediaFileRecheckRequestClaim, mediaFileRecheckRequestReply,
+        mediaFileRecheckRequestStatus, mediaFileRecheckRequestCreatedAt,
+        memberId, memberName, memberEmail, memberPhone
+    })
+        .then(() => {
+            isLoading.value = false;
+            console.log('이의제기 업데이트 성공');
+
+            // 성공시 모달을 닫고 새 값을 로드
+            getClaimList();
+            detailRequestDiagVisible.value = false;
+        })
+        .catch((error) => {
+            isLoading.value = false;
+            console.error('이의제기 업데이트 실패');
+            console.error(error);
+
+            alert('수정에 실패하였습니다. 다시 한 번 시도해주세요.')
+        })
+}
+
 function showRequestDetailDiag(item) {
     detailRequestDaigContent.value = item;
-
+    selectedStatus.value = item.mediaFileRecheckRequestStatus;
+    requestReply.value = item.mediaFileRecheckRequestReply;
     detailRequestDaigContentMediaUrl.value = '';
     admin.getMediaFileWithCredential({
         mediaFileId: detailRequestDaigContent.value.mediaFileId,
@@ -140,7 +202,7 @@ function showRequestDetailDiag(item) {
         console.log('미디어 파일 요청 성공');
         console.log(response);
 
-        const myFile = new File([response.data], 'mediaFile');
+        const mediaFile = new File([response.data], 'mediaFile');
 
         if (detailRequestDaigContent.value.mediaTypeId === 'image') {
             const reader = new FileReader();
@@ -148,9 +210,9 @@ function showRequestDetailDiag(item) {
                 const previewImage = String(ev.target?.result)
                 detailRequestDaigContentMediaUrl.value = previewImage;
             };
-            reader.readAsDataURL(myFile);
+            reader.readAsDataURL(mediaFile);
         } else { // video
-            detailRequestDaigContentMediaUrl.value = URL.createObjectURL(myFile)
+            detailRequestDaigContentMediaUrl.value = URL.createObjectURL(mediaFile)
         }
     })
     .catch((error) => {
@@ -207,18 +269,38 @@ function showRequestDetailDiag(item) {
                     <li>미디어 파일 ID: {{ detailRequestDaigContent.mediaFileId }}</li>
                     <li>미디어 타입: {{ detailRequestDaigContent.mediaTypeId }}</li>
                     <li>요청 일시: {{ detailRequestDaigContent.mediaFileRecheckRequestCreatedAt }}</li>
-                    <li>작성 일시: {{ detailRequestDaigContent.mediaFileRecheckRequestCreatedAt }}</li>
                     <li>요청 본문: {{ detailRequestDaigContent.mediaFileRecheckRequestClaim }}</li>
-                    <li>처리 현황: {{ detailRequestDaigContent.mediaFileRecheckRequestStatus }}</li>
-                    <li>처리 결과: {{ detailRequestDaigContent.mediaFileRecheckRequestReply }}</li>
                     <li>회원 ID: {{ detailRequestDaigContent.memberId }}</li>
                     <li>회원 이름: {{ detailRequestDaigContent.memberName }}</li>
                     <li>회원 이메일: {{ detailRequestDaigContent.memberEmail }}</li>
                     <li>회원 연락처: {{ detailRequestDaigContent.memberPhone }}</li>
                 </ul>
+
+                <div class="mt-12">
+                    <div class="mb-8">
+                        <v-textarea
+                            v-model="requestReply"
+                            label="재확인 결과"
+                            variant="outlined" />
+                        <div class="comment-length">{{ replyLength }} / {{ MAX_COMMENT_LENGTH }}</div>
+                    </div>
+
+                    <div>
+                        <div style="font-size: 80%;">
+                            * '인용'으로 상태를 변경하는 동시에 해당 미디어의 차단은 해제됩니다
+                        </div>
+                        <v-select v-model="selectedStatus"
+                            :items="STATUS"
+                            item-title="label"
+                            item-value="value"
+                            label="현황 선택"></v-select>
+                    </div>
+
+                    <v-btn color="primary" @click="updateRequest">처리 현황 업데이트 및 이메일통보</v-btn>
+                </div>
             </v-card-text>
             <v-card-actions>
-                <v-btn color="primary" block @click="detailRequestDiagVisible = false">닫기</v-btn>
+                <v-btn color="secondaty" block @click="detailRequestDiagVisible = false">닫기</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -228,7 +310,7 @@ function showRequestDetailDiag(item) {
             <h2 class="section-title">조각 및 미디어 조회</h2>
         </v-row>
         <v-row>
-            <v-btn @click="changeView">
+            <v-btn @click="changeView" class="my-8">
                 {{ showRequest ? '조각 및 미디어 일반 조회' : '차단 미디어 이의제기 조회' }}
             </v-btn>
         </v-row>
@@ -284,16 +366,7 @@ function showRequestDetailDiag(item) {
                 <thead>
                     <tr>
                         <th class="text-left">
-                            이의제기 ID
-                        </th>
-                        <th class="text-left">
-                            미디어 파일 ID
-                        </th>
-                        <th class="text-left">
-                            요청 본문
-                        </th>
-                        <th class="text-left">
-                            처리 결과
+                            미디어 ID
                         </th>
                         <th class="text-left">
                             처리 현황
@@ -313,14 +386,14 @@ function showRequestDetailDiag(item) {
                         <th class="text-left">
                             회원 연락처
                         </th>
+                        <th class="text-left">
+                            처리
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="item in claimList" :key="item.recordId">
-                        <td>{{ item.mediaFileRecheckRequestId }}</td>
                         <td>{{ item.mediaFileId }}</td>
-                        <td>{{ item.mediaFileRecheckRequestClaim }}</td>
-                        <td>{{ item.mediaFileRecheckRequestReply }}</td>
                         <td>{{ item.mediaFileRecheckRequestStatus }}</td>
                         <td>{{ item.mediaFileRecheckRequestCreatedAt }}</td>
                         <td>{{ item.memberId }}</td>
