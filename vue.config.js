@@ -1,4 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
+const fs = require('fs')
 module.exports = defineConfig({
   transpileDependencies: true,
   pluginOptions: {
@@ -7,6 +8,11 @@ module.exports = defineConfig({
 		}
   },
   devServer: {
+    https: {
+      key: fs.readFileSync('C:/dev/openssl/private.key'),
+      cert: fs.readFileSync('C:/dev/openssl/private.crt'),
+      ca: fs.readFileSync('C:/dev/openssl/rootCA.pem'),
+    },
     client: {
       overlay: true,
       webSocketURL: "wss://0.0.0.0:443/ws",
