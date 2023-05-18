@@ -124,7 +124,6 @@ function detailNotify(referenceId,notificationTypeId){
     recordDialog.value = true;
     recordId.value=referenceId;
   }
-  
 }
 
 

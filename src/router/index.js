@@ -152,7 +152,7 @@ const routes = [
     component: KaKaoRedirect,
   },
   {
-    path: "/login/redirect-google",
+    path: "/login/google-redirect",
     name: "RedirectGoogle",
     component: RedirectGoogle,
   },
