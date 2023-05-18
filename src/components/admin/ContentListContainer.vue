@@ -1,29 +1,53 @@
 <script setup>
 import { computed, onMounted, watch, ref } from 'vue';
 import { useStore } from 'vuex';
+import { admin } from '@/api'
 
 const store = useStore();
 
 onMounted(() => {
-  getContentList();
+    store.commit('admin/setContentPage', 1);
+    getContentList();
 })
 
-
 const isLoading = ref(false);
+
+const showRequest = ref(false);
+
+function changeView() {
+    showRequest.value = !showRequest.value;
+    if (showRequest.value) {
+        store.commit('admin/updateMediaFileRecheckRequestOption', {
+            page: 1,
+            size: 10,
+            mediaFileId: null,
+            mediaFileRecheckRequestStatus: null
+        })
+        getClaimList();
+    } else {
+        store.commit('admin/setContentPage', 1);
+        getContentList();
+    }
+}
+
+////////////////
+// 미디어 및 조각 조회
+const detailContentDiagVisible = ref(false);
+const detailContentDaigContent = ref({});
 
 const contentList = computed(() => {
     return store.getters['admin/contentList'];
 })
 
-const currentOption = computed(() => {
+const contentOption = computed(() => {
     return store.getters['admin/contentOption'];
 });
 
-const currentPage = computed(() => {
+const contentCurrentPage = computed(() => {
     return store.getters['admin/contentOption'].page;
 });
 
-const totalPage = computed(() => {
+const contentTotalPage = computed(() => {
     const totalItem = store.getters['admin/contentTotal'];
     const pageSize = store.getters['admin/contentOption'].size;
     const computed = Math.ceil(totalItem / pageSize);
@@ -34,61 +58,182 @@ const totalPage = computed(() => {
     return computed;
 })
 
-watch(currentPage, () => {
+watch(contentCurrentPage, () => {
     getContentList();
 })
 
 function getContentList() {
     isLoading.value = true;
     store.dispatch("admin/getContentList")
-    .then(() => {
-        isLoading.value = false;
-        console.log('성공');
-    })
-    .catch((error) => {
-        isLoading.value = false;
-        console.error('컨텐츠 리스트 조회 실패');
-        console.error(error);
-    })
+        .then(() => {
+            isLoading.value = false;
+            console.log('성공');
+        })
+        .catch((error) => {
+            isLoading.value = false;
+            console.error('컨텐츠 리스트 조회 실패');
+            console.error(error);
+        })
 }
 
-// function setPage(page) {
-//     if (page < 1 || page > totalPage.value) return;
-//     store.commit('admin/setContentPage', page);
-// }
+function showContentDetailDiag(item) {
+    detailContentDaigContent.value = item;
+    detailContentDiagVisible.value = true;
+}
+
+////////////////
+// 이의제기 조회
+const detailRequestDiagVisible = ref(false);
+const detailRequestDaigContent = ref({});
+const detailRequestDaigContentMediaUrl = ref('');
+
+const claimList = computed(() => {
+    return store.getters['admin/mediaFileRecheckRequest'];
+})
+
+const claimOption = computed(() => {
+    return store.getters['admin/mediaFileRecheckRequestOption'];
+});
+
+const claimCurrentPage = computed(() => {
+    return store.getters['admin/mediaFileRecheckRequestOption'].page;
+});
+
+const claimTotalPage = computed(() => {
+    const totalItem = store.getters['admin/mediaFileRecheckRequestTotal'];
+    const pageSize = store.getters['admin/mediaFileRecheckRequestOption'].size;
+    const computed = Math.ceil(totalItem / pageSize);
+
+    if (!computed) { // NaN인 경우 페이지네이션 컴포넌트의 Validation 로직에 걸리게 되므로 한 번 걸러준다
+        return 1;
+    }
+    return computed;
+})
+
+watch(claimCurrentPage, () => {
+    getClaimList();
+})
+
+function getClaimList() {
+    isLoading.value = true;
+    store.dispatch("admin/getMediaFileRecheckRequest")
+        .then(() => {
+            isLoading.value = false;
+            console.log('성공');
+        })
+        .catch((error) => {
+            isLoading.value = false;
+            console.error('이의제기 리스트 조회 실패');
+            console.error(error);
+        })
+}
+
+function showRequestDetailDiag(item) {
+    detailRequestDaigContent.value = item;
+
+    detailRequestDaigContentMediaUrl.value = '';
+    admin.getMediaFileWithCredential({
+        mediaFileId: detailRequestDaigContent.value.mediaFileId,
+        mediaType: detailRequestDaigContent.value.mediaTypeId
+    })
+    .then((response) => {
+        console.log('미디어 파일 요청 성공');
+        console.log(response);
+
+        const myFile = new File([response.data], 'mediaFile');
+
+        if (detailRequestDaigContent.value.mediaTypeId === 'image') {
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const previewImage = String(ev.target?.result)
+                detailRequestDaigContentMediaUrl.value = previewImage;
+            };
+            reader.readAsDataURL(myFile);
+        } else { // video
+            detailRequestDaigContentMediaUrl.value = URL.createObjectURL(myFile)
+        }
+    })
+    .catch((error) => {
+        console.error('미디어 파일 요청 실패');
+        console.error(error);
+    })
+
+    detailRequestDiagVisible.value = true;
+}
 </script>
 
 <template>
     <v-overlay class="loading-overlay" v-model="isLoading" scroll-strategy="block" persistent>
         <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <!-- <v-card
-        v-for="content in contentList"
-        width="400"
-        :title="content.contentTitle"
-        :text="`[${content.recordId}, ${content.memberId}, ${content.recordCreatedAt}, 
-                 ${content.mediaFileBlocked}, ${content.mediaFileChecked}]` + content.contentContent"
-        :key="content.recordId"
-    >
-        <v-btn @click="contentDetail(content.recordId)">상세보기</v-btn>
-    </v-card>
-    <v-btn @click="setPage(currentPage-1)">이전</v-btn>
-    {{ currentPage }} / {{ totalPage }}
-    <v-btn @click="setPage(currentPage+1)">다음</v-btn> -->
+
+    <v-dialog v-model="detailContentDiagVisible" width="auto">
+        <v-card>
+            <v-card-title>
+                조각 및 미디어 정보
+            </v-card-title>
+            <v-card-text>
+                <ul>
+                    <li>조각 ID: {{ detailContentDaigContent.recordId }}</li>
+                    <li>작성자 ID: {{ detailContentDaigContent.memberId }}</li>
+                    <li>작성 일시: {{ detailContentDaigContent.recordCreatedAt }}</li>
+                    <li>미디어 ID: {{ detailContentDaigContent.mediaFileId }}</li>
+                    <li>미디어 타입: {{ detailContentDaigContent.mediaTypeId }}</li>
+                    <li>모니터링 여부: {{ detailContentDaigContent.mediaFileChecked === 1 ? 'TRUE' : 'FALSE' }}</li>
+                    <li>차단 여부: {{ detailContentDaigContent.mediaFileBlocked === 1 ? 'TRUE' : 'FALSE' }}</li>
+                </ul>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn color="primary" block @click="detailContentDiagVisible = false">닫기</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="detailRequestDiagVisible" width="auto">
+        <v-card>
+            <v-card-title>
+                이의제기 처리
+            </v-card-title>
+            <v-card-text>
+                <img v-if="detailRequestDaigContent.mediaTypeId == 'image'"
+                    :src="detailRequestDaigContentMediaUrl"
+                    style="max-width: 600px">
+                <video v-if="detailRequestDaigContent.mediaTypeId == 'video'"
+                    :src="detailRequestDaigContentMediaUrl"
+                    style="max-width: 600px"
+                    controls muted></video>
+                <ul>
+                    <li>이의제기 ID: {{ detailRequestDaigContent.mediaFileRecheckRequestId }}</li>
+                    <li>미디어 파일 ID: {{ detailRequestDaigContent.mediaFileId }}</li>
+                    <li>미디어 타입: {{ detailRequestDaigContent.mediaTypeId }}</li>
+                    <li>요청 일시: {{ detailRequestDaigContent.mediaFileRecheckRequestCreatedAt }}</li>
+                    <li>작성 일시: {{ detailRequestDaigContent.mediaFileRecheckRequestCreatedAt }}</li>
+                    <li>요청 본문: {{ detailRequestDaigContent.mediaFileRecheckRequestClaim }}</li>
+                    <li>처리 현황: {{ detailRequestDaigContent.mediaFileRecheckRequestStatus }}</li>
+                    <li>처리 결과: {{ detailRequestDaigContent.mediaFileRecheckRequestReply }}</li>
+                    <li>회원 ID: {{ detailRequestDaigContent.memberId }}</li>
+                    <li>회원 이름: {{ detailRequestDaigContent.memberName }}</li>
+                    <li>회원 이메일: {{ detailRequestDaigContent.memberEmail }}</li>
+                    <li>회원 연락처: {{ detailRequestDaigContent.memberPhone }}</li>
+                </ul>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn color="primary" block @click="detailRequestDiagVisible = false">닫기</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 
     <v-col class="mt-8">
         <v-row>
-            <h2 class="section-title">상세 조회</h2>
+            <h2 class="section-title">조각 및 미디어 조회</h2>
         </v-row>
-        <!-- <v-row>
-            <v-select v-model="selectedJobName"
-                :items="JOBS"
-                item-title="label"
-                item-value="value"
-                label="배치 작업 선택"></v-select>
-        </v-row> -->
-        <v-row class="d-flex flex-column align-center justify-center">
-            <v-table>
+        <v-row>
+            <v-btn @click="changeView">
+                {{ showRequest ? '조각 및 미디어 일반 조회' : '차단 미디어 이의제기 조회' }}
+            </v-btn>
+        </v-row>
+        <v-row class="d-flex flex-column align-center justify-center" v-if="!showRequest">
+            <v-table style="width: 100%">
                 <thead>
                     <tr>
                         <th class="text-left">
@@ -127,14 +272,68 @@ function getContentList() {
                         <td>{{ item.mediaFileChecked === 1 ? 'TRUE' : 'FALSE' }}</td>
                         <td>{{ item.mediaFileBlocked === 1 ? 'TRUE' : 'FALSE' }}</td>
                         <td>
-                            <v-btn @click="showDetailDiag(item)">보기</v-btn>
+                            <v-btn @click="showContentDetailDiag(item)">보기</v-btn>
                         </td>
                     </tr>
                 </tbody>
             </v-table>
+            <v-pagination v-model="contentOption.page" :total-visible="6" :length="contentTotalPage"></v-pagination>
         </v-row>
-        <v-row class="d-flex flex-column align-center justify-center">
-            <v-pagination v-model="currentOption.page" :total-visible="6" :length="totalPage"></v-pagination>
+        <v-row class="d-flex flex-column align-center justify-center" v-if="showRequest">
+            <v-table style="width: 100%">
+                <thead>
+                    <tr>
+                        <th class="text-left">
+                            이의제기 ID
+                        </th>
+                        <th class="text-left">
+                            미디어 파일 ID
+                        </th>
+                        <th class="text-left">
+                            요청 본문
+                        </th>
+                        <th class="text-left">
+                            처리 결과
+                        </th>
+                        <th class="text-left">
+                            처리 현황
+                        </th>
+                        <th class="text-left">
+                            요청 일시
+                        </th>
+                        <th class="text-left">
+                            회원 ID
+                        </th>
+                        <th class="text-left">
+                            회원 이름
+                        </th>
+                        <th class="text-left">
+                            회원 이메일
+                        </th>
+                        <th class="text-left">
+                            회원 연락처
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in claimList" :key="item.recordId">
+                        <td>{{ item.mediaFileRecheckRequestId }}</td>
+                        <td>{{ item.mediaFileId }}</td>
+                        <td>{{ item.mediaFileRecheckRequestClaim }}</td>
+                        <td>{{ item.mediaFileRecheckRequestReply }}</td>
+                        <td>{{ item.mediaFileRecheckRequestStatus }}</td>
+                        <td>{{ item.mediaFileRecheckRequestCreatedAt }}</td>
+                        <td>{{ item.memberId }}</td>
+                        <td>{{ item.memberName }}</td>
+                        <td>{{ item.memberEmail }}</td>
+                        <td>{{ item.memberPhone }}</td>
+                        <td>
+                            <v-btn @click="showRequestDetailDiag(item)">보기</v-btn>
+                        </td>
+                    </tr>
+                </tbody>
+            </v-table>
+            <v-pagination v-model="claimOption.page" :total-visible="6" :length="claimTotalPage"></v-pagination>
         </v-row>
     </v-col>
 </template>

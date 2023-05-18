@@ -63,6 +63,12 @@ export default {
         return axios.post(`/admin/content/claim`, {
             mediaFileId, mediaFileRecheckRequestClaim
         })
+    },
+    getMediaFileWithCredential({ mediaFileId, mediaType }) {
+        return axios.get(`/record/media/${mediaFileId}`, {
+            params: { mediaType },
+            responseType: 'blob'
+        })
     }
 }
 
