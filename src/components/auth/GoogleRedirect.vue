@@ -33,7 +33,7 @@ onMounted(async () => {
         client_secret: process.env.VUE_APP_GOOGLE_SECRET_KEY,
         code,
         grant_type: 'authorization_code',
-        redirect_uri: 'https://localhost:9090/login/google-redirect'
+        redirect_uri: process.env.VUE_APP_GOOGLE_REDIRECT_URL
       }),
     });
     const data = await response.json();

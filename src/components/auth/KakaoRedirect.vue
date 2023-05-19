@@ -21,7 +21,7 @@ async function getKakaoToken(code) {
     const data = {
       grant_type: "authorization_code", // 권한 타입_ 따로 카카오 문서에서 지정 "authorization_code"
       client_id: process.env.VUE_APP_KAKAO_LOGIN_KEY, // 우리 웹서비스를 등록한 REST_API키 (예시 한국영화진흥사에서 해당 영화정보를 가져왔을 때 처럼 용도가 동일 )
-      redirect_uri: "https://localhost:9090/login/kakao-redirect", //리다이렉트 주소_ 우리 웹서비스에서 등록한 반환 받을 주소 지정
+      redirect_uri: process.env.VUE_APP_KAKAO_REDIRECT_URL, //리다이렉트 주소_ 우리 웹서비스에서 등록한 반환 받을 주소 지정
       code: code, // 리다이렉트 주소로 반환받은 인증 코드 
     };
     //위에서 명시한 데이터를 쿼리 스트링으로 반환하는 코드
