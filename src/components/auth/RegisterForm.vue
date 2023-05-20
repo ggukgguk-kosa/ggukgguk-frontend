@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { watch,onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { auth } from '../../api';
 import { useRouter } from "vue-router";
@@ -225,6 +225,14 @@ function personalinfoServiceAgreeDiag() {
 onMounted(() => {
   termOfServiceContent();
   personalInfoServiceContent();
+});
+
+// 회원ID값이 변화를 감지하여 빨간색글자로 '중복되었습니다 문구'를 나타내는 여부
+// 사용자가 memberId 입력 필드에 새로운 값(빈 문자열이 아닌 값)을 입력하면 => 중복 경고 메시지를 숨김
+watch(memberId, newValue => {
+  if(newValue !== '') {
+    IdRules_duplited.value = false;
+  }
 });
 
 
