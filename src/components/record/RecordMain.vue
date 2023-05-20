@@ -453,7 +453,7 @@ onUnmounted(() => {
                   @click="goToRecordUpdate(record)"><v-icon icon="mdi-pencil-outline"></v-icon></span>
                   <span
                   v-if="!friendId"
-                  @click="openDeleteRemoveDialog(record)">삭제</span>
+                  @click="openDeleteRemoveDialog(record)"><v-icon icon="mdi-delete-outline"></v-icon></span>
                 </v-col>
             </v-row>
             <v-card-text v-if="!friendId && record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
@@ -472,6 +472,18 @@ onUnmounted(() => {
               <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
               <v-img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media" />
               <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+              <v-card
+                v-if="record.mediaFileBlocked"
+                class="my-4 text-center"
+                text="이 미디어는 꾹꾹 커뮤니티 가이드라인에 의해 차단되었습니다"
+                color="primary"
+                @click="() => { router.push({ name: 'mediaRecheck', params: { mediaFileId: record.mediaFileId } }) }"
+              >
+                <v-tooltip
+                  activator="parent"
+                  location="bottom"
+                >자세히 보기</v-tooltip>
+              </v-card>
             </div>
 
             <v-divider></v-divider>
@@ -487,7 +499,7 @@ onUnmounted(() => {
                     <div>
                       <div style="display: flex; justify-content: space-between;">
                         <div class="font-weight-bold mr-2">{{ reply.memberNickname }}</div>
-                        <div>
+                        <div v-if="reply.replyMemberId === memberId">
                           <span @click="openEditReplyForm(reply)" class="mr-1">수정 |</span>
                           <span @click="openDeleteReplyDialog(reply)">삭제</span>
                         </div>

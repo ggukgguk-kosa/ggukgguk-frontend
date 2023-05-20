@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter} from 'vue-router';
 
 const store = useStore();
 
@@ -52,6 +52,7 @@ async function getDiaryList() {
 
 const router = useRouter();
 
+
 const selectedYear = ref(diaryYear);
 const selectedMonth = ref(null);
 const years = [new Date().getFullYear(), new Date().getFullYear()-1, new Date().getFullYear()-2];
@@ -74,7 +75,9 @@ function clickDiary(diary) {
 }
 
 onMounted(() => {
-  setDiaryMonth(null);
+
+  setDiaryYear(selectedYear.value)
+  setDiaryMonth(null)
   getDiaryList();
 })
 

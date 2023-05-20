@@ -86,5 +86,9 @@ export default {
             recordId,
             recordShareTo
         })
+    },
+
+    getRecord( recordId ) {
+        return axios.get(`/record/${recordId}`);
     }
 };

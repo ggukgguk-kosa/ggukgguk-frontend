@@ -61,5 +61,7 @@ onMounted(async () => {
 
 </script>
 <template>
-<h1>메인 페이지로 이동</h1>
+  <div>
+    <p>접속 중..</p>
+  </div>
 </template>

@@ -35,7 +35,16 @@ export default {
       page: 1,
       size: 10,
       jobName: 'extractKeywordJob'
-    }
+    },
+    mediaFileDetail: {},
+    mediaFileRecheckRequest: [],
+    mediaFileRecheckRequestOption: {
+      page: 1,
+      size: 10,
+      mediaFileId: null,
+      mediaFileRecheckRequestStatus: null
+    },
+    mediaFileRecheckRequestTotal: 0
   },
 
   getters: {
@@ -91,6 +100,18 @@ export default {
     },
     batchOption(state) {
       return state.batchOption;
+    },
+    mediaFileDetail(state) {
+      return state.mediaFileDetail;
+    },
+    mediaFileRecheckRequest(state) {
+      return state.mediaFileRecheckRequest;
+    },
+    mediaFileRecheckRequestTotal(state) {
+      return state.mediaFileRecheckRequestTotal;
+    },
+    mediaFileRecheckRequestOption(state) {
+      return state.mediaFileRecheckRequestOption;
     }
   },
   mutations: {
@@ -151,6 +172,19 @@ export default {
     },
     updateBatchOption(state, batchOption) {
       state.batchOption = {...state.batchOption, ...batchOption};
+    },
+    setMediaFileDetail(state, mediaFileDetail) {
+      state.mediaFileDetail = mediaFileDetail;
+    },
+    setMediaFileRecheckRequest(state, mediaFileRecheckRequest) {
+      state.mediaFileRecheckRequest = mediaFileRecheckRequest;
+    },
+    setMediaFileRecheckRequestTotal(state, mediaFileRecheckRequestTotal) {
+      state.mediaFileRecheckRequestTotal = mediaFileRecheckRequestTotal;
+    },
+    updateMediaFileRecheckRequestOption(state, mediaFileRecheckRequestOption) {
+      state.mediaFileRecheckRequestOption =
+        {...state.mediaFileRecheckRequestOption, ...mediaFileRecheckRequestOption};
     }
   },
 
@@ -222,7 +256,25 @@ export default {
         .then((response) => {
           commit('setBatchDetail', response.data.data);
         })
-    }
+    },
+    getMediaFileDetail({ commit }, mediaFileId) {
+      return admin.getMediaFileDetail(mediaFileId)
+        .then((response) => {
+          commit('setMediaFileDetail', response.data.data);
+        })
+    },
+    // eslint-disable-next-line
+    uploadMediaFileRecheckRequest({ commit }, { mediaFileId, mediaFileRecheckRequestClaim }) {
+      return admin.postMediaFileRecheckRequest({ mediaFileId, mediaFileRecheckRequestClaim });
+    },
+    getMediaFileRecheckRequest({ commit, state }) {
+      const { mediaFileId, mediaFileRecheckRequestStatus, page, size } = state.mediaFileRecheckRequestOption;
+
+      return admin.getMediaFileRecheckRequest({ mediaFileId, mediaFileRecheckRequestStatus, page, size })
+        .then((response) => {
+          commit('setMediaFileRecheckRequest', response.data.data.list);
+          commit('setMediaFileRecheckRequestTotal', response.data.data.total)
+        })
+    },
   }
 }
-

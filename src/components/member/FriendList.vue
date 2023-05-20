@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore} from 'vuex';
+import { useStore } from 'vuex';
 
 const store = useStore();
 const router = useRouter();
@@ -25,15 +25,62 @@ function getFriendList() {
 function goToFriendAndblock() {
     router.push('/friend/new');
 }
+// 카톡 주소록의 친구들에게 나의 꾹꾹 아이디를 공유하기
+function sendLinkDefault() {
+    // 꾹꾹 회원으로 로그인 시, 나의 아이디를 공유하기 위해 먼저 카카오 로그인을 먼저 수행해야 함.
+    if (!window.Kakao.isInitialized()) {
+        window.Kakao.init("f0b4268c10a9c956df9816637eede528");
+    }
 
+    window.Kakao.Link.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: '꾹꾹 회원 아이디 공유',
+        description: '친구분의 아이디는 '+ memberId.value + 
+        '이며 당신과 교류하고 싶습니다. #꾹꾹 #일기 #교환일기',
+        imageUrl:
+          'https://app.ggukgguk.online/img/landing_main.png',
+        link: {
+          mobileWebUrl: 'https://app.ggukgguk.online/login',
+          webUrl: 'https://app.ggukgguk.online/login',
+        },
+      },
+      buttons: [
+        {
+          title: '자세히 보기',
+        link: {
+          mobileWebUrl: 'https://app.ggukgguk.online/login',
+          webUrl: 'https://app.ggukgguk.online/login',
+          },
+        }
+      ],
+    })
+}
+
+// // 친구에게 꾹꾹 회원 ID 공유하기
+// function sendLinkCustom() {
+//     // 꾹꾹 회원으로 로그인 시 로그인을 먼저 수행해야 함.
+//     if (!window.Kakao.isInitialized()) {
+//         window.Kakao.init("f0b4268c10a9c956df9816637eede528");
+//     }
+    
+//     window.Kakao.Link.sendCustom({
+//         templateId: 93730
+//     });
+// }
 </script>  
 <template>
     <!--무한 스크롤을 구현해야 할 듯 함.-->
     <v-container>
         <v-card-title>친구 목록</v-card-title>
-        <v-col cols="auto" class="text-end">
-            <v-btn @click="goToFriendAndblock">친구 추가 및 차단 </v-btn>
-        </v-col>
+        <v-row>
+            <v-col>
+                <v-btn @click="sendLinkDefault">친구에게 아이디 공유하기</v-btn>
+            </v-col>
+            <v-col cols="auto" class="text-end">
+                <v-btn @click="goToFriendAndblock">친구 추가 및 차단 </v-btn>
+            </v-col>
+        </v-row>
     </v-container>
     <v-container>
         <v-row>
