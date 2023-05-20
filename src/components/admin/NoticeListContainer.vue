@@ -1,67 +1,110 @@
 <script setup>
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted, watch, ref } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
 
 onMounted(() => {
-  getNoticeList();
+    getNoticeList();
 })
+
+const showDetail = ref(false);
+
+const noticeDetail = ref({});
 
 const noticeList = computed(() => {
     return store.getters['admin/noticeList'];
 })
 
-const currentPage = computed(() => {
-    return store.getters['admin/noticeOption'].page;
+const noticeOption = computed(() => {
+    return store.getters['admin/noticeOption'];
 });
 
 const totalPage = computed(() => {
     const totalItem = store.getters['admin/noticeTotal'];
-    const pageSize = store.getters['admin/noticeOption'].size
-    return Math.ceil(totalItem / pageSize);
+    const pageSize = store.getters['admin/noticeOption'].size;
+
+    const computed = Math.ceil(totalItem / pageSize);
+    if (!computed) { 
+        return 1;
+    }
+    return computed;
 })
 
-watch(currentPage, () => {
-    store.dispatch("admin/getNoticeList")
-    .catch((error) => {
-        console.error('공지사항 리스트 조회 실패');
-        console.error(error);
-    })
-})
+watch(noticeOption,() => {
+    getNoticeList();
+},
+{ deep: true });
 
 function getNoticeList() {
     store.dispatch("admin/getNoticeList")
-    .then(() => {
-        console.log('성공');
-    })
-    .catch((error) => {
-        console.error('공지사항 리스트 조회 실패');
-        console.error(error);
-    })
+        .catch((error) => {
+            console.error('공지사항 리스트 조회 실패');
+            console.error(error);
+        })
 }
 
-function setPage(page) {
-    if (page < 1 || page > totalPage.value) return;
-    store.commit('admin/setNoticePage', page);
+function showDialog(notice) {
+    noticeDetail.value = notice;
+
+    showDetail.value = true;
+}
+
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+
+  return `${year}년 ${month < 10 ? '0' + month : month}월 ${day < 10 ? '0' + day : day}일 ${hour}시 ${minute}분`;
 }
 </script>
 
 <template>
-    <v-card
-        v-for="notice in noticeList"
-        width="400"
-        :title="notice.noticeTitle"
-        :text="`[${notice.noticeId}]` + notice.noticeContent"
-        :key="notice.noticeId"
-    ></v-card>
-    <v-btn @click="setPage(currentPage-1)">이전</v-btn>
-    {{ currentPage }} / {{ totalPage }}
-    <v-btn @click="setPage(currentPage+1)">다음</v-btn>
-</template>
+    <v-dialog
+      v-model="showDetail"
+      width="auto"
+    >
+      <v-card>
+        <v-card-title>
+            {{ noticeDetail.noticeTitle }}
+        </v-card-title>
+        <v-card-text>
+          <ul>
+              <li>내용 : {{ noticeDetail.noticeContent }}</li>
+              <li>작성일: {{ formatDate(new Date(noticeDetail.noticeCreatedAt)) }}</li>
+        </ul>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" block @click="showDetail = false">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-<!-- 컴포넌트를 포함하는 위치
-Vue.js는 컴포넌트 기반의 프레임워크로, UI를 작은 단위로 나누어 재사용 가능한 컴포넌트로 구성
-컴포넌트는 데이터와 뷰를 결합하는 것에 도움
-컴포넌트는 재사용 가능하며, 다른 컴포넌트 내부에서 사용 가능
-예를 들어, 페이지 레이아웃, 사용자 입력 폼, 메뉴 및 버튼 등을 포함할 수 있음 -->
+    <v-col class="mt-8">
+        <v-row>
+            <h2 class="section-title">공지사항</h2>
+        </v-row>
+        <v-row class="d-flex flex-column align-center justify-center">
+            <v-table style="width: 100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">
+                            제목
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in noticeList" :key="item.noticeId" class="text-center">
+                        <td @click="showDialog(item)">{{ item.noticeTitle }}</td>
+                    </tr>
+                </tbody>
+            </v-table>
+        </v-row>
+        <v-row class="d-flex flex-column align-center justify-center">
+            <v-pagination v-model="noticeOption.page" :total-visible="5" :length="totalPage"></v-pagination>
+        </v-row>
+    </v-col>
+
+</template>

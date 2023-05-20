@@ -2,10 +2,10 @@
 import { computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 
-const store = useStore();
+const store = useStore(); // vuex 스토어 사용
 
-onMounted(() => {
-  getContentList();
+onMounted(() => { // Container가 호출되면 실행하는 함수
+    getContentList(); // getContentList 실행
 })
 
 const contentList = computed(() => {
@@ -25,21 +25,21 @@ const totalPage = computed(() => {
 
 watch(currentPage, () => {
     store.dispatch("admin/getContentList")
-    .catch((error) => {
-        console.error('컨텐츠 리스트 조회 실패');
-        console.error(error);
-    })
+        .catch((error) => {
+            console.error('컨텐츠 리스트 조회 실패');
+            console.error(error);
+        })
 })
 
 function getContentList() {
     store.dispatch("admin/getContentList")
-    .then(() => {
-        console.log('성공');
-    })
-    .catch((error) => {
-        console.error('컨텐츠 리스트 조회 실패');
-        console.error(error);
-    })
+        .then(() => {
+            console.log('성공');
+        })
+        .catch((error) => {
+            console.error('컨텐츠 리스트 조회 실패');
+            console.error(error);
+        })
 }
 
 function setPage(page) {
@@ -49,17 +49,12 @@ function setPage(page) {
 </script>
 
 <template>
-    <v-card
-        v-for="content in contentList"
-        width="400"
-        :title="content.contentTitle"
-        :text="`[${content.recordId}, ${content.memberId}, ${content.recordCreatedAt}, 
-                 ${content.mediaFileBlocked}, ${content.mediaFileChecked}]` + content.contentContent"
-        :key="content.recordId"
-    >
+    <v-card v-for="content in contentList" width="400" :title="content.contentTitle" :text="`[${content.recordId}, ${content.memberId}, ${content.recordCreatedAt}, 
+                     ${content.mediaFileBlocked}, ${content.mediaFileChecked}]` + content.contentContent"
+        :key="content.recordId">
         <v-btn @click="contentDetail(content.recordId)">상세보기</v-btn>
     </v-card>
-    <v-btn @click="setPage(currentPage-1)">이전</v-btn>
+    <v-btn @click="setPage(currentPage - 1)">이전</v-btn>
     {{ currentPage }} / {{ totalPage }}
-    <v-btn @click="setPage(currentPage+1)">다음</v-btn>
+    <v-btn @click="setPage(currentPage + 1)">다음</v-btn>
 </template>
