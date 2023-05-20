@@ -38,10 +38,13 @@ watch(noticeOption,() => {
 
 function getNoticeList() {
     store.dispatch("admin/getNoticeList")
-        .catch((error) => {
-            console.error('공지사항 리스트 조회 실패');
-            console.error(error);
-        })
+    .then(() => {
+        console.log('성공');
+    })
+    .catch((error) => {
+        console.error('공지사항 리스트 조회 실패');
+        console.error(error);
+    })
 }
 
 function showDialog(notice) {

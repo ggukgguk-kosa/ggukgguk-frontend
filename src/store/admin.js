@@ -101,6 +101,9 @@ export default {
     setAdminMain(state, newAdminMain) {
       state.adminMain = newAdminMain
     },
+    addNotice(state, notice) {
+      state.noticeList.push(notice);
+    },
     setNoticePage(state, page) {
       state.noticeOption.page = page;
     },
@@ -162,7 +165,6 @@ export default {
           //commit('setAdminMain', response.data.data.)
         })
     },
-
     // eslint-disable-next-line
     uploadNotice({ commit }, { noticeTitle, noticeContent }) {
       return admin.addNotice({ noticeTitle, noticeContent });
