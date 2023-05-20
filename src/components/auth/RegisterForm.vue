@@ -115,16 +115,26 @@ function cetificationCheck() {
   });
 }
 
-
+// 꾹꾹 서비스 이용 동의 및 개인 정보 동의 여부 
+const serviceAgree = ref(false);
+const personalinformationAgree = ref(false);
 
 function showContentDetailDiag() {
   termOfServicetermsDiagVisible.value = true;
 }
+function showPersonalInfoDiag() {
+  personalInformationDiagVisible.value = true;
+}
 
-// 이용서비스 다이어로그 표시여부
+// 꾹꾹 서비스 이용 동의 및 개인 정보 다이어로그 표시여부
 const termOfServicetermsDiagVisible = ref(false);
-// 이용서비스 본문 내용
+const personalInformationDiagVisible = ref(false);
+
+
+// 개인정보처리 서비스 및 이용서비스 본문 내용
 const serviceContent = ref('');
+const prsonalInfoContent = ref('');
+
 
 // 이용약관 본문 내용 가져오기
 const termOfServiceContent = () => {
@@ -132,17 +142,29 @@ const termOfServiceContent = () => {
     serviceContent.value = response.data
   })
 }
-const serviceAgree = ref(false);
+// 개인정보 동의 본문 내용 가져오기
+const personalInfoServiceContent = () => {
+  axios.get('/subscriptionTerms/personInfo.txt').then((response) => {
+    prsonalInfoContent.value = response.data
+  })
+}
 
 // 이용약관에 동의한 경우 
 function termOfServiceAgreeDiag() {
-  termOfServicetermsDiagVisible.value =  false;
+  termOfServicetermsDiagVisible.value = false;
   serviceAgree.value = true;
 }
 
+// 개인정보 처리에 동의한 경우
+function personalinfoServiceAgreeDiag() {
+  personalInformationDiagVisible.value = false;
+  personalinformationAgree.value = true;
+}
 
-
-onMounted(termOfServiceContent)
+onMounted(() => {
+  termOfServiceContent();
+  personalInfoServiceContent();
+});
 
 
 </script>
@@ -199,29 +221,25 @@ onMounted(termOfServiceContent)
       <v-text-field v-model="memberBirth" label="생년월일"></v-text-field>
       <v-row>
         <v-col cols="10">
-        <v-checkbox
-          label="이용약관"
-          v-model="serviceAgree"
-          disabled
-        ></v-checkbox>
-      </v-col>
+          <v-checkbox class="checked-agree" label="이용약관" v-model="serviceAgree" disabled></v-checkbox>
+        </v-col>
         <v-col cols="2">
           <v-dialog v-model="termOfServicetermsDiagVisible" width="auto">
             <template v-slot:activator="{ props }">
               <v-btn color="primary" @click="showContentDetailDiag" v-bind="props">
-               보기
+                보기
               </v-btn>
             </template>
             <v-card>
               <v-card-title>
-                <span class="text-h5" >꾹꾹 서비스의 이용약관</span>
+                <span class="text-h5">꾹꾹 서비스의 이용약관</span>
               </v-card-title>
               <v-card-text>
                 <pre class="terms-text">{{ serviceContent }}</pre>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green-darken-1" variant="text" @click="termOfServicetermsDiagVisible= false">
+                <v-btn color="green-darken-1" variant="text" @click="termOfServicetermsDiagVisible = false">
                   거절
                 </v-btn>
                 <v-btn v-model="serviceAgree" color="green-darken-1" variant="text" @click="termOfServiceAgreeDiag">
@@ -232,17 +250,57 @@ onMounted(termOfServiceContent)
           </v-dialog>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="10">
+          <v-checkbox label="개인정보동의" v-model="personalinformationAgree" disabled></v-checkbox>
+        </v-col>
+        <v-col cols="2">
+          <v-dialog v-model="personalInformationDiagVisible" width="auto">
+            <template v-slot:activator="{ props }">
+              <v-btn color="primary" @click="showPersonalInfoDiag" v-bind="props">
+                보기
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="text-h5">개인정보동의</span>
+              </v-card-title>
+              <v-card-text>
+                <pre class="terms-text">{{ prsonalInfoContent }}</pre>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green-darken-1" variant="text" @click="personalInformationDiagVisible = false">
+                  거절
+                </v-btn>
+                <v-btn v-model="serviceAgree" color="green-darken-1" variant="text" @click="personalinfoServiceAgreeDiag">
+                  동의
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-col>
+      </v-row>
       <!-- <v-checkbox value="1" label="이용약관" @click="showContentDetailDiag"></v-checkbox>
       <v-checkbox value="1" label="개인정보처리" type="checkbox"></v-checkbox> -->
-      <v-btn class="me-4"  @click="register">등록</v-btn>
+      <v-col cols="auto">
+        <v-btn size="large" class="register-btn" @click="register">등록</v-btn> 
+      </v-col>
+     
     </form>
   </v-sheet>
 </template>
 <style scoped>
-
 .terms-text {
   white-space: pre-wrap; /* 텍스트 형식 유지 */
   font-family: monospace; /* 고정폭 글꼴 */
+}
+
+.checked-agree {
+  margin-bottom: -50px; /* 원하는 값으로 조절하세요. */
+}
+.register-btn {
+  width: 500px; /* 원하는 값으로 조절하세요. */
 }
 
 </style>
