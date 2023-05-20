@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { auth } from '../../api';
 import { useRouter } from "vue-router";
+import axios from 'axios'
 
 const store = useStore();
 const router = useRouter();
@@ -88,7 +89,7 @@ function methodToExecuteWhenTemplateAppears() {
   store.dispatch('auth/handleCertification', {
     sendTo: memberEmail.value
   }).then((response) => {
-    appearCertification.value = true; 
+    appearCertification.value = true;
     alert("해당 메일에 인증 코드를 전송하였습니다.")
     console.log("인증번호 전달 완료")
     console.log(response);
@@ -113,6 +114,36 @@ function cetificationCheck() {
     alert('인증번호가 일치하지 않습니다. 다시 인증해주세요');
   });
 }
+
+
+
+function showContentDetailDiag() {
+  termOfServicetermsDiagVisible.value = true;
+}
+
+// 이용서비스 다이어로그 표시여부
+const termOfServicetermsDiagVisible = ref(false);
+// 이용서비스 본문 내용
+const serviceContent = ref('');
+
+// 이용약관 본문 내용 가져오기
+const termOfServiceContent = () => {
+  axios.get('/subscriptionTerms/register.txt').then((response) => {
+    serviceContent.value = response.data
+  })
+}
+const serviceAgree = ref(false);
+
+// 이용약관에 동의한 경우 
+function termOfServiceAgreeDiag() {
+  termOfServicetermsDiagVisible.value =  false;
+  serviceAgree.value = true;
+}
+
+
+
+onMounted(termOfServiceContent)
+
 
 </script>
 <template>
@@ -166,14 +197,52 @@ function cetificationCheck() {
       <v-text-field v-model="memberPhone" label="휴대번호 입력"></v-text-field>
 
       <v-text-field v-model="memberBirth" label="생년월일"></v-text-field>
-
-      <v-checkbox value="1" label="이용약관" type="checkbox"></v-checkbox>
-
-      <v-checkbox value="1" label="개인정보처리" type="checkbox"></v-checkbox>
-
-      <v-btn class="me-4" @click="register">등록</v-btn>
-      <!-- <v-btn @click="handleReset"> 지우기 </v-btn> -->
+      <v-row>
+        <v-col cols="10">
+        <v-checkbox
+          label="이용약관"
+          v-model="serviceAgree"
+          disabled
+        ></v-checkbox>
+      </v-col>
+        <v-col cols="2">
+          <v-dialog v-model="termOfServicetermsDiagVisible" width="auto">
+            <template v-slot:activator="{ props }">
+              <v-btn color="primary" @click="showContentDetailDiag" v-bind="props">
+               보기
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="text-h5" >꾹꾹 서비스의 이용약관</span>
+              </v-card-title>
+              <v-card-text>
+                <pre class="terms-text">{{ serviceContent }}</pre>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green-darken-1" variant="text" @click="termOfServicetermsDiagVisible= false">
+                  거절
+                </v-btn>
+                <v-btn v-model="serviceAgree" color="green-darken-1" variant="text" @click="termOfServiceAgreeDiag">
+                  동의
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-col>
+      </v-row>
+      <!-- <v-checkbox value="1" label="이용약관" @click="showContentDetailDiag"></v-checkbox>
+      <v-checkbox value="1" label="개인정보처리" type="checkbox"></v-checkbox> -->
+      <v-btn class="me-4"  @click="register">등록</v-btn>
     </form>
   </v-sheet>
 </template>
-<style scoped></style>
+<style scoped>
+
+.terms-text {
+  white-space: pre-wrap; /* 텍스트 형식 유지 */
+  font-family: monospace; /* 고정폭 글꼴 */
+}
+
+</style>
