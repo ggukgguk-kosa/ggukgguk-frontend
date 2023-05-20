@@ -62,7 +62,7 @@ async function login() {
 }
 async function loginWithKakao() {
   const params = {
-    redirectUri: "https://localhost:9090/login/kakao-redirect",
+    redirectUri: process.env.VUE_APP_KAKAO_REDIRECT_URL,
   };
   window.Kakao.Auth.authorize(params);
 }
@@ -84,7 +84,7 @@ async function findPassword() {
 async function loginWithGoogle() {
   const params = new URLSearchParams({
     client_id: process.env.VUE_APP_GOOGLE_LOGIN_KEY,
-    redirect_uri: 'https://localhost:9090/login/google-redirect',
+    redirect_uri: process.env.VUE_APP_GOOGLE_REDIRECT_URL,
     response_type: 'code',
     scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
   });

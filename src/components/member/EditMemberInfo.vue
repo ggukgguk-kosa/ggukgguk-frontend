@@ -27,6 +27,12 @@ const passwordMatchRule = (value) => {
   return true;
 };
 
+const cancel = () =>{
+  router.push({ name: "recordMain" });
+}
+
+
+
 const modify = () => {
   store
     .dispatch('member/modfiyMemberInfo', {
@@ -65,6 +71,25 @@ const fetchUpdatedMemberInfo = () => {
       console.error(error);
     });
 };
+
+const BirthRules = [
+  (value) => {
+    return (
+      (!!value || "생년월일이 비워져있습니다.") &&
+      ((value && /^\d{4}-\d{2}-\d{2}$/.test(value)) || 'YYYY-MM-DD 형식으로 입력해주세요.')
+    );
+  },
+];
+
+const phoneRules = [
+  (value) => {
+    return (
+      (!!value || "휴대폰번호를 입력해주세요.") &&
+      ((value && /^[0-9]+$/.test(value)) || "숫자만 입력해주세요")
+    );
+  }
+]
+
 </script>
 
 <template>
@@ -78,10 +103,10 @@ const fetchUpdatedMemberInfo = () => {
                 <v-text-field type="password" v-model="memberPw" label="새로운 비밀번호 입력"></v-text-field>
                 <v-text-field type="password" v-model="memberCheckPw" :rules="[passwordMatchRule]"
                     label="새로운 비밀번호 한번 더 입력"></v-text-field>
-                <v-text-field v-model="memberEmail" label="이메일"></v-text-field>
-                <v-text-field v-model="memberBirth" label="생일"></v-text-field>
+                <v-text-field v-model="memberEmail" disabled label="이메일"></v-text-field>
+                <v-text-field v-model="memberBirth" :rules="BirthRules" label="생일"></v-text-field>
                 <v-text-field v-model="memberNickname" label="닉네임"></v-text-field>
-                <v-text-field v-model="memberPhone" label="번호"></v-text-field>
+                <v-text-field v-model="memberPhone" :rules="phoneRules" label="휴대폰번호"></v-text-field>
             </v-form>
         </v-card-text>
         <v-card-actions>
