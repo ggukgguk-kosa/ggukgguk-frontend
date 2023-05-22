@@ -86,16 +86,16 @@
     <v-container>
         <h1>조각 수정</h1>
 
-        <div class="mt-10">
+        <div class="media-wrapper">
             <div class="preview-map my-8" v-if="record.recordLocationX !== 0 && record.recordLocationY !== 0">
                 <record-map class="map-container"
                     :record-location-x="record.recordLocationX"
                     :record-location-y="record.recordLocationY"/>
             </div>
             <div class="preview my-8">
-                <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls></video>
-                <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`">
-                <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`"></audio>
+                <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
+                <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
+                <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
             </div>
             <div>
                 <v-textarea
@@ -133,6 +133,19 @@ h1 {
 .toolbar {
     text-align: center;
     margin-bottom: 15px;
+}
+
+.media-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: auto;
+}
+
+.media {
+  margin: 2px;
+  width: 100%;
 }
 
 video {
