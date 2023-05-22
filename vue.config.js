@@ -20,7 +20,7 @@ module.exports = defineConfig({
         start_url: "./",
         display: "standalone",
         theme_color: "#3AA73A",
-        background_color: "#000000",
+        background_color: "#3AA73A",
         icons: [
             {
                 "src": "img/icons/favicon-16x16.png",
@@ -86,7 +86,7 @@ module.exports = defineConfig({
     },
 
     themeColor: "#3AA73A",
-    msTileColor: "#000000",
+    msTileColor: "#3AA73A",
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black-translucent",
     iconPaths: {
