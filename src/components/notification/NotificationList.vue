@@ -176,7 +176,7 @@ function readNotify(notificationId) {
     </v-card>
     <v-dialog
           v-model="recordDialog"
-          width="auto"
+          width="100%"
       >
         <notification-record :recordId="recordId"></notification-record>
         <v-btn color="primary" block @click="recordDialog = false">닫기</v-btn>
