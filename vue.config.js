@@ -8,11 +8,6 @@ module.exports = defineConfig({
 		}
   },
   devServer: {
-    https: {
-      key: fs.readFileSync('C:/dev/openssl/private.key'),
-      cert: fs.readFileSync('C:/dev/openssl/private.crt'),
-      ca: fs.readFileSync('C:/dev/openssl/rootCA.pem'),
-    },
     client: {
       overlay: true,
       webSocketURL: "wss://0.0.0.0:443/ws",
@@ -25,7 +20,7 @@ module.exports = defineConfig({
         start_url: "./",
         display: "standalone",
         theme_color: "#3AA73A",
-        background_color: "#000000",
+        background_color: "#3AA73A",
         icons: [
             {
                 "src": "img/icons/favicon-16x16.png",
@@ -91,7 +86,7 @@ module.exports = defineConfig({
     },
 
     themeColor: "#3AA73A",
-    msTileColor: "#000000",
+    msTileColor: "#3AA73A",
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black-translucent",
     iconPaths: {
