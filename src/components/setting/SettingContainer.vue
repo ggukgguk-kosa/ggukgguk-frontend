@@ -9,7 +9,8 @@ const router = useRouter();
 const MENUS = {
     logout: 'login',
     modifyMemberInfo: 'MemberInfo',
-    initLocalStorage: 'initLocalStorage'
+    initLocalStorage: 'initLocalStorage',
+    noticeList: 'settingNotice'
 }
 
 const memberInfo = computed(() => {
@@ -75,7 +76,7 @@ watch(allowEmail, () => {
 
         <v-divider></v-divider>
 
-        <v-list >
+        <v-list>
             <v-list-item value="initLocalStorage" @click="goTo('initLocalStorage')">
                 <v-list-item-title>어플리케이션 초기화</v-list-item-title>
                 <v-list-item-subtitle>어플리케이션이 사용하는 로컬스토리지를 초기화합니다.</v-list-item-subtitle>
@@ -87,6 +88,15 @@ watch(allowEmail, () => {
                     <v-switch v-model="allowEmail" color="primary"></v-switch>
                     <div class="mt-2" style="height: 56px;">{{ allowEmail ? '수신 허용' : '수신 거부' }}</div>
                 </v-list-item-action>
+            </v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list>
+            <v-list-item value="noticeList" @click="goTo('noticeList')">
+                <v-list-item-title>공지사항</v-list-item-title>
+                <v-list-item-subtitle>꾹꾹의 공지사항을 확인할 수 있습니다.</v-list-item-subtitle>
             </v-list-item>
         </v-list>
     </v-card>
