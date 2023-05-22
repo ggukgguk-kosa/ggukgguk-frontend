@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { ref,computed, onMounted,onUnmounted,watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -33,27 +33,27 @@ function sendLinkDefault() {
     }
 
     window.Kakao.Link.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: '꾹꾹 회원 아이디 공유',
-        description: '친구분의 아이디는 '+ memberId.value + 
-        '이며 당신과 교류하고 싶습니다. #꾹꾹 #일기 #교환일기',
-        imageUrl:
-          'https://app.ggukgguk.online/img/landing_main.png',
-        link: {
-          mobileWebUrl: 'https://app.ggukgguk.online/login',
-          webUrl: 'https://app.ggukgguk.online/login',
+        objectType: 'feed',
+        content: {
+            title: '꾹꾹 회원 아이디 공유',
+            description: '친구분의 아이디는 ' + memberId.value +
+                '이며 당신과 교류하고 싶습니다. #꾹꾹 #일기 #교환일기',
+            imageUrl:
+                'https://app.ggukgguk.online/img/landing_main.png',
+            link: {
+                mobileWebUrl: 'https://app.ggukgguk.online/login',
+                webUrl: 'https://app.ggukgguk.online/login',
+            },
         },
-      },
-      buttons: [
-        {
-          title: '자세히 보기',
-        link: {
-          mobileWebUrl: 'https://app.ggukgguk.online/login',
-          webUrl: 'https://app.ggukgguk.online/login',
-          },
-        }
-      ],
+        buttons: [
+            {
+                title: '자세히 보기',
+                link: {
+                    mobileWebUrl: 'https://app.ggukgguk.online/login',
+                    webUrl: 'https://app.ggukgguk.online/login',
+                },
+            }
+        ],
     })
 }
 
@@ -63,14 +63,65 @@ function sendLinkDefault() {
 //     if (!window.Kakao.isInitialized()) {
 //         window.Kakao.init("f0b4268c10a9c956df9816637eede528");
 //     }
-    
+
 //     window.Kakao.Link.sendCustom({
 //         templateId: 93730
 //     });
 // }
+
+watch(friendList, () => {
+  noMoreDown.value = false;
+})
+
+// let lastScrollPosition = 0;
+
+const isLoadingForScrollEvent = ref(false);
+const isLoading = ref(false);
+const noMoreDown = ref(false);
+
+function handleScroll() {
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    const documentHeight = document.documentElement.scrollHeight;
+    const windowHeight = window.innerHeight;
+
+    // 스크롤이 맨 아래에 도달했는지 확인
+    if (Math.ceil(scrollY + windowHeight) >= documentHeight && !isLoadingForScrollEvent.value) {
+        if (noMoreDown.value) {
+            return;
+        }
+
+        isLoadingForScrollEvent.value = true;
+        getFriendsDown();
+    }
+
+    // lastScrollPosition = scrollY;
+}
+
+window.addEventListener('scroll', handleScroll);
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+})
+
+function getFriendsDown() {
+  isLoadingForScrollEvent.value = true;
+  isLoading.value = true;
+
+  store.dispatch("friend/getFriendList", memberId.value)
+  .then((data) => {
+        isLoadingForScrollEvent.value = false;
+        isLoading.value = false;
+        if (data?.length === 0) noMoreDown.value = true;
+  })
+  .catch((error) => {
+        console.error('친구 리스트 조회 실패');
+        console.error(error);
+  })
+}
+
+
 </script>  
 <template>
-    <!--무한 스크롤을 구현해야 할 듯 함.-->
     <v-container>
         <v-card-title>친구 목록</v-card-title>
         <v-row>

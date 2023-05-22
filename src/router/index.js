@@ -26,6 +26,7 @@ import RecordUnaccepted from '../views/record/RecordUnaccepted.vue';
 import FindPwView from '../views/auth/FindPwView.vue';
 import NotificationView from '../views/notification/NotificationView.vue'
 import SettingMainView from '../views/setting/SettingMainView.vue';
+import SettingNoticeView from '../views/setting/SettingNoticeView.vue';
 import AdminBatchView from '../views/admin/AdminBatchView.vue';
 import MediaRecheckRequestView from '../views/record/MediaRecheckRequestView.vue';
 
@@ -188,6 +189,12 @@ const routes = [
     path: '/setting',
     name: 'settingMain',
     component: SettingMainView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/setting/notice',
+    name: 'settingNotice',
+    component: SettingNoticeView,
     meta: { requiresAuth: true }
   }
 ]

@@ -29,6 +29,10 @@ export default {
       if (index !== -1) {
         state.friendList.splice(index, 1);
       }
+    },
+    setFriendsDown(state, friendList) {
+      if (friendList !== [])
+        state.friendList = [...state.friendList, ...friendList];
     }
   },
   actions: {
@@ -72,8 +76,16 @@ export default {
           console.log('친구를 차단하였고, list를 확인해야 함')
           commit('removeFriend', friendId);
         })
-    }
+    },
+
+    // 친구목록 내리기
+    getFriendsDown({ commit }, memberId) {
+    return friend.getFriendList(memberId)
+    .then((response) => {
+      console.log(response.data.data);
+      commit('setFriendsDown', response.data.data);
+      return response.data.data;
+    })
   },
-
-
+  }
 };
