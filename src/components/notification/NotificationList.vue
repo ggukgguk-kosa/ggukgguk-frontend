@@ -162,13 +162,18 @@ function readNotify(notificationId) {
         <div v-if="notify.notificationTypeId === 'FRIEND_BIRTHDAY'">친구분의 생일입니다. {{ notify.notificationMessage }}</div>
         <div v-if="notify.notificationTypeId === 'MONTHLY_ANALYSIS'"> {{ notify.notificationMessage }}</div>
       </v-card-text>
-      <v-card-actions class="justify-end pt-1 pb-0">
-        <v-checkbox v-model="checked" :value="notify.notificationId" class="mt-n4"
-          @change="() =>{detailNotify(notify.referenceId,notify.notificationTypeId); readNotify(notify.notificationId)}"></v-checkbox>
+      <v-card-actions class="justify-end custom-space-between pt-1 pb-0">
+        <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST' && notify.notificationIsRead !== 1" @click="readNotify(notify.notificationId)">
+        읽음 </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn v-if="notify.notificationTypeId !== 'FRIEND_REQUEST'" v-model="checked" :value="notify.notificationId" class="mt-n4" @click="() =>{detailNotify(notify.referenceId,notify.notificationTypeId); readNotify(notify.notificationId)}">상세보기</v-btn>
+        <!-- <v-checkbox v-model="checked" :value="notify.notificationId" class="mt-n4"
+          @change="() =>{detailNotify(notify.referenceId,notify.notificationTypeId); readNotify(notify.notificationId)}"></v-checkbox> -->
       <!-- 수락 컴포넌트를 만든 이유.. 음 체크박스는 단순히 읽음의 용도로와 해당 위치의 라우터로 넘길 수 있지만,
            친구 요청 알림은 수락 or 거절의 2가지 옵션이 있어서, 음 수락하려고 하면 수락버튼을 누르고 진행, 아니면 싫으면 단순히 체크박스를 클릭후 
            넘길 수 있게 하는게 어떨런지 궁금함.
       -->
+    
       <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId); readNotify(notify.notificationId); }">
         수락 </v-btn>
       </v-card-actions>
@@ -182,3 +187,11 @@ function readNotify(notificationId) {
       </v-dialog>
   </div>
 </template>
+<style scoped>
+.custom-space-between {
+  display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+</style>
