@@ -53,7 +53,6 @@ async function getDiaryList() {
           console.error(error);
       })
     }
-    console.log(diaryList.value.diaryRecordList);
 }
 
 function setRecordCount(){
@@ -140,7 +139,6 @@ onMounted(onMountedHandler)
 </script>
 
 <template>
-  <v-container :style="{ backgroundColor: mainColor, borderRadius: '10px' }" class="mt-15" >
     <v-row>
       <v-col cols="6">
         <v-select
@@ -159,6 +157,8 @@ onMounted(onMountedHandler)
         ></v-select>
       </v-col>
     </v-row>
+    <h3 v-if="diaryList===undefined" class="text-center"> 해당 월의 다이어리가 없습니다. </h3>
+  <v-container v-if="diaryList!==undefined" :style="{ backgroundColor: mainColor, borderRadius: '10px' }" class="mt-15" >
     <v-row>
           <VCalendar expanded
           ref="calendar"
@@ -180,6 +180,7 @@ onMounted(onMountedHandler)
     </v-row>
   </v-container>
   <v-icon
+    v-if="diaryList!==undefined"
     @click="goToColor"
   >
     mdi-palette
