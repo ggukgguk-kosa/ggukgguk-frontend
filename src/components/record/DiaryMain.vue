@@ -45,7 +45,7 @@ async function getDiaryList() {
           console.error('다이어리 리스트 조회 실패');
           console.error(error);
       })
-    }
+    }   
 }
 
 
@@ -75,7 +75,6 @@ function clickDiary(diary) {
 }
 
 onMounted(() => {
-
   setDiaryYear(selectedYear.value)
   setDiaryMonth(null)
   getDiaryList();
@@ -84,7 +83,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container align="center" class="mt-15">
     <v-row>
       <v-col cols="6">
         <v-select
@@ -101,6 +99,16 @@ onMounted(() => {
         ></v-select>
       </v-col>
     </v-row>
+    <div
+      v-if="diaryList.length === 0" 
+      style="display: flex; justify-content: center;">
+    <v-chip
+      variant="outlined"
+    >
+      해당 연도의 다이어리가 없습니다.
+    </v-chip>
+    </div>
+    <v-container v-if="diaryList !== undefined" align="center" class="mt-15">
     <v-row 
       v-for="diary in diaryList"
       :key="diary.diaryId"

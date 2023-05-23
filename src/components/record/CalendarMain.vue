@@ -61,7 +61,7 @@ function setRecordCount(){
     const date = new Date(diaryYear.value, diaryMonth.value - 1, record.recordDay);
     const dots = [];
     for (let i = 0; i < record.recordCount; i++) {
-      dots.push({ dot: true, dates: [date], color: mainColor.value });
+      dots.push({ dot: { style : { backgroundColor : mainColor.value} }, dates: [date] });
     }
     attributes.value = attributes.value.concat(dots);
   }
@@ -81,10 +81,13 @@ watch(selectedYear, () => {
 })
 
 watch(selectedMonth, async () => {
+    selectMsg.value = false;
     setDiaryMonth(selectedMonth.value);
-    calendar.value.move({ month: selectedMonth.value, year: selectedYear.value })
     await getDiaryList();
-    setRecordCount();
+    if(diaryList.value !== undefined){
+      diaryVal.value = true;
+      setRecordCount();
+    }
 })
 
 // 캘린더
@@ -119,18 +122,19 @@ function goToColor(){
   router.push('/color'); 
 }
 
+const selectMsg = ref(false);
+const diaryVal = ref(false);
+
 async function onMountedHandler() {
-  if(diaryMonth.value==null){
-    setDiaryMonth(new Date().getMonth());
-    await getDiaryList();
-    console.log("null실행")
-    calendar.value.move({ month: diaryMonth.value, year: diaryYear.value });
-    setRecordCount();
+  if(diaryMonth.value === null){
+    selectMsg.value = true;
   } else {
     await getDiaryList();
-    console.log("아님아님")
-    calendar.value.move({ month: diaryMonth.value, year: diaryYear.value });
-    setRecordCount();
+    if(diaryList.value !== undefined){
+      diaryVal.value = true;
+      setRecordCount();
+    }
+    selectMsg.value = false;
   }
 }
 
@@ -157,15 +161,44 @@ onMounted(onMountedHandler)
         ></v-select>
       </v-col>
     </v-row>
-    <h3 v-if="diaryList===undefined" class="text-center"> 해당 월의 다이어리가 없습니다. </h3>
-  <v-container v-if="diaryList!==undefined" :style="{ backgroundColor: mainColor, borderRadius: '10px' }" class="mt-15" >
+    <div
+      v-if="selectMsg" 
+      style="display: flex; justify-content: center;">
+    <v-chip
+      variant="outlined"
+      color="primary"
+    >
+      월을 선택해주세요
+    </v-chip>
+    </div>
+    <div
+      v-if="diaryList === undefined" 
+      style="display: flex; justify-content: center;">
+    <v-chip
+      variant="outlined"
+      color="primary"
+    >
+      해당 월의 다이어리가 없습니다.
+    </v-chip>
+    </div>
+  <v-container v-if="diaryVal">
+  <v-row>
+    <v-col class="text-center">
+        <span 
+          :style="{ color : mainColor }"
+          class="text-h3">
+            {{ diaryList.mainKeyword }}
+          </span>
+    </v-col>
+  </v-row>
     <v-row>
-          <VCalendar expanded
-          ref="calendar"
-          :attributes="attributes"
-          @dayclick="handleDateClick"
-          class="calendar"
-          />
+      <VCalendar expanded
+        ref="calendar"
+        :attributes="attributes"
+        @dayclick="handleDateClick"
+        :style="{ borderColor: mainColor, borderRadius: '20px' }"
+        class="calendar"
+      />
     </v-row>
     <v-row>
       <v-col
@@ -180,7 +213,8 @@ onMounted(onMountedHandler)
     </v-row>
   </v-container>
   <v-icon
-    v-if="diaryList!==undefined"
+    v-if="diaryVal"
+    :style="{ color: mainColor }"
     @click="goToColor"
   >
     mdi-palette
