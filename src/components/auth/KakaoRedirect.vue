@@ -72,4 +72,7 @@ onMounted(async () => { // 미은트가 된 이후에 비동기적으로 실행 
   <div>
     <p>접속 중..</p>
   </div>
+  <!-- <v-overlay class="loading-overlay" v-model="isLoading" scroll-strategy="block" persistent>
+        <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
+  </v-overlay> -->
 </template>

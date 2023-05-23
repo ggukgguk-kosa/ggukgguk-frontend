@@ -6,7 +6,8 @@ export default {
     // [변수들의 집합]
     state: {
         memberDetailInfo :{},
-        friendList: []
+        friendList: [],
+        memberEmail: ''
     },
     // [state의 변수들을 get 호출]
     getters :{
@@ -15,6 +16,9 @@ export default {
         },
         friendList(state) {
             return state.friendList;
+        },
+        memberEmail(state){
+            return state.memberEmail;
         }
     },
     // [변수들을 조작하는 함수들]
@@ -24,6 +28,9 @@ export default {
         },
         setFriendList(state, newFriendList) {
             state.friendList = newFriendList;
+        },
+        setMemberEmail(state,memberEmail){
+            state.memberEmail = memberEmail;
         }
     },
     // [비동기 처리를 하는 함수들]
