@@ -113,7 +113,7 @@ function goToExchangeRecord() {
     </template>
     <input v-model="keyword"
       class="v-input v-text-field__input v-text-field__input--enclosed v-text-field__input--placeholder v-text-field__input--solo w-full"
-      type="text" placeholder="검색" @keydown.enter="handleSearch" style="max-width: none; color:#FFFFFF;" />
+      type="text" placeholder="검색" @keydown.enter="handleSearch" style="min-width: 150px; color:#FFFFFF;" />
     <v-btn icon @click="handleSearch">
       <v-icon>mdi-magnify</v-icon>
     </v-btn>
