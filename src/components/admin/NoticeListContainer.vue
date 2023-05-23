@@ -124,7 +124,6 @@ function deleteNotice(noticeId){
         .catch((error) => {
             console.error(error);
         })
-
 }
 </script>
 
@@ -154,9 +153,6 @@ function deleteNotice(noticeId){
         </v-card>
     </v-dialog>
     <v-col class="mt-8">
-        <v-row>
-            <h2 class="section-title">공지사항</h2>
-        </v-row>
         <v-row class="d-flex flex-column align-center justify-center">
             <v-table style="width: 100%">
                 <thead>

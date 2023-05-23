@@ -9,6 +9,9 @@ export default {
         },
         );
     },
+    deleteMember({memberId}){
+        return axios.put(`/admin/member/delete/${memberId}`)
+    },
     deleteNotice({noticeId}){
         return axios.delete(`/admin/notice/delete/${noticeId}`);
     },
