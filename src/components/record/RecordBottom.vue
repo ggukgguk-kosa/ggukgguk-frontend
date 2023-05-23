@@ -94,7 +94,7 @@ onMounted(() => {
 <style scoped>
 .record-btn {
     font-size: xx-large !important;
-    color: red;
+    color: #3AA73A;
 }
 
 .v-bottom-navigation .v-bottom-navigation__content > .v-btn {
@@ -107,6 +107,6 @@ onMounted(() => {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: red;
+  background-color: #3AA73A;
 }
 </style>
