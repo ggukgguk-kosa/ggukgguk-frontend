@@ -11,7 +11,7 @@ export default{
   methods: {
     loginWithKakao() {
       const params = {
-        redirectUri: "https://localhost:9090/login/kakao-redirect",
+        redirectUri: process.env.VUE_APP_KAKAO_REDIRECT_URL,
       };
       window.Kakao.Auth.authorize(params);
     },

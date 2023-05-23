@@ -1,24 +1,32 @@
 import apiFactory from "./apiFactory"
-import store from '../store'
 
 const axios = apiFactory.getInstance();
 
 export default {
     addNotice ({ noticeTitle, noticeContent }) {
-        return axios.post('/admin/notice/list', {
+        return axios.post('/admin/notice/write', {
             noticeTitle, noticeContent
         },
-        {
-            headers: {
-                Authorization: `Bearer ${store.getters['auth/accessToken']}`
-            }
-        });
+        );
+    },
+    deleteMember({memberId}){
+        return axios.put(`/admin/member/delete/${memberId}`)
+    },
+    deleteNotice({noticeId}){
+        return axios.delete(`/admin/notice/delete/${noticeId}`);
     },
     getNoticeList({ page, size }) {
         return axios.get('/admin/notice/list',
         {
             params: { page, size }
         });
+    },
+
+    editNotice({ noticeId, noticeTitle, noticeContent }){
+        console.log(noticeId, noticeTitle, noticeContent);
+        return axios.put(`/admin/notice/update/${noticeId}`, {
+            noticeTitle, noticeContent, noticeId
+        })
     },
 
     getAnalysisData() {
@@ -48,6 +56,40 @@ export default {
         {
             params: { page, size }
         });
+    },
+    getMediaFileDetail(mediaFileId) {
+        return axios.get(`/admin/content/media/${mediaFileId}`)
+    },
+    getMediaFileRecheckRequest({ mediaFileRecheckRequestStatus, mediaFileId, page, size }) {
+        return axios.get(`/admin/content/claim`, {
+            params: {
+                mediaFileRecheckRequestStatus, mediaFileId, page, size
+            }
+        })
+    },
+    postMediaFileRecheckRequest({ mediaFileId, mediaFileRecheckRequestClaim }) {
+        return axios.post(`/admin/content/claim`, {
+            mediaFileId, mediaFileRecheckRequestClaim
+        })
+    },
+    editMediaFileRecheckRequest({
+        mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+        mediaFileRecheckRequestClaim, mediaFileRecheckRequestReply,
+        mediaFileRecheckRequestStatus,
+        memberId, memberName, memberEmail, memberPhone
+    }) {
+        return axios.put(`/admin/content/claim/${mediaFileRecheckRequestId}`, {
+            mediaFileRecheckRequestId, mediaFileId, mediaTypeId,
+            mediaFileRecheckRequestClaim, mediaFileRecheckRequestReply,
+            mediaFileRecheckRequestStatus,
+            memberId, memberName, memberEmail, memberPhone
+        })
+    },
+    getMediaFileWithCredential({ mediaFileId, mediaType }) {
+        return axios.get(`/record/media/${mediaFileId}`, {
+            params: { mediaType },
+            responseType: 'blob'
+        })
     }
 }
 
