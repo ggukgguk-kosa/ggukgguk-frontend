@@ -510,10 +510,10 @@ onUnmounted(() => {
                     </div>
                     <v-form v-if="editReplyForm && reply.replyId === editReplyId">
                       <v-row>
-                        <v-col cols="10">
+                        <v-col>
                           <v-text-field v-model="editReplyContent" required></v-text-field>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col>
                           <v-btn
                           :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
                           class= "button"
