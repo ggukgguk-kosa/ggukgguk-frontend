@@ -10,7 +10,7 @@ function goBack() {
 </script>
 
 <template>
-<v-app-bar class="mb-20" color="primary">
+<v-app-bar class="mb-20" color="#E0E3DA">
   <v-btn icon
   @click="goBack">
     <v-icon>mdi-arrow-left</v-icon>
