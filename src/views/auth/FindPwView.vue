@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 import { useStore } from "vuex";
 import { auth } from '../../api';
+import { useRouter } from "vue-router";
 
 const store = useStore();
 const memberId = ref("");
@@ -9,6 +10,7 @@ const memberEmail = ref("");
 const doubleCheck = ref(false);
 const emptyMember = ref(false);
 const certificationNumber = ref("");
+const router = useRouter();
 
 watch(doubleCheck, (newValue) => {
     if (newValue === true) {
@@ -36,6 +38,11 @@ function cetificationCheck() {
         console.log("인증번호 일치")
         console.log(response);
         alert('인증번호가 일치하여 비밀번호 수정페이지로 이동합니다.');
+        store.commit('member/setMemberEmail', memberEmail); 
+        router.push({ name: "modifyPw"});
+        
+        // router.push({ name: "modifyPw", query: { email: memberEmail.value } });
+        // 이동할 라우터 페이지 명시.
         return response;
     }).catch((error) => {
         console.error(error);
@@ -57,6 +64,7 @@ function findPwByIdEmail() {
         }).catch(() => {
             emptyMember.value = true;
             doubleCheck.value = false;
+            alert('등록된 아이디와 이메일 주소가 일치하지 않습니다.');
         });
 }
 
@@ -74,23 +82,21 @@ function findPwByIdEmail() {
     </v-sheet>
     <v-container v-if="doubleCheck" class="text-center">
         <v-form>
-            <v-card class="mx-auto" width="400">
+            <v-card class="mx-auto" width="300">
                 <template v-slot:title>
-                    등록된 이메일로 인증번호를 전송하였습니다.
+                    메일 인증번호를 전송하였습니다.
                     <v-text-field v-model="certificationNumber" label="인증번호 입력"></v-text-field>
                     <v-btn @click="cetificationCheck" block class="mt-2 mb-6">인증번호 확인</v-btn>
                 </template>
             </v-card>
         </v-form>
     </v-container>
-    <v-container v-if="emptyMember" class="text-center">
-        <v-card class="mx-auto" width="400">
-            <template v-slot:title>
-                가입된 이메일 주소가 아닙니다.
-            </template>
-            <v-card-text></v-card-text>
-        </v-card>
-    </v-container>
+    <v-card v-if="emptyMember" class="mx-auto" width="300">
+        <template v-slot:title>
+            가입된 이메일 주소가 아닙니다.
+        </template>
+        <v-card-text></v-card-text>
+    </v-card>
 </template>
 <style scoped>
 .img-wrap {
