@@ -1,24 +1,32 @@
 import apiFactory from "./apiFactory"
-import store from '../store'
 
 const axios = apiFactory.getInstance();
 
 export default {
     addNotice ({ noticeTitle, noticeContent }) {
-        return axios.post('/admin/notice/list', {
+        return axios.post('/admin/notice/write', {
             noticeTitle, noticeContent
         },
-        {
-            headers: {
-                Authorization: `Bearer ${store.getters['auth/accessToken']}`
-            }
-        });
+        );
+    },
+    deleteMember({memberId}){
+        return axios.put(`/admin/member/delete/${memberId}`)
+    },
+    deleteNotice({noticeId}){
+        return axios.delete(`/admin/notice/delete/${noticeId}`);
     },
     getNoticeList({ page, size }) {
         return axios.get('/admin/notice/list',
         {
             params: { page, size }
         });
+    },
+
+    editNotice({ noticeId, noticeTitle, noticeContent }){
+        console.log(noticeId, noticeTitle, noticeContent);
+        return axios.put(`/admin/notice/update/${noticeId}`, {
+            noticeTitle, noticeContent, noticeId
+        })
     },
 
     getAnalysisData() {

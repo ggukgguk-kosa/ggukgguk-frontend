@@ -100,7 +100,7 @@ function goToExchangeRecord() {
   <v-overlay class="loading-overlay" v-model="isLoading" scroll-strategy="block" persistent>
     <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
   </v-overlay>
-  <v-app-bar class="text-center align-content-center w-full" color="primary">
+  <v-app-bar class="text-center align-content-center w-full" :elevation="0" color="#E0E3DA">
     <template v-slot:prepend>
       <v-dialog v-model="dialog" max-width="290" @click:outside="dialog = false">
         <template v-slot:activator="{ props }">
@@ -113,7 +113,7 @@ function goToExchangeRecord() {
     </template>
     <input v-model="keyword"
       class="v-input v-text-field__input v-text-field__input--enclosed v-text-field__input--placeholder v-text-field__input--solo w-full"
-      type="text" placeholder="검색" @keydown.enter="handleSearch" style="max-width: none; color:#FFFFFF;" />
+      type="text" placeholder="검색" @keydown.enter="handleSearch" style="min-width: 150px; color:#111111;" />
     <v-btn icon @click="handleSearch">
       <v-icon>mdi-magnify</v-icon>
     </v-btn>
@@ -159,6 +159,12 @@ function goToExchangeRecord() {
 }
 
 input::placeholder {
-  color: #FFFFFF;
+  color: #111111;
+}
+
+.v-app-bar {
+  border-bottom-style: double;
+  border-bottom-width: 3px;
+  border-bottom-color: #111111;
 }
 </style>

@@ -3,7 +3,7 @@ import { computed, onMounted, watch, ref } from 'vue';
 import { useStore } from 'vuex';
 import { admin } from '@/api'
 
-const store = useStore();
+const store = useStore(); // vuex 스토어 사용
 
 onMounted(() => {
     store.commit('admin/setContentPage', 1);
