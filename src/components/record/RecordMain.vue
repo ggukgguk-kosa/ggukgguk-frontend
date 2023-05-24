@@ -441,7 +441,7 @@ onUnmounted(() => {
             :date="formatDate(new Date(record.recordCreatedAt))"
             :color="record.mainColor" />
           <!-- 조각 카드 -->
-          <v-card class="card" :style="{ borderColor: record.mainColor }" variant="outlined">
+          <v-card class="card" :style="{ borderColor: record.mainColor, borderWidth: '2px' }" variant="outlined">
             <!-- 헤더 영역 -->
             <v-row>
                 <v-col cols="10">
@@ -513,6 +513,8 @@ onUnmounted(() => {
                         <v-col>
                           <v-text-field v-model="editReplyContent" required></v-text-field>
                         </v-col>
+                      </v-row>
+                      <v-row>
                         <v-col>
                           <v-btn
                           :style="{ border: '2px solid ' + record.mainColor, color: record.mainColor }"
