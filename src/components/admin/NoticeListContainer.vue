@@ -163,7 +163,7 @@ function deleteNotice(noticeId){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in noticeList" :key="item.noticeId" class="text-center">
+                    <tr v-for="item in noticeList" :key="item.noticeId" class="text-center" style="cursor:pointer">
                         <td @click="showDetailDialog(item)">{{ item.noticeTitle }}</td>
                     </tr>
                 </tbody>
