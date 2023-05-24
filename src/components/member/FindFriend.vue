@@ -26,12 +26,12 @@ async function addFriend(friendId,memberEmail) {
 }
 
 // 친구 차단하기 
-function refuseFriend(friendId) {
-    store.dispatch('friend/delRelationshipFriend', friendId);
-    // .then(() => {
-    // alert('상대방을 차단하였습니다.');
-    // });
-}
+// function refuseFriend(friendId) {
+//     store.dispatch('friend/delRelationshipFriend', friendId);
+//     // .then(() => {
+//     // alert('상대방을 차단하였습니다.');
+//     // });
+// }
 // 나의 친구 목록 조회.=> 친구들의 ID 값만 가져오기
 const friendId = computed(() => {
     return store.getters['friend/friendList'].map(friend => friend.memberId);
@@ -77,14 +77,14 @@ async function friendRequestEmail(memberEmail){
 
 <template>
     <v-container>
-        <v-card-title>친구 추가 및 차단</v-card-title>
+        <v-card-title>친구 추가</v-card-title>
     </v-container>
-    <v-card class="mx-auto" width="400">
+    <v-card class="mx-auto" width="300">
         <template v-slot:title>
             아이디 찾기
         </template>
         <v-text-field v-model="findId" label="찾고자 하는 친구 아이디"></v-text-field>
-        <v-card-actions>
+        <v-card-actions class="d-flex justify-center">
             <v-btn variant="outlined" @click="findFriendList">
                 검색
             </v-btn>
@@ -100,7 +100,7 @@ async function friendRequestEmail(memberEmail){
                     <v-card-text class="text-end">
                         <span>
                             <v-btn v-if="!isFriend(friend.memberId)" @click="addFriend(friend.memberId,friend.memberEmail)">추가</v-btn>
-                            <v-btn v-if="isFriend(friend.memberId)" @click="refuseFriend(friend.memberId)">차단</v-btn>
+                            <!-- <v-btn v-if="isFriend(friend.memberId)" @click="refuseFriend(friend.memberId)">차단</v-btn> -->
                         </span>
                     </v-card-text>
                     <v-divider></v-divider>
