@@ -85,17 +85,18 @@
 
     <v-container>
         <h1>조각 수정</h1>
-
-        <div class="media-wrapper">
-            <div class="preview-map my-8" v-if="record.recordLocationX !== 0 && record.recordLocationY !== 0">
-                <record-map class="map-container"
-                    :record-location-x="record.recordLocationX"
-                    :record-location-y="record.recordLocationY"/>
-            </div>
-            <div class="preview my-8">
-                <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
-                <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
-                <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+            <div class="mt-10">
+            <div class="media-wrapper">
+                <div class="preview-map my-8" v-if="record.recordLocationX !== 0 && record.recordLocationY !== 0">
+                    <record-map class="map-container"
+                        :record-location-x="record.recordLocationX"
+                        :record-location-y="record.recordLocationY"/>
+                </div>
+                <div class="preview my-8">
+                    <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
+                    <img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media">
+                    <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+                </div>
             </div>
             <div>
                 <v-textarea

@@ -13,7 +13,7 @@ const router = useRouter();
 const checked = ref([]);
 const toMemberId = ref('');
 
-
+const dialog = ref(false);
 
 // 전체 나의 알림 목록
 const notifyList = computed(() => {
@@ -91,7 +91,8 @@ async function applyFriendrelationShip(referenceId) {
     .then((response) => {
       console.log("친구요청 수락 완료")
       console.log(response)
-    }).catch(() => {})
+      dialog.value =true;
+    }).catch(() => { })
 
 }
 const diaryYear = ref('');
@@ -101,14 +102,14 @@ const recordDialog = ref(false);
 const recordId = ref(0);
 
 // 알림 상세 보기 (라우터로 해당 댓글 / 월말 결산 / 교환일기 이동)
-function detailNotify(referenceId,notificationTypeId){
+function detailNotify(referenceId, notificationTypeId) {
 
 
   // 월말 결산 알림인 경우
-  if(notificationTypeId === 'MONTHLY_ANALYSIS'){
-      console.log(referenceId)
-      return diary.getNotifyDiaryList(referenceId)
-      .then((response)=>{
+  if (notificationTypeId === 'MONTHLY_ANALYSIS') {
+    console.log(referenceId)
+    return diary.getNotifyDiaryList(referenceId)
+      .then((response) => {
         console.log(response);
         diaryYear.value = response.data.data[0].diaryYear
         diaryMonth.value = response.data.data[0].diaryMonth
@@ -116,13 +117,13 @@ function detailNotify(referenceId,notificationTypeId){
         console.log("월말결산 해당 달 : " + diaryMonth.value) // 4
         store.commit('diary/setDiaryYear', diaryYear.value);
         store.commit('diary/setDiaryMonth', diaryMonth.value);
-        router.push({ name: "CalendarMain"});
+        router.push({ name: "CalendarMain" });
       })
   }
 
-  if(notificationTypeId === 'NEW_REPLY'){
+  if (notificationTypeId === 'NEW_REPLY') {
     recordDialog.value = true;
-    recordId.value=referenceId;
+    recordId.value = referenceId;
   }
 }
 
@@ -163,35 +164,45 @@ function readNotify(notificationId) {
         <div v-if="notify.notificationTypeId === 'MONTHLY_ANALYSIS'"> {{ notify.notificationMessage }}</div>
       </v-card-text>
       <v-card-actions class="justify-end custom-space-between pt-1 pb-0">
-        <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST' && notify.notificationIsRead !== 1" @click="readNotify(notify.notificationId)">
-        읽음 </v-btn>
+        <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST' && notify.notificationIsRead !== 1"
+          @click="readNotify(notify.notificationId)">
+          읽음 </v-btn>
+        <v-dialog v-model="dialog" width="auto">
+          <v-card>
+            <v-card-text>
+              친구 관계를 맺었습니다.
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" block @click="dialog = false">닫기</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-spacer></v-spacer>
-        <v-btn v-if="notify.notificationTypeId !== 'FRIEND_REQUEST'" v-model="checked" :value="notify.notificationId" class="mt-n4" @click="() =>{detailNotify(notify.referenceId,notify.notificationTypeId); readNotify(notify.notificationId)}">상세보기</v-btn>
+        <v-btn v-if="notify.notificationTypeId !== 'FRIEND_REQUEST'" v-model="checked" :value="notify.notificationId"
+          class="mt-n4"
+          @click="() => { detailNotify(notify.referenceId, notify.notificationTypeId); readNotify(notify.notificationId) }">상세보기</v-btn>
         <!-- <v-checkbox v-model="checked" :value="notify.notificationId" class="mt-n4"
           @change="() =>{detailNotify(notify.referenceId,notify.notificationTypeId); readNotify(notify.notificationId)}"></v-checkbox> -->
-      <!-- 수락 컴포넌트를 만든 이유.. 음 체크박스는 단순히 읽음의 용도로와 해당 위치의 라우터로 넘길 수 있지만,
+        <!-- 수락 컴포넌트를 만든 이유.. 음 체크박스는 단순히 읽음의 용도로와 해당 위치의 라우터로 넘길 수 있지만,
            친구 요청 알림은 수락 or 거절의 2가지 옵션이 있어서, 음 수락하려고 하면 수락버튼을 누르고 진행, 아니면 싫으면 단순히 체크박스를 클릭후 
            넘길 수 있게 하는게 어떨런지 궁금함.
       -->
-    
-      <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'" @click="() => { applyFriendrelationShip(notify.referenceId); readNotify(notify.notificationId); }">
-        수락 </v-btn>
+
+        <v-btn v-if="notify.notificationTypeId === 'FRIEND_REQUEST'"
+          @click="() => { applyFriendrelationShip(notify.referenceId); readNotify(notify.notificationId); }">
+          수락 </v-btn>
       </v-card-actions>
     </v-card>
-    <v-dialog
-          v-model="recordDialog"
-          width="100%"
-      >
-        <notification-record :recordId="recordId"></notification-record>
-        <v-btn color="primary" block @click="recordDialog = false">닫기</v-btn>
-      </v-dialog>
+    <v-dialog v-model="recordDialog" width="100%">
+      <notification-record :recordId="recordId"></notification-record>
+      <v-btn color="primary" block @click="recordDialog = false">닫기</v-btn>
+    </v-dialog>
   </div>
 </template>
 <style scoped>
 .custom-space-between {
   display: flex;
-    justify-content: space-between;
-    width: 100%;
+  justify-content: space-between;
+  width: 100%;
 }
-
 </style>

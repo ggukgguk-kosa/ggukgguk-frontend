@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref} from "vue";
 import { useStore } from "vuex";
 import { auth } from '../../api';
 import { useRouter } from "vue-router";
@@ -12,11 +12,11 @@ const emptyMember = ref(false);
 const certificationNumber = ref("");
 const router = useRouter();
 
-watch(doubleCheck, (newValue) => {
-    if (newValue === true) {
-        methodToExecuteWhenTemplateAppears();
-    }
-});
+// watch(doubleCheck, (newValue) => {
+//     if (newValue === true) {
+//         methodToExecuteWhenTemplateAppears();
+//     }
+// });
 
 // 인증번호 전달.
 function methodToExecuteWhenTemplateAppears() {
@@ -57,13 +57,14 @@ function findPwByIdEmail() {
             memberEmail: memberEmail.value,
             memberId: memberId.value
         })
-        .then((response) => {
+        .then(() => {
+            console.log("테스트 수행");
             emptyMember.value = false;
-            console.log(response)
-            doubleCheck.value = response.data.data
+            methodToExecuteWhenTemplateAppears();
+            doubleCheck.value = true;
         }).catch(() => {
             emptyMember.value = true;
-            doubleCheck.value = false;
+            // doubleCheck.value = false;
             alert('등록된 아이디와 이메일 주소가 일치하지 않습니다.');
         });
 }

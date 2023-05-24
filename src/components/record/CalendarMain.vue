@@ -86,6 +86,9 @@ watch(selectedMonth, async () => {
     await getDiaryList();
     if(diaryList.value !== undefined){
       diaryVal.value = true;
+      foundKeyword = diaryList.value.diaryKeywordList.find(
+      keyword => keyword.diaryKeyword === diaryList.value.mainKeyword
+  );
       setRecordCount();
     }
 })
@@ -122,6 +125,28 @@ function goToColor(){
   router.push('/color'); 
 }
 
+let foundKeyword = null;
+
+
+// 키워드를 빈도수에 따라 다른 크기로 지정.
+function getChipStyle(freq) {
+      let fontSize = 10+20*(freq/foundKeyword.diaryFreq);
+      return {
+        fontSize: `${fontSize}px`
+      };
+}
+
+// // v-chip 사이즈 설정
+// function getChipSize(freq) {
+//       if (freq === foundKeyword.diaryFreq) {
+//         return "x-large"; // 가장 큰 크기로 설정
+//       } else if (freq >= foundKeyword.diaryFreq / 2) {
+//         return "large"; // 중간 크기로 설정
+//       } else {
+//         return "small"; // 작은 크기로 설정
+//       }
+// }
+
 const selectMsg = ref(false);
 const diaryVal = ref(false);
 
@@ -132,7 +157,11 @@ async function onMountedHandler() {
     await getDiaryList();
     if(diaryList.value !== undefined){
       diaryVal.value = true;
+      foundKeyword = diaryList.value.diaryKeywordList.find(
+      keyword => keyword.diaryKeyword === diaryList.value.mainKeyword
+      );
       setRecordCount();
+      console.log(diaryList.value.diaryKeywordList);
     }
     selectMsg.value = false;
   }
@@ -201,15 +230,22 @@ onMounted(onMountedHandler)
       />
     </v-row>
     <v-row>
-      <v-col
-        v-for="keyword in diaryList.diaryKeywordList"
-        :key="keyword.diaryKeywordId"
-        :id="keyword.diaryKeywordId"
-        cols="1"
-        class="text-center"
-      >
-        {{ keyword.diaryKeyword }}
-      </v-col>  
+      <v-col>
+      <v-chip-group class="center-align">
+        <v-chip
+          v-for="keyword in diaryList.diaryKeywordList"
+          :key="keyword.diaryKeywordId"
+          :id="keyword.diaryKeywordId"
+          cols="1"
+          variant="text"
+          :style="{
+            ...getChipStyle(keyword.diaryFreq),
+            borderColor : mainColor}"
+        >
+          {{ keyword.diaryKeyword }}
+        </v-chip>
+      </v-chip-group>
+      </v-col> 
     </v-row>
   </v-container>
   <v-icon
@@ -222,5 +258,9 @@ onMounted(onMountedHandler)
 </template>
 
 <style scoped>
-
+.center-align {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* 만약 chips가 너비를 초과하면 여러 줄로 나누기 위해 flex-wrap을 설정합니다 */
+}
 </style>
