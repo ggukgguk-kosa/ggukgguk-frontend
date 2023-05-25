@@ -77,6 +77,12 @@ export default {
         return axios.get(`/auth/mailCertificationNumberCheck`,{
             params: { certificationNumber, sendTo }
         });
-    }
+    },
+
+    // 비밀번호 변경
+    modifyPassword({memberEmail, memberPw}) {
+        return axios.put(`/auth/editPw`,{ memberEmail, memberPw }
+        );
+    },
 
 }
