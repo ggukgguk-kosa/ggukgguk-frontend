@@ -367,6 +367,7 @@ function deleteReply(reply) {
   })
 }
 
+
 // 맨위로
 function scrollToTop() {
   window.scrollTo({
@@ -376,6 +377,7 @@ function scrollToTop() {
 }
 
 onMounted(() => {
+  setStartDateStr(formatDate(new Date()));
   getRecordList();
   getFriendList();
 })
@@ -492,7 +494,9 @@ onUnmounted(() => {
             <!-- 댓글이 없을 때에도 replyId가 0인 값이 반환되는 버그가 있어, -->
             <!-- 우선 리스트 마지막 값의 replyId가 0이면 보이지 않도록 해놓음  -->
             <div class="ma-2">댓글</div>
-            <v-list dense v-if="record?.replyList[record.replyList.length-1]?.replyId !== 0">
+            <v-list 
+              dense v-if="record?.replyList[record.replyList.length-1]?.replyId !== 0"
+              >
               <v-list-item v-for="reply in record.replyList" :key="reply.replyId">
                 <v-list-item-title v-if="reply.replyId !== 0">
                   <div class="mb-2">
