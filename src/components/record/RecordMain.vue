@@ -533,7 +533,7 @@ onUnmounted(() => {
             </v-list>
 
             <v-form class="d-flex align-center">
-              <v-text-field class="ml-1" :value="newReplyContent[record.recordId]" @input="newReplyContent[record.recordId] = $event.target.value" required></v-text-field>
+              <v-text-field class="ml-1" :value="newReplyContent[record.recordId]" @input="newReplyContent[record.recordId] = $event.target.value" required @keydown.enter.prevent="addReply(record.recordId); newReplyContent[record.recordId] = ''"></v-text-field>
               <v-btn 
               :style="{ border: '1px solid ' + record.mainColor, color: 'black', backgroundColor: record.mainColor }"
               class= "button"
