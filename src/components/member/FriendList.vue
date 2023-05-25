@@ -1,11 +1,11 @@
 <script setup>
-import { ref,computed, onMounted,onUnmounted,watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 const store = useStore();
 const router = useRouter();
-
+const dialog = ref(false);
 const memberId = computed(() => {
     return store.getters['auth/memberInfo'].memberId;
 })
@@ -57,20 +57,16 @@ function sendLinkDefault() {
     })
 }
 
-// // 친구에게 꾹꾹 회원 ID 공유하기
-// function sendLinkCustom() {
-//     // 꾹꾹 회원으로 로그인 시 로그인을 먼저 수행해야 함.
-//     if (!window.Kakao.isInitialized()) {
-//         window.Kakao.init("f0b4268c10a9c956df9816637eede528");
-//     }
-
-//     window.Kakao.Link.sendCustom({
-//         templateId: 93730
-//     });
-// }
+// 친구 차단하기 
+function refuseFriend(friendId) {
+    store.dispatch('friend/delRelationshipFriend', friendId)
+        .then(() => {
+            dialog.value = true;
+    });
+}
 
 watch(friendList, () => {
-  noMoreDown.value = false;
+    noMoreDown.value = false;
 })
 
 // let lastScrollPosition = 0;
@@ -100,23 +96,23 @@ function handleScroll() {
 window.addEventListener('scroll', handleScroll);
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('scroll', handleScroll);
 })
 
 function getFriendsDown() {
-  isLoadingForScrollEvent.value = true;
-  isLoading.value = true;
+    isLoadingForScrollEvent.value = true;
+    isLoading.value = true;
 
-  store.dispatch("friend/getFriendList", memberId.value)
-  .then((data) => {
-        isLoadingForScrollEvent.value = false;
-        isLoading.value = false;
-        if (data?.length === 0) noMoreDown.value = true;
-  })
-  .catch((error) => {
-        console.error('친구 리스트 조회 실패');
-        console.error(error);
-  })
+    store.dispatch("friend/getFriendList", memberId.value)
+        .then((data) => {
+            isLoadingForScrollEvent.value = false;
+            isLoading.value = false;
+            if (data?.length === 0) noMoreDown.value = true;
+        })
+        .catch((error) => {
+            console.error('친구 리스트 조회 실패');
+            console.error(error);
+        })
 }
 
 
@@ -129,7 +125,7 @@ function getFriendsDown() {
                 <v-btn @click="sendLinkDefault">친구에게 아이디 공유하기</v-btn>
             </v-col>
             <v-col cols="auto" class="text-end">
-                <v-btn @click="goToFriendAndblock">친구 추가 및 차단 </v-btn>
+                <v-btn @click="goToFriendAndblock">친구 추가 </v-btn>
             </v-col>
         </v-row>
     </v-container>
@@ -140,9 +136,22 @@ function getFriendsDown() {
                     <v-card-text>{{ friend.memberNickname }} 님</v-card-text>
                     <v-card-text :style="{ fontStyle: 'italic' }"> {{ friend.memberId }} </v-card-text>
                     <v-card-text :style="{ fontStyle: 'italic' }"> {{ friend.memberEmail }} </v-card-text>
+                    <v-card-actions class="justify-end pt-1 pb-0">
+                        <v-btn @click="refuseFriend(friend.memberId)"> 차단
+                            <v-dialog v-model="dialog" width="auto">
+                                <v-card>
+                                    <v-card-text>
+                                        친구의 관계를 마무리하였습니다.
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-btn color="primary" block @click="dialog = false">닫기</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </v-btn>
+                    </v-card-actions>
                     <v-divider></v-divider>
                 </v-card>
             </v-col>
         </v-row>
-    </v-container>
-</template>
+    </v-container></template>

@@ -7,31 +7,37 @@ const FindList = ref([]);
 const store = useStore();
 const findId = ref("");
 
+const check = ref(false);
+const sendDialog = ref(false);
+const resendDialog = ref(false);
+
 // 본인 로그인 아이디 가져오기 
 const memberId = computed(() => {
     return store.getters['auth/memberInfo'].memberId;
 })
 
 // 친구 추가하기
-async function addFriend(friendId,memberEmail) {
+async function addFriend(friendId, memberEmail) {
     // console.log("테스트");
     console.log(friendId);
     console.log(memberEmail);
     await store.dispatch('friend/additionFriendId', friendId)
-    .then(() => {
-    alert('상대방에게 친구 요청을 보냈습니다.');
-    });
-    friendRequestEmail(memberEmail)
-
+        .then(() => {
+            sendDialog.value = true;
+        }).catch(() => {
+            resendDialog.value =true;
+        })
+    friendRequestEmail(memberEmail);
+    check.value = true;
 }
 
 // 친구 차단하기 
-function refuseFriend(friendId) {
-    store.dispatch('friend/delRelationshipFriend', friendId);
-    // .then(() => {
-    // alert('상대방을 차단하였습니다.');
-    // });
-}
+// function refuseFriend(friendId) {
+//     store.dispatch('friend/delRelationshipFriend', friendId);
+//     // .then(() => {
+//     // alert('상대방을 차단하였습니다.');
+//     // });
+// }
 // 나의 친구 목록 조회.=> 친구들의 ID 값만 가져오기
 const friendId = computed(() => {
     return store.getters['friend/friendList'].map(friend => friend.memberId);
@@ -61,7 +67,7 @@ async function findFriendList() {
 }
 
 // 상대방에게 친구 요청 안내 메일 전송
-async function friendRequestEmail(memberEmail){
+async function friendRequestEmail(memberEmail) {
     console.log(memberEmail)
     return await friend.friendRequestInfo({
         sendTo: memberEmail,
@@ -77,14 +83,14 @@ async function friendRequestEmail(memberEmail){
 
 <template>
     <v-container>
-        <v-card-title>친구 추가 및 차단</v-card-title>
+        <v-card-title>친구 추가</v-card-title>
     </v-container>
-    <v-card class="mx-auto" width="400">
+    <v-card class="mx-auto" width="300">
         <template v-slot:title>
             아이디 찾기
         </template>
         <v-text-field v-model="findId" label="찾고자 하는 친구 아이디"></v-text-field>
-        <v-card-actions>
+        <v-card-actions class="d-flex justify-center">
             <v-btn variant="outlined" @click="findFriendList">
                 검색
             </v-btn>
@@ -99,8 +105,30 @@ async function friendRequestEmail(memberEmail){
                     <v-card-text :style="{ fontStyle: 'italic' }"> {{ friend.memberEmail }} </v-card-text>
                     <v-card-text class="text-end">
                         <span>
-                            <v-btn v-if="!isFriend(friend.memberId)" @click="addFriend(friend.memberId,friend.memberEmail)">추가</v-btn>
-                            <v-btn v-if="isFriend(friend.memberId)" @click="refuseFriend(friend.memberId)">차단</v-btn>
+                            <!-- () => { detailNotify(notify.referenceId, notify.notificationTypeId); readNotify(notify.notificationId) } -->
+                            <v-btn :disabled="check" v-if="!isFriend(friend.memberId)"
+                                @click="() => { addFriend(friend.memberId, friend.memberEmail) }">추가</v-btn>
+                            <v-dialog v-model="sendDialog" width="auto">
+                                <v-card>
+                                    <v-card-text>
+                                        친구신청을 보냈습니다.
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-btn color="primary" block @click="sendDialog = false">닫기</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                            <v-dialog v-model="resendDialog" width="auto">
+                                <v-card>
+                                    <v-card-text>
+                                        이미 친구신청을 보냈습니다.
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-btn color="primary" block @click="resendDialog = false">닫기</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                            <!-- <v-btn v-if="isFriend(friend.memberId)" @click="refuseFriend(friend.memberId)">차단</v-btn> -->
                         </span>
                     </v-card-text>
                     <v-divider></v-divider>
