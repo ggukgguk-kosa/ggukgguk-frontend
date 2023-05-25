@@ -193,16 +193,16 @@ function readNotify(notificationId) {
           수락 </v-btn>
       </v-card-actions>
     </v-card>
-    <v-dialog v-model="recordDialog" width="100%">
-      <notification-record :recordId="recordId"></notification-record>
-      <v-btn color="primary" block @click="recordDialog = false">닫기</v-btn>
+    <v-dialog
+      v-model="recordDialog"
+      width="100%"
+    >
+      <notification-record :recordId="recordId" width="100%"></notification-record>
+      <v-btn color="primary" @click="recordDialog = false" width="100%">닫기</v-btn>
     </v-dialog>
   </div>
 </template>
+
 <style scoped>
-.custom-space-between {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
+
 </style>
