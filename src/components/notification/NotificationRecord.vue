@@ -133,78 +133,77 @@ onMounted(() => {
 </script>
 
 <template>
-          <v-card class="card">
-            <!-- 헤더 영역 -->
-            <v-row>
-                <v-col cols="10">
-                  {{ record.recordCreatedAt }}
-                </v-col>
-            </v-row>
-            <v-card-text v-if="record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
-            <v-card-text v-if="record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
-            
-            <!-- 본문 영역 -->
-            <v-card-text class="mb-8 record-comment" style="white-space: pre-wrap">
-              {{ record.recordComment }}
-            </v-card-text>
+  <v-card class="card">
+    <!-- 헤더 영역 -->
+    <v-row>
+        <v-col cols="10">
+          {{ record.recordCreatedAt }}
+        </v-col>
+    </v-row>
+    <v-card-text v-if="record.memberId !== memberId" :style="{ fontStyle: 'italic' }"> {{ record.memberNickname }}(으)로부터 </v-card-text>
+    <v-card-text v-if="record.recordShareTo && record.memberId === memberId" :style="{ fontStyle: 'italic' }"> {{ record.friendNickname }}(이)에게 </v-card-text>
+    
+    <!-- 본문 영역 -->
+    <v-card-text class="mb-8 record-comment" style="white-space: pre-wrap">
+      {{ record.recordComment }}
+    </v-card-text>
 
-            <!-- 미디어 영역 -->
-            <div v-if="record.mediaTypeId || record.recordLocationX !==0" class="media-wrapper">
-              <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media map-container"></record-map>
-              <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
-              <v-img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media" />
-              <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+    <!-- 미디어 영역 -->
+    <div v-if="record.mediaTypeId || record.recordLocationX !==0" class="media-wrapper">
+      <record-map v-if="record.recordLocationX !== 0" :recordLocationX="record.recordLocationX" :recordLocationY="record.recordLocationY" class="media map-container"></record-map>
+      <video v-if="record.mediaTypeId==='video'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" autoplay playsinline controls class="media"></video>
+      <v-img v-if="record.mediaTypeId==='image'" :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media" />
+      <audio v-if="record.mediaTypeId==='audio'" controls :src="`${BASE_URI}record/media/${record.mediaFileId}?mediaType=${record.mediaTypeId}`" class="media"></audio>
+    </div>
+
+    <v-divider></v-divider>
+
+    <div class="ma-2">댓글</div>
+    <div>
+    <v-list dense style="overflow-y: hidden;">
+      <v-list-item v-for="reply in record.replyList" :key="reply.replyId">
+        <v-list-item-title v-if="reply.replyId !== 0">
+          <div class="mb-2">
+            <div>
+              <div style="display: flex; justify-content: space-between;">
+                <div class="font-weight-bold mr-2">{{ reply.memberNickname }}</div>
+                <div v-if="reply.replyMemberId === memberId">
+                  <span @click="openEditReplyForm(reply)" class="mr-1">수정 |</span>
+                  <span @click="openDeleteReplyDialog(reply)">삭제</span>
+                </div>
+              </div>
+              <div>
+                <div style="white-space: normal">{{ reply.replyContent }}</div>
+              </div>
             </div>
-
-            <v-divider></v-divider>
-
-            <!-- 댓글 영역 -->
-            <!-- 댓글이 없을 때에도 replyId가 0인 값이 반환되는 버그가 있어, -->
-            <!-- 우선 리스트 마지막 값의 replyId가 0이면 보이지 않도록 해놓음  -->
-            <div class="ma-2">댓글</div>
-            <v-list dense>
-              <v-list-item v-for="reply in record.replyList" :key="reply.replyId">
-                <v-list-item-title v-if="reply.replyId !== 0">
-                  <div class="mb-2">
-                    <div>
-                      <div style="display: flex; justify-content: space-between;">
-                        <div class="font-weight-bold mr-2">{{ reply.memberNickname }}</div>
-                        <div v-if="reply.replyMemberId === memberId">
-                          <span @click="openEditReplyForm(reply)" class="mr-1">수정 |</span>
-                          <span @click="openDeleteReplyDialog(reply)">삭제</span>
-                        </div>
-                      </div>
-                      <div>
-                        <div style="white-space: normal">{{ reply.replyContent }}</div>
-                      </div>
-                    </div>
-                    <v-form v-if="editReplyForm && reply.replyId === editReplyId">
-                      <v-row>
-                        <v-col cols="10">
-                          <v-text-field v-model="editReplyContent" required></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-btn
-                          class= "button"
-                          @click="editReply(reply)">수정</v-btn>
-                          <v-btn
-                          class= "button"
-                          @click="cancelEditReply">취소</v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-form>
-                  </div>
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-
-            <v-form class="d-flex align-center">
-              <v-text-field class="ml-1" :value="newReplyContent" @input="newReplyContent = $event.target.value" required></v-text-field>
-              <v-btn 
-              class= "button"
-              @click="addReply(record.recordId); newReplyContent = ''" :disabled="newReplyContent === ''">등록</v-btn>
+            <v-form v-if="editReplyForm && reply.replyId === editReplyId">
+              <v-row>
+                <v-col cols="10">
+                  <v-text-field v-model="editReplyContent" required></v-text-field>
+                </v-col>
+                <v-col cols="2">
+                  <v-btn
+                  class= "button"
+                  @click="editReply(reply)">수정</v-btn>
+                  <v-btn
+                  class= "button"
+                  @click="cancelEditReply">취소</v-btn>
+                </v-col>
+              </v-row>
             </v-form>
-        </v-card>
+          </div>
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+    </div>
+
+    <v-form class="d-flex align-center">
+      <v-text-field class="ml-1" :value="newReplyContent" @input="newReplyContent = $event.target.value" required @keydown.enter.prevent="addReply(record.recordId); newReplyContent = ''"></v-text-field>
+      <v-btn 
+      class= "button"
+      @click="addReply(record.recordId); newReplyContent = ''" :disabled="newReplyContent === ''">등록</v-btn>
+    </v-form>
+</v-card>
 </template>
 
 <style scoped>

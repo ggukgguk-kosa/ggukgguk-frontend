@@ -174,11 +174,15 @@ function readNotify(notificationId) {
       </v-card-actions>
     </v-card>
     <v-dialog
-          v-model="recordDialog"
-          width="100%"
-      >
-        <notification-record :recordId="recordId"></notification-record>
-        <v-btn color="primary" block @click="recordDialog = false">닫기</v-btn>
-      </v-dialog>
+      v-model="recordDialog"
+      width="100%"
+    >
+      <notification-record :recordId="recordId" width="100%"></notification-record>
+      <v-btn color="primary" @click="recordDialog = false" width="100%">닫기</v-btn>
+    </v-dialog>
   </div>
 </template>
+
+<style scoped>
+
+</style>
