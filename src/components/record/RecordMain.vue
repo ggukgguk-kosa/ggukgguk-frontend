@@ -20,6 +20,11 @@ const friendId = computed(() => {
             return store.getters['record/recordOption'].friendId;
 })
 
+const memberNickname = computed(() => {
+            return store.getters['auth/memberInfo'].memberNickname;
+})
+
+
 const friendNickname = computed(() => {
   let nick;
   friendList.value.forEach((item) => {
@@ -401,7 +406,7 @@ onUnmounted(() => {
     ></v-progress-circular>
   </v-overlay>
 
-  <h1 v-if="!friendId">조각들 |&nbsp;&nbsp;&nbsp;나 ({{ memberId }})</h1>
+  <h1 v-if="!friendId">조각들 |&nbsp;&nbsp;&nbsp;나 ({{ memberNickname }})</h1>
   <h1 v-if="friendId">조각들 |&nbsp;&nbsp;&nbsp;{{ friendNickname }} ({{ friendId }})</h1>
 
   <v-slide-group
