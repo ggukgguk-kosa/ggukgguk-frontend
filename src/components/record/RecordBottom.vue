@@ -15,10 +15,6 @@ const MENUS = {
     cog: 'settingMain'
 };
 
-const memberId = computed(() => {
-            return store.getters['auth/memberInfo'].memberId;
-})
-
 // 읽지 않은 알림 수 조회
 const unNotifyList = computed(() => {
   return store.getters['notification/unReadNotify'];
@@ -29,21 +25,12 @@ function setFriendId(friendId) {
     store.commit('record/setFriendId', friendId);
 }
 
-function getRecordList() {
-  setFriendId(null);
-  store.dispatch("record/getRecordList", memberId.value)
-  .catch((error) => {
-        console.error('조각 리스트 조회 실패');
-        console.error(error);
-  })
-}
-
 function goTo(from) {
     const name = MENUS[from];
+    setFriendId(null);
 
     if (name === 'recordMain' && route.name === 'recordMain') {
-        getRecordList();
-        return;
+        window.location.reload();
     }
     router.push({ name });
 }
