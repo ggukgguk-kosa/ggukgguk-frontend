@@ -121,9 +121,15 @@ function detailNotify(referenceId, notificationTypeId) {
       })
   }
 
+  // 새로운 댓글 알림일 경우
   if (notificationTypeId === 'NEW_REPLY') {
     recordDialog.value = true;
     recordId.value = referenceId;
+  }
+
+  // 교환일기 이동
+  if(notificationTypeId=='EXCHANGE_DIARY'){
+    router.push({ name: "recordUnaccepted" });
   }
 }
 
