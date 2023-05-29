@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref , computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
@@ -32,10 +32,12 @@ const cancel = () =>{
 }
 
 
+const memberInfo = computed(() => {
+    return store.getters['auth/memberInfo'];
+})
 
-const modify = () => {
-  store
-    .dispatch('member/modfiyMemberInfo', {
+async function modify() {
+  await store.dispatch('member/modfiyMemberInfo', {
       memberId: memberId.value,
       memberPw: memberPw.value || null,
       memberName: memberName.value,
@@ -53,24 +55,40 @@ const modify = () => {
       console.error('회원 정보 수정 실패');
       console.error(error);
     });
-};
+}
 
-const fetchUpdatedMemberInfo = () => {
-  memberId.value = store.getters['auth/memberInfo'].memberId;
-  store.dispatch('member/informationMemberDetail', memberId.value)
-    .then((response) => {
-      const memberData = response.data.data;
-      memberName.value = memberData.memberName;
-      memberEmail.value = memberData.memberEmail;
-      memberBirth.value = memberData.memberBirth;
-      memberNickname.value = memberData.memberNickname;
-      memberPhone.value = memberData.memberPhone;
-    })
-    .catch((error) => {
-      console.error('회원 세부정보 조회 실패');
-      console.error(error);
-    });
-};
+async function fetchUpdatedMemberInfo() {
+
+  memberId.value = memberInfo.value.memberId;
+    await store.dispatch('member/informationMemberDetail', memberId.value)
+      .then((response) => {
+        const memberData = response.data.data;
+        memberName.value = memberData.memberName;
+        memberEmail.value = memberData.memberEmail;
+        memberBirth.value = memberData.memberBirth;
+        memberNickname.value = memberData.memberNickname;
+        memberPhone.value = memberData.memberPhone;
+      })
+      .catch((error) => {
+        console.error('회원 세부정보 조회 실패');
+        console.error(error);
+      });
+  
+  // memberId.value = store.getters['auth/memberInfo'].memberId;
+  // store.dispatch('member/informationMemberDetail', memberId.value)
+  //   .then((response) => {
+  //     const memberData = response.data.data;
+  //     memberName.value = memberData.memberName;
+  //     memberEmail.value = memberData.memberEmail;
+  //     memberBirth.value = memberData.memberBirth;
+  //     memberNickname.value = memberData.memberNickname;
+  //     memberPhone.value = memberData.memberPhone;
+  //   })
+  //   .catch((error) => {
+  //     console.error('회원 세부정보 조회 실패');
+  //     console.error(error);
+  //   });
+}
 
 const BirthRules = [
   (value) => {
@@ -99,7 +117,7 @@ const phoneRules = [
         </v-card-title>
         <v-card-text>
             <v-form :ref="form">
-                <v-text-field v-model="memberId" label="ID"></v-text-field>
+                <v-text-field v-model="memberId" disabled label="ID"></v-text-field>
                 <v-text-field type="password" v-model="memberPw" label="새로운 비밀번호 입력"></v-text-field>
                 <v-text-field type="password" v-model="memberCheckPw" :rules="[passwordMatchRule]"
                     label="새로운 비밀번호 한번 더 입력"></v-text-field>

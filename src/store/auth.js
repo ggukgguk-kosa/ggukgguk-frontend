@@ -39,13 +39,17 @@ export default {
     },
     updateMemberAllowEmail(state, isAllow) {
       state.memberInfo.memberAllowEmail = isAllow;
+    },
+    updateMember(state, memberInfo){
+      state.memberInfo = memberInfo; 
+      state.memberInfo.memberPw = '';
     }
   },
   actions: {
     login({ commit }, { memberId, memberPw }) {
       return auth.login({ memberId, memberPw })
         .then((response) => {
-          console.log('리스폰스 받음');
+          console.log('로그인 완료');
           console.log(response);
           commit('setMemberInfo', response.data.data);
           return response;
@@ -114,8 +118,8 @@ export default {
 
     // 아이디와 이메일로 비밀번호 찾기
     // eslint-disable-next-line
-    handleFindPw({ }, {memberEmail,memberId}) {
-      return auth.findPwByIdEmail({memberEmail,memberId})
+    handleFindPw({ }, { memberEmail, memberId }) {
+      return auth.findPwByIdEmail({ memberEmail, memberId })
         .then((response) => {
           console.log('리스폰스 받음');
           console.log(response);
@@ -125,8 +129,8 @@ export default {
 
     // 메일 인증번호 요청하기 
     // eslint-disable-next-line
-    handleCertification({ }, {sendTo}) {
-      return auth.requestAuthenticationCode({sendTo})
+    handleCertification({ }, { sendTo }) {
+      return auth.requestAuthenticationCode({ sendTo })
         .then((response) => {
           console.log('storehandleCertification 처리');
           console.log(response);
@@ -134,17 +138,15 @@ export default {
         })
     },
 
-     // 비밀번호 찾기시 메일 인증번호 요청하기 
+    // 비밀번호 찾기시 메일 인증번호 요청하기 
     // eslint-disable-next-line
-    handleCertificationPw({ }, {sendTo}) {
-      return auth.requestPwAuthenticationCode({sendTo})
+    handleCertificationPw({ }, { sendTo }) {
+      return auth.requestPwAuthenticationCode({ sendTo })
         .then((response) => {
           console.log('storehandleCertification 처리');
           console.log(response);
           return response;
         })
     },
-
-
   }
 };
