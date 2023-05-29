@@ -43,6 +43,7 @@ function setFriendId(friendId) {
 }
 
 function getFriendList() {
+  console.log(memberId);
   store.dispatch('friend/getFriendList', memberId)
   .then(() => {
     isLoading.value = false;
