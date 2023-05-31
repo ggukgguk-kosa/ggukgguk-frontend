@@ -267,8 +267,8 @@
                     divided
                     variant="outlined"
                 >
-                    <v-btn icon="mdi-paperclip" @click="openInputGallery"></v-btn>
-                    <v-btn icon="mdi-image-outline" @click="openInputImage"></v-btn>
+                    <v-btn icon="mdi-image-outline" @click="openInputGallery"></v-btn>
+                    <v-btn icon="mdi-camera-outline" @click="openInputImage"></v-btn>
                     <v-btn icon="mdi-video-outline" @click="openVideoCamera"></v-btn>
                     <v-btn icon="mdi-microphone-outline" @click="openAudioRecoder"></v-btn>
                     <v-btn icon="mdi-map-marker-outline" @click="openLocationRecoder"></v-btn>
