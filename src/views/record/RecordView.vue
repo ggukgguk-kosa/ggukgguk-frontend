@@ -8,9 +8,7 @@ import RecordBottom from '@/components/record/RecordBottom.vue';
 <template>
     <record-header />
     <v-main>
-        <v-container>
-            <record-main />
-        </v-container>
+        <record-main/>
     </v-main>
     <record-bottom />
 </template>
