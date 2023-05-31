@@ -73,10 +73,16 @@ function formatDate(date, isCardHeader) {
   const hour = date.getHours();
   const minute = date.getMinutes();
 
-  if (isCardHeader)
-    return `${month < 10 ? '0' + month : month}월 ${day < 10 ? '0' + day : day}일 ${hour}시 ${minute}분`;
-  else
+  const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  const week = WEEKDAYS[date.getDay()];
+
+  if (isCardHeader) {
+    const halfHour = hour > 12 ? hour - 12 : hour;
+    const hourPrefix = hour >= 12 ? '오후' : '오전';
+    return `${month}월 ${day}일 ${week}요일 ${hourPrefix} ${halfHour}시 ${minute}분`;
+  } else {
     return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+  }
 }
 
 const recordList = computed(() => {
