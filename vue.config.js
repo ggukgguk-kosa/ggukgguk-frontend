@@ -24,8 +24,8 @@ module.exports = defineConfig({
         short_name: "꾹꾹",
         start_url: "./",
         display: "standalone",
-        theme_color: "#3AA73A",
-        background_color: "#3AA73A",
+        theme_color: "#E0E3DA",
+        background_color: "#E0E3DA",
         icons: [
             {
                 "src": "img/icons/favicon-16x16.png",
@@ -90,8 +90,8 @@ module.exports = defineConfig({
         ],
     },
 
-    themeColor: "#3AA73A",
-    msTileColor: "#3AA73A",
+    themeColor: "#E0E3DA",
+    msTileColor: "#E0E3DA",
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black",
     iconPaths: {
