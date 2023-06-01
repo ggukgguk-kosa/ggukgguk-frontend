@@ -30,24 +30,24 @@ const memberNickname = computed(() => {
 
 const friendNickname = computed(() => {
   let nick;
-  friendList.value.forEach((item) => {
+  friendListByRecord.value.forEach((item) => {
     if (item.memberId === friendId.value)
       nick = item.memberNickname;
   });
   return nick;
 });
 
-const friendList = computed(() => {
-            return store.getters['friend/friendList'];
+const friendListByRecord = computed(() => {
+            return store.getters['record/friendListByRecord'];
 })
 
 function setFriendId(friendId) {
     store.commit('record/setFriendId', friendId);
 }
 
-function getFriendList() {
+function getFriendListByRecord() {
   console.log(memberId);
-  store.dispatch('friend/getFriendList', memberId)
+  store.dispatch('record/getFriendListByRecord', memberId)
   .then(() => {
     isLoading.value = false;
   })
@@ -394,7 +394,7 @@ function scrollToTop() {
 onMounted(() => {
   setStartDateStr(formatDate(new Date()));
   getRecordList();
-  getFriendList();
+  getFriendListByRecord();
 })
 
 onUnmounted(() => {
@@ -427,7 +427,7 @@ onUnmounted(() => {
           class = "mt-15"
         >
           <v-slide-group-item
-            v-for="friend in friendList"
+            v-for="friend in friendListByRecord"
             :key="friend.memberId"
             v-slot="{ isSelected, toggle }"
           >
