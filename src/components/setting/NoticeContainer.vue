@@ -45,7 +45,10 @@ function formatDate(date) {
     const hour = date.getHours();
     const minute = date.getMinutes();
 
-    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${hour}:${minute}`;
+    const halfHour = hour > 12 ? hour - 12 : hour;
+    const hourPrefix = hour >= 12 ? '오후' : '오전';
+
+    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${hourPrefix} ${halfHour}시 ${minute}분`;
 }
 
 </script>
@@ -58,9 +61,16 @@ function formatDate(date) {
             <v-expansion-panel
                 v-for="notice in noticeList"
                 :key="notice.noticeId"
-                :title="`${notice.noticeTitle}`"
-                :text="formatDate(new Date(notice.noticeCreatedAt)) + '<br>' + notice.noticeContent"
-            ></v-expansion-panel>
+            >
+                <v-expansion-panel-title>
+                    {{ notice.noticeTitle }}
+                </v-expansion-panel-title>
+
+                <v-expansion-panel-text>
+                    <div class="mb-8" style="font-size: 85%;">{{ formatDate(new Date(notice.noticeCreatedAt)) }}</div>
+                    <div style="white-space: pre-wrap">{{ notice.noticeContent }}</div>
+                </v-expansion-panel-text>
+            </v-expansion-panel>
         </v-expansion-panels>
 
         <v-pagination v-model="noticeOption.page" :total-visible="5" :length="totalPage"></v-pagination>
