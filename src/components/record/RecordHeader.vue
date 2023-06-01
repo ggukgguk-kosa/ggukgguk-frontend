@@ -38,7 +38,10 @@ function handleSearch() {
   setKeyword(keyword.value);
   store.dispatch('record/getRecordList', memberId.value);
   keyword.value = null;
-  setKeyword(null);
+  window.scrollTo({
+    top: 10,
+    behavior: "smooth"
+  });
 }
 
 const route = useRoute();
