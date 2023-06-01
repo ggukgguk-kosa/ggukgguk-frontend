@@ -85,6 +85,15 @@ function formatDate(date, isCardHeader) {
   }
 }
 
+
+const keyword = computed(() => {
+  return store.getters['record/recordOption'].keyword
+});
+
+function setKeyword(keyword) {
+  store.commit('record/setKeyword', keyword);
+}
+
 const recordList = computed(() => {
     return store.getters['record/recordList']
 });
@@ -127,8 +136,14 @@ const earliestRecordCreatedAt = computed(() => {
 const isLoadingForScrollEvent = ref(false);
 const isLoading = ref(false);
 
-const noMoreUp = ref(false);
-const noMoreDown = ref(false);
+const noMoreUp = computed(() => {
+  if (keyword.value !== null) return true;
+  else return false;
+})
+const noMoreDown = computed(() => {
+  if (keyword.value !== null) return true;
+  else return false;
+})
 const noData = computed(() => {
   if (recordList.value.length === 0) return true;
   else return false;
@@ -392,13 +407,14 @@ function scrollToTop() {
 }
 
 onMounted(() => {
-  setStartDateStr(formatDate(new Date()));
   getRecordList();
   getFriendListByRecord();
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  setStartDateStr(formatDate(new Date()));
+  setKeyword(null);
 })
 </script>
 

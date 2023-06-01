@@ -16,6 +16,8 @@ watch(props, () => {
 
 function initMap() {
   // let container = document.getElementById("map");
+  console.log(props.recordLocationX);
+  console.log(props.recordLocationY);
   let container = mapContainer.value;
   let options = {
     // eslint-disable-next-line
@@ -43,9 +45,11 @@ function updateCoord() {
   console.log('위치 업데이트');
   console.log('> 좌표:',props.recordLocationY, props.recordLocationX);
   // eslint-disable-next-line
-  const latLng = new kakao.maps.LatLng(props.recordLocationY, props.recordLocationX);
-  marker.setPosition(latLng);
-  map.setCenter(latLng);
+  // const latLng = new kakao.maps.LatLng(props.recordLocationY, props.recordLocationX);
+  // marker.setPosition(latLng);
+  // map.setCenter(latLng);
+  initMap();
+  showOnMap();
 }
 
 onMounted(() => {
