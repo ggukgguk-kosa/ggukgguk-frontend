@@ -60,7 +60,16 @@ onMounted(() => {
   </v-overlay>
 
   <h1>교환일기 |&nbsp;&nbsp;&nbsp;({{ memberId }})</h1>
-
+  <div
+      v-if="unacceptedRecordList.length === 0" 
+      style="display: flex; justify-content: center;">
+    <v-chip
+      variant="outlined"
+      color="primary"
+    >
+      미수락 교환일기가 없습니다.
+    </v-chip>
+    </div>
   <v-container>
     <v-row>
       <v-col

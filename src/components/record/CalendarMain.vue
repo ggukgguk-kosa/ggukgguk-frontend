@@ -249,7 +249,7 @@ onMounted(onMountedHandler)
     </v-row>
   </v-container>
   <v-icon
-    v-if="diaryVal"
+    v-if="diaryVal && !friendId"
     :style="{ color: mainColor }"
     @click="goToColor"
   >

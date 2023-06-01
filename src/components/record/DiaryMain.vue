@@ -104,6 +104,7 @@ onMounted(() => {
       style="display: flex; justify-content: center;">
     <v-chip
       variant="outlined"
+      color="primary"
     >
       해당 연도의 다이어리가 없습니다.
     </v-chip>
