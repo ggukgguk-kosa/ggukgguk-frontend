@@ -1,10 +1,10 @@
 <script setup>
-import RecordHeader from '../../components/record/RecordHeader.vue';
+import GoBackHeader from '@/components/common/GoBackHeader.vue';
 import FriendList from '../../components/member/FriendList.vue';
 import RecordBottom from '@/components/record/RecordBottom.vue';
 </script>
 <template>
-    <record-header/>
+    <go-back-header />
     <v-container fluid ma-0 pa-0 fill-height> </v-container>
     <v-container fluid ma-0 pa-0 fill-height> </v-container>
     <!-- 나의 정보 수정 페이지 -->
