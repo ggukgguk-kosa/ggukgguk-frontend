@@ -83,6 +83,13 @@ async function loginWithGoogle() {
       <router-link :to="{ name: 'login' }" v-if="!isLogin">로그인</router-link> <br>
       <button @click="onLogout" v-if="isLogin">로그아웃</button> <br>
     </div>
+
+    <v-footer class="text-center d-flex flex-column mt-16 py-16" style="width: 100%; font-size: 90%; background-color: #D3D3D3;">
+      <div>
+        꾹꾹 - 기록자들, {{ new Date().getFullYear() }} <br>
+        한국소프트웨어산업협회 솔트룩스 과정
+      </div>
+    </v-footer>
   </div>
 </template>
 
@@ -111,6 +118,7 @@ img {
 }
 
 .debug {
+  display: none;
   font-size: 8px;
   margin-top: 60px;
 }
