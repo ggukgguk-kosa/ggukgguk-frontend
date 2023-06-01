@@ -74,6 +74,12 @@ export default {
         });
     },
 
+    getFriendListByRecord({ memberId }) {
+        return axios.get('/record/friend', {
+            memberId
+        })
+    },
+
     getUnacceptedRecordList(memberId) {
         return axios.get('/record/unaccepted',
         {
