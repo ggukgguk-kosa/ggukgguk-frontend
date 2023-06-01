@@ -91,6 +91,10 @@ async function loginWithGoogle() {
   width: 100;
 }
 
+.debug {
+  display: none;
+}
+
 .landing-wrap {
   text-align: center;
   margin-top: 80px;
