@@ -39,6 +39,7 @@ export default {
     },
 
     deleteReply( recordId, replyId, memberId ) {
+        console.log(memberId);
         return axios.delete(`/record/reply/${replyId}`,
         {
             data: {

@@ -136,20 +136,16 @@ const earliestRecordCreatedAt = computed(() => {
 const isLoadingForScrollEvent = ref(false);
 const isLoading = ref(false);
 
-const noMoreUp = computed(() => {
-  if (keyword.value !== null) return true;
-  else return false;
-})
-const noMoreDown = computed(() => {
-  if (keyword.value !== null) return true;
-  else return false;
-})
+const noMoreUp = ref(false);
+const noMoreDown = ref(false);
+
 const noData = computed(() => {
   if (recordList.value.length === 0) return true;
   else return false;
 });
 
 function setStartDateStr(startDateStr) {
+    setKeyword(null);
     store.commit('record/setStartDateStr', startDateStr);
 }
 
@@ -164,7 +160,7 @@ function handleScroll() {
 
   // 스크롤이 맨 아래에 도달했는지 확인
   if (Math.ceil(scrollY + windowHeight) >= documentHeight && !isLoadingForScrollEvent.value) {
-    if (noMoreDown.value) {
+    if (noMoreDown.value || keyword.value !== null) {
       return;
     }
 
@@ -178,7 +174,7 @@ function handleScroll() {
 
   // 스크롤이 맨 위에 도달했는지 확인
   if (scrollY === 0 && !isLoadingForScrollEvent.value && Math.abs(scrollY - lastScrollPosition) > scrollThreshold) {
-    if (noMoreUp.value) {
+    if (noMoreUp.value || keyword.value !== null) {
       return;
     }
 
@@ -384,10 +380,11 @@ function openDeleteReplyDialog(reply) {
 }
 
 function deleteReply(reply) {
+  console.log(reply);
   store.dispatch("record/deleteReply", {
     recordId : reply.recordId,
     replyId : reply.replyId,
-    memberId : reply.memberId })
+    memberId : reply.replyMemberId })
   .then(() => {
         deleteReplyId.value = 0;
   })
@@ -414,7 +411,6 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
   setStartDateStr(formatDate(new Date()));
-  setKeyword(null);
 })
 </script>
 
