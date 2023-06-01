@@ -9,8 +9,9 @@ export default {
       friendId: null
     },
     recordList: [],
+    friendListByRecord: [],
     record: [],
-    unacceptedRecordList: []
+    unacceptedRecordList: [],
   },
   getters: {
     recordOption(state) {
@@ -21,6 +22,9 @@ export default {
     },
     record(state) {
       return state.record
+    },
+    friendListByRecord(state) {
+      return state.friendListByRecord
     },
     unacceptedRecordList(state) {
       return state.unacceptedRecordList
@@ -53,6 +57,9 @@ export default {
     updateReplyList(state, {recordId, newReplyList}) {
       const index = state.recordList.findIndex(record => record.recordId === recordId);
       state.recordList[index].replyList = newReplyList;
+    },
+    setFriendListByRecord(state, friendListByRecord) {
+      state.friendListByRecord = friendListByRecord;
     },
     setRecord(state, record) {
       state.record = record;
@@ -137,6 +144,15 @@ export default {
     // eslint-disable-next-line
     deleteRecord({ }, { recordId, memberId } ) {
       return record.deleteRecord(recordId, memberId);
+    },
+
+    // eslint-disable-next-line
+    getFriendListByRecord({ commit }, memberId) {
+      return record.getFriendListByRecord(memberId)
+        .then((response) => {
+          console.log(response.data.data);
+          commit('setFriendListByRecord', response.data.data);
+        })
     },
     
     // eslint-disable-next-line
