@@ -1,9 +1,3 @@
-<template>
-  <div>
-    <p>접속 중..</p>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -11,6 +5,7 @@ import { useStore } from 'vuex';
 
 const store = useStore();
 const router = useRouter();
+const isLoading = ref(true);
 
 onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -45,6 +40,7 @@ onMounted(async () => {
       AccessToken.value = data.access_token;
       store.dispatch("auth/handleGoogleAuth",AccessToken.value)
       .then((response) =>{
+        isLoading.value = false;
         console.log("구글 로그인 성공");
         console.log(response);
         router.push({ name: "recordMain" });
@@ -57,27 +53,25 @@ onMounted(async () => {
 });
 </script>
 
-<!-- <template>
-  <div>loading....</div>
+<template>
+  <v-overlay
+      v-model="isLoading"
+      scroll-strategy="block"
+      persistent
+      class="loading-overlay"
+    >
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
 </template>
 
-<script setup>
-import { onMounted } from "vue";
-// import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-
-// const router = useRouter();
-const store = useStore();
-
-onMounted(async () => {
-  const queryParams = new URLSearchParams(window.location.search);
-  const token = queryParams.get("token");
-
-  if (token) {
-    await store.dispatch("auth/handleGoogleAuth",token);
-    // router.push("/");
-  } else {
-    // router.push("/login");
-  }
-});
-</script> -->
+<style scoped>
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

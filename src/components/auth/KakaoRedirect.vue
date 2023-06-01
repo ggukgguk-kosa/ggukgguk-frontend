@@ -6,6 +6,7 @@ import axios from "axios";
 
 const store = useStore();
 const router = useRouter();
+const isLoading = ref(true);
 
 /**
  * 
@@ -57,6 +58,7 @@ onMounted(async () => { // 미은트가 된 이후에 비동기적으로 실행 
       store.dispatch("auth/handleKakaoAuth",AccessToken.value)
       // store.dispatch("auth/handleKakaoAuth",AccessToken.value,refreshToken.value)
       .then((response) =>{
+        isLoading.value = false;
         console.log("카카오 로그인 성공");
         console.log(response);
         router.push({ name: "recordMain" });
@@ -66,13 +68,16 @@ onMounted(async () => { // 미은트가 된 이후에 비동기적으로 실행 
     }
   }
 });
-
 </script>
 <template>
-  <div>
-    <p>접속 중..</p>
-  </div>
-  <!-- <v-overlay class="loading-overlay" v-model="isLoading" scroll-strategy="block" persistent>
-        <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
-  </v-overlay> -->
+    <v-overlay class="loading-overlay" v-model="isLoading" scroll-strategy="block" persistent>
+          <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
+    </v-overlay>
 </template>
+<style scoped>
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
