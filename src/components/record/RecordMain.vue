@@ -299,16 +299,18 @@ function goToRecordUpdate(record) {
 function openDeleteRemoveDialog(record) {
 
     if (confirm("삭제하시겠습니까?")) {
-      deleteRecord(record.recordId, record.memberId);
+      deleteRecord(record.recordId, record.memberId, record.recordCreatedAt);
     }
 }
 
 
-function deleteRecord(recordId, memberId) {
+function deleteRecord(recordId, memberId, recordCreatedAt) {
     console.log("삭제 실행");
     store.dispatch('record/deleteRecord', { recordId, memberId } )
     .then(() => {
     console.log("삭제 성공");
+    const startDateStr = formatDate(new Date(recordCreatedAt));
+    setStartDateStr(startDateStr);
     getRecordList();
     })
     .catch((error) =>
