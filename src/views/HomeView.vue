@@ -137,7 +137,7 @@ img {
   display: flex;
   justify-content: center;
   margin-top: 30px;
-  width: 600px;
+  width: 50%;
 }
 
 .button-wrap img {
