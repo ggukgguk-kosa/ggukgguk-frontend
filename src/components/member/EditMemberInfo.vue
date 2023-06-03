@@ -113,7 +113,7 @@ const phoneRules = [
 <template>
     <v-card>
         <v-card-title>
-            <span class="headline">{{ memberName }} 님 회원정보 입니다.</span>
+            <span class="headline">{{ memberInfo.memberNickname }} 님 회원정보 입니다.</span>
         </v-card-title>
         <v-card-text>
             <v-form :ref="form">
