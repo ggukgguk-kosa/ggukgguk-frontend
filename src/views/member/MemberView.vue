@@ -7,7 +7,10 @@ import RecordBottom from '@/components/record/RecordBottom.vue';
 <template>
     <go-back-header />  
     <v-container fluid ma-0 pa-0 fill-height> </v-container>
-    <!-- 나의 정보 수정 페이지 -->
+    <v-container fluid ma-0 pa-0 fill-height> </v-container> 
+    <v-container fluid ma-0 pa-0 fill-height> </v-container> 
     <edit-member-info/>
+    <v-container fluid ma-0 pa-0 fill-height> </v-container>
+    <v-container fluid ma-0 pa-0 fill-height> </v-container>
     <record-bottom />
 </template>
