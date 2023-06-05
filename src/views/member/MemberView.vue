@@ -5,12 +5,11 @@ import RecordBottom from '@/components/record/RecordBottom.vue';
 </script>
 
 <template>
-    <go-back-header />  
-    <v-container fluid ma-0 pa-0 fill-height> </v-container>
-    <v-container fluid ma-0 pa-0 fill-height> </v-container> 
-    <v-container fluid ma-0 pa-0 fill-height> </v-container> 
-    <edit-member-info/>
-    <v-container fluid ma-0 pa-0 fill-height> </v-container>
-    <v-container fluid ma-0 pa-0 fill-height> </v-container>
+    <go-back-header />
+    <v-main>
+        <v-container>
+            <edit-member-info />
+        </v-container>
+    </v-main>
     <record-bottom />
 </template>
