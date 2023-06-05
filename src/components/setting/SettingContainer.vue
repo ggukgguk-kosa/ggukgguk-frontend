@@ -62,7 +62,7 @@ watch(allowEmail, () => {
             <v-list-item>
                 <v-card>
                     <v-card-subtitle>
-                        {{ `${memberInfo.memberName}(${memberInfo.memberId})님` }}
+                        {{ `${memberInfo.memberNickname}(${memberInfo.memberId})님` }}
                     </v-card-subtitle>
                     <v-card-actions>
                         <v-btn @click="goTo('logout')">로그아웃</v-btn>
