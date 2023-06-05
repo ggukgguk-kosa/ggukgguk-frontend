@@ -7,7 +7,6 @@ import RecordBottom from '@/components/record/RecordBottom.vue';
     <go-back-header />
     <v-main>
         <v-container>
-            <!-- 나의 정보 수정 페이지 -->
             <friend-list />
         </v-container>
     </v-main>
