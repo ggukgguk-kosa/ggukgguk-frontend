@@ -223,6 +223,14 @@ function personalinfoServiceAgreeDiag() {
 }
 
 onMounted(() => {
+  alert("[알려드립니다] \n" +
+    "메일 전송을 위해 사용하는 Amazon Simple Email Service(SES)가 " +
+    "테스트 상태로 세팅되어 있기 때문에 allowList에 등록되지 않은 " +
+    "이메일로는 메일 전송이 불가능합니다. 따라서 현재는 메일 인증을 이용한 " +
+    "회원가입이 불가능합니다. \n" + 
+    "심사위원께서는 소셜 로그인을 이용하여 회원 등록을 하시거나, " +  
+    "QR코드와 함께 제공해드린 데모용 계정으로 로그인하실 수 있습니다. \n\n" +
+    "이 메시지는 프로덕션 빌드에서는 표시되지 않습니다.");
   termOfServiceContent();
   personalInfoServiceContent();
 });
